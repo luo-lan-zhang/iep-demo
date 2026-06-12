@@ -1,0 +1,51 @@
+.admin-layout {
+  min-height: 100vh;
+}
+.admin-layout .ant-layout-sider {
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+}
+.logo-container {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.logo-container h2 {
+  color: #fff;
+  font-size: 16px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-header {
+  background: #fff !important;
+  padding: 0 24px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.admin-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-header .header-left h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+.admin-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.admin-content {
+  margin: 24px;
+  min-height: calc(100vh - 64px - 48px);
+}
