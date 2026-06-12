@@ -69,7 +69,7 @@ export default function AdminLayout() {
     <Layout className="admin-layout">
       <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} theme="dark" width={220}>
         <div className="logo-container">
-          <h2>{collapsed ? '产教' : '产教融合智慧云平台'}</h2>
+          <h2>{collapsed ? '产教' : '产教融合云平台'}</h2>
         </div>
         <Menu
           theme="dark" mode="inline"
@@ -81,7 +81,7 @@ export default function AdminLayout() {
       <Layout>
         <Header className="admin-header">
           <div className="header-left">
-            <h3>{pageTitles[location.pathname] || '产教融合智慧云平台'}</h3>
+            <h3>{pageTitles[location.pathname] || '产教融合云平台'}</h3>
           </div>
           <div className="header-right">
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">

@@ -39,7 +39,7 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <ExperimentOutlined style={{ fontSize: 40, color: '#1677ff', marginBottom: 8 }} />
-          <h1>产教融合智慧云平台</h1>
+          <h1>产教融合云平台</h1>
           <p>Industry-Education Integration Smart Platform</p>
         </div>
         <Form onFinish={onFinish} size="large">

@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/Login'
 import AdminLayout from './pages/AdminLayout'
 import Dashboard from './pages/Dashboard'
@@ -37,8 +38,8 @@ function AppRoutes() {
         <Route path="points" element={<PointsManagement />} />
         <Route path="system" element={<SystemSettings />} />
       </Route>
-      <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/" element={user ? <Navigate to="/admin/dashboard" replace /> : <LandingPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
