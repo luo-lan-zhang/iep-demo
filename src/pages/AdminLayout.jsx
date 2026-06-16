@@ -22,7 +22,6 @@ const ALL_MENU_ITEMS = [
   { key: '/admin/resources',    icon: <ExperimentOutlined />,     label: '共享资源池' },
   { key: '/admin/services',     icon: <DeploymentUnitOutlined />, label: '技术服务池' },
   { key: '/admin/teaching',     icon: <BookOutlined />,           label: '教学资源转化' },
-  { key: '/admin/cockpit',      icon: <FundOutlined />,           label: '数据驾驶舱' },
   { key: '/admin/points',       icon: <GiftOutlined />,           label: '积分管理' },
   { key: '/admin/system',       icon: <SettingOutlined />,        label: '系统设置' },
   { key: '/admin/industry-report', icon: <ThunderboltOutlined />, label: '产业报告' },
@@ -31,10 +30,10 @@ const ALL_MENU_ITEMS = [
 
 const ROLE_MENUS = {
   council:    ALL_MENU_ITEMS,
-  park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/resources', '/admin/services', '/admin/cockpit', '/admin/system'].includes(m.key)),
+  park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system'].includes(m.key)),
   enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report'].includes(m.key)),
   mentor:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent'].includes(m.key)),
-  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/cockpit', '/admin/industry-report'].includes(m.key)),
+  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report'].includes(m.key)),
   teacher:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/achievements', '/admin/services', '/admin/teaching'].includes(m.key)),
   student:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/talent'].includes(m.key)),
 }
@@ -47,7 +46,6 @@ const pageTitles = {
   '/admin/resources':    '共享资源池',
   '/admin/services':     '技术服务池',
   '/admin/teaching':     '教学资源转化',
-  '/admin/cockpit':      '数据驾驶舱',
   '/admin/points':       '积分管理',
   '/admin/system':       '系统设置',
   '/admin/industry-report': '产业报告',

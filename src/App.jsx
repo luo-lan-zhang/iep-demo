@@ -36,7 +36,6 @@ function AppRoutes() {
         <Route path="resources" element={<SharedResources />} />
         <Route path="services" element={<ServicePool />} />
         <Route path="teaching" element={<TeachingResource />} />
-        <Route path="cockpit" element={<DataCockpit />} />
         <Route path="points" element={<PointsManagement />} />
         <Route path="system" element={<SystemSettings />} />
         <Route path="industry-report" element={<IndustryReport />} />

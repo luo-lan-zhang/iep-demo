@@ -3,7 +3,9 @@ import { Row, Col, Card, Statistic, Table, Tag, Progress, Descriptions, Divider,
 import {
   ApartmentOutlined, BankOutlined, GlobalOutlined, UserOutlined,
   TeamOutlined, ExperimentOutlined, ProjectOutlined,
-  NodeIndexOutlined, SafetyCertificateOutlined, BarChartOutlined
+  NodeIndexOutlined, SafetyCertificateOutlined, BarChartOutlined,
+  ArrowUpOutlined, ArrowDownOutlined, ShopOutlined, FundOutlined,
+  TrophyOutlined, BookOutlined, PieChartOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -350,6 +352,131 @@ export default function Dashboard() {
           </Card>
         </Col>
       </Row>
+
+      {/* ─── Data Cockpit (for enterprise/school/council) ─── */}
+      {role !== 'student' && role !== 'mentor' && role !== 'teacher' && role !== 'park' && (
+        <Card title={<span><FundOutlined /> 数据驾驶舱</span>} style={{ marginTop: 24 }}>
+          {/* Industry Panorama */}
+          <h3 style={{ marginBottom: 16, color: '#333' }}>
+            <BankOutlined style={{ marginRight: 8 }} />产业全景
+          </h3>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Col xs={12} sm={6}>
+              <Card hoverable>
+                <Statistic title="产业产值" value="1.2亿" prefix={<FundOutlined style={{ color: '#1677ff' }} />} valueStyle={{ color: '#1677ff', fontSize: 28 }} />
+                <div style={{ marginTop: 8 }}><Tag color="green"><ArrowUpOutlined /> 15.6%</Tag><span style={{ color: '#999', fontSize: 12, marginLeft: 8 }}>同比增长</span></div>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6}>
+              <Card hoverable>
+                <Statistic title="服务企业数" value={86} prefix={<ShopOutlined style={{ color: '#52c41a' }} />} valueStyle={{ color: '#52c41a', fontSize: 28 }} />
+                <div style={{ marginTop: 8 }}><Tag color="green"><ArrowUpOutlined /> 8.3%</Tag><span style={{ color: '#999', fontSize: 12, marginLeft: 8 }}>同比增长</span></div>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6}>
+              <Card hoverable>
+                <Statistic title="合作院校" value={12} prefix={<TeamOutlined style={{ color: '#722ed1' }} />} valueStyle={{ color: '#722ed1', fontSize: 28 }} />
+                <div style={{ marginTop: 8 }}><Tag color="green"><ArrowUpOutlined /> 4.2%</Tag><span style={{ color: '#999', fontSize: 12, marginLeft: 8 }}>同比增长</span></div>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6}>
+              <Card hoverable>
+                <Statistic title="累计项目" value={45} prefix={<ProjectOutlined style={{ color: '#faad14' }} />} valueStyle={{ color: '#faad14', fontSize: 28 }} />
+                <div style={{ marginTop: 8 }}><Tag color="green"><ArrowUpOutlined /> 22.1%</Tag><span style={{ color: '#999', fontSize: 12, marginLeft: 8 }}>同比增长</span></div>
+              </Card>
+            </Col>
+          </Row>
+
+          {/* Resource Integration */}
+          <h3 style={{ marginBottom: 16, color: '#333' }}>
+            <PieChartOutlined style={{ marginRight: 8 }} />资源整合情况
+          </h3>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Col xs={24} md={16}>
+              <Card title="资源整合指标" size="small">
+                {[{name:'设备捐赠价值',value:'580万元',percent:72,color:'#1677ff'},{name:'企业服务项目数',value:'68项',percent:85,color:'#52c41a'},{name:'企业师资数量',value:'45人',percent:56,color:'#faad14'},{name:'校企共建课程',value:'32门',percent:64,color:'#722ed1'}].map(item => (
+                  <div key={item.name} style={{ marginBottom: 16 }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                      <span>{item.name}</span>
+                      <span style={{ fontWeight:'bold' }}>{item.value}</span>
+                    </div>
+                    <Progress percent={item.percent} strokeColor={item.color} size="small" />
+                  </div>
+                ))}
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card title="投入排行榜 Top 3" size="small">
+                {[{rank:1,name:'华为技术有限公司',type:'企业',score:98,value:'12项合作'},{rank:2,name:'深圳大学',type:'院校',score:92,value:'10项合作'},{rank:3,name:'腾讯科技（深圳）有限公司',type:'企业',score:87,value:'8项合作'}].map(item => (
+                  <div key={item.rank} style={{ padding:'10px 12px', marginBottom:8, background: item.rank===1?'#fff7e6':'#fafafa', borderRadius:6, border: item.rank===1?'1px solid #ffd591':'none' }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <span><Tag color={item.rank===1?'gold':item.rank===2?'blue':'cyan'} style={{ fontWeight:'bold' }}>#{item.rank}</Tag><strong>{item.name}</strong></span>
+                      <Tag color={item.type==='企业'?'blue':'green'}>{item.type}</Tag>
+                    </div>
+                    <div style={{ marginTop:4, display:'flex', justifyContent:'space-between', color:'#666', fontSize:12 }}>
+                      <span>综合评分：{item.score}</span>
+                      <span>{item.value}</span>
+                    </div>
+                  </div>
+                ))}
+              </Card>
+            </Col>
+          </Row>
+
+          {/* Talent Supply & Demand */}
+          <h3 style={{ marginBottom: 16, color: '#333' }}>
+            <TeamOutlined style={{ marginRight: 8 }} />人才供需情况
+          </h3>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Col xs={24} md={8}>
+              <Card size="small"><Statistic title="岗位缺口总数" value={2860} suffix="个" valueStyle={{ color:'#f5222d', fontSize:32 }} /></Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card title="热门岗位 Top 5" size="small">
+                {[{name:'AI算法工程师',demand:520,growth:35},{name:'嵌入式开发工程师',demand:450,growth:28},{name:'大数据工程师',demand:380,growth:22},{name:'智能制造工程师',demand:320,growth:18},{name:'云计算架构师',demand:290,growth:25}].map((job,i) => (
+                  <div key={job.name} style={{ marginBottom:8, display:'flex', alignItems:'center', gap:8 }}>
+                    <Tag color={i===0?'gold':i<3?'blue':'default'}>{i+1}</Tag>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:'flex', justifyContent:'space-between' }}>
+                        <span>{job.name}</span>
+                        <span style={{ fontWeight:'bold', color:'#1677ff' }}>{job.demand}人</span>
+                      </div>
+                      <Progress percent={job.demand/520*100} size="small" strokeColor={i===0?'#faad14':'#1677ff'} showInfo={false} />
+                    </div>
+                    <Tag color="green">+{job.growth}%</Tag>
+                  </div>
+                ))}
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card title="学历需求分布" size="small">
+                {[{level:'博士',percent:8,count:229},{level:'硕士',percent:25,count:715},{level:'本科',percent:45,count:1287},{level:'大专及以下',percent:22,count:629}].map(edu => (
+                  <div key={edu.level} style={{ marginBottom:12 }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                      <span>{edu.level}</span>
+                      <span style={{ color:'#666' }}>{edu.count}人 ({edu.percent}%)</span>
+                    </div>
+                    <Progress percent={edu.percent} size="small" strokeColor={edu.level==='博士'?'#722ed1':edu.level==='硕士'?'#1677ff':edu.level==='本科'?'#52c41a':'#faad14'} />
+                  </div>
+                ))}
+              </Card>
+            </Col>
+          </Row>
+
+          {/* Service Results */}
+          <h3 style={{ marginBottom: 16, color: '#333' }}>
+            <TrophyOutlined style={{ marginRight: 8 }} />服务成果
+          </h3>
+          <Row gutter={[16, 16]}>
+            <Col xs={12} sm={6}><Card hoverable size="small"><Statistic title="培训总人次" value="2,860人次" prefix={<TeamOutlined style={{ color:'#1677ff' }} />} valueStyle={{ fontSize:22 }} /></Card></Col>
+            <Col xs={12} sm={6}><Card hoverable size="small"><Statistic title="专利数" value={38} prefix={<ExperimentOutlined style={{ color:'#722ed1' }} />} suffix="项" valueStyle={{ fontSize:22 }} /></Card></Col>
+            <Col xs={12} sm={6}><Card hoverable size="small"><Statistic title="软著数" value={52} prefix={<BookOutlined style={{ color:'#52c41a' }} />} suffix="项" valueStyle={{ fontSize:22 }} /></Card></Col>
+            <Col xs={12} sm={6}><Card hoverable size="small"><Statistic title="研究成果" value={27} prefix={<FundOutlined style={{ color:'#faad14' }} />} suffix="项" valueStyle={{ fontSize:22 }} /></Card></Col>
+            <Col xs={12} sm={6}><Card hoverable size="small"><Statistic title="成果转化率" value={68} suffix="%" prefix={<ArrowUpOutlined style={{ color:'#f5222d' }} />} valueStyle={{ color:'#f5222d', fontSize:22 }} /></Card></Col>
+            <Col xs={12} sm={6}><Card hoverable size="small"><Statistic title="项目合同总额" value="3,200万元" prefix={<ShopOutlined style={{ color:'#1677ff' }} />} valueStyle={{ fontSize:22 }} /></Card></Col>
+          </Row>
+        </Card>
+      )}
     </div>
   )
 }
