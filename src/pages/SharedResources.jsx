@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Descriptions, Steps } from 'antd'
+import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Descriptions, Steps, Empty } from 'antd'
 import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { mockResources, mockApplications } from '../mock/resources'
 import { mockSchools } from '../mock/schools'
@@ -15,6 +15,8 @@ export default function SharedResources() {
   const [applyResource, setApplyResource] = useState(null)
   const [detailOpen, setDetailOpen] = useState(false)
   const [detailResource, setDetailResource] = useState(null)
+  const [auditOpen, setAuditOpen] = useState(false)
+  const [auditResource, setAuditResource] = useState(null)
   const [publishForm] = Form.useForm()
   const [applyForm] = Form.useForm()
 
@@ -44,6 +46,7 @@ export default function SharedResources() {
       <span>
         <a onClick={() => { setDetailResource(r); setDetailOpen(true) }}>查看</a>
         {r.status === 'idle' && hasPermission('resource.apply') && <span> | <Button type="link" size="small" onClick={() => { setApplyResource(r); setApplyOpen(true) }}>申请使用</Button></span>}
+        {role === 'council' && r.status === 'pending' && <span> | <Button type="link" size="small" style={{ color: '#faad14' }} onClick={() => { setAuditResource(r); setAuditOpen(true) }}>审核</Button></span>}
       </span>
     )},
   ]
@@ -190,6 +193,37 @@ export default function SharedResources() {
             <Input placeholder="格式: 2024-07-01 ~ 2024-07-30" />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Audit Modal - for council */}
+      <Modal title={<span>审核申请 — {auditResource?.name}</span>}
+        open={auditOpen} onCancel={() => { setAuditOpen(false); setAuditResource(null) }}
+        width={700} footer={null}>
+        {auditResource && (
+          <div>
+            {applications.filter(a => a.resourceId === auditResource.id && a.status === 'pending').length === 0 ? (
+              <Empty description="此资源暂无待审核的申请" />
+            ) : (
+              <Table
+                dataSource={applications.filter(a => a.resourceId === auditResource.id && a.status === 'pending')}
+                columns={[
+                  { title: '申请企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                  { title: '使用理由', dataIndex: 'reason', key: 'reason' },
+                  { title: '使用周期', dataIndex: 'period', key: 'period' },
+                  { title: '总积分', dataIndex: 'points', key: 'points', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
+                  { title: '申请日期', dataIndex: 'applyDate', key: 'applyDate' },
+                  { title: '操作', key: 'action', render: (_, app) => (
+                    <span style={{ display: 'flex', gap: 8 }}>
+                      <Button size="small" type="primary" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                        onClick={() => { handleApprove(app.id); setAuditResource(null); setAuditOpen(false) }}>通过</Button>
+                      <Button size="small" danger icon={<CloseCircleOutlined />}
+                        onClick={() => { handleReject(app.id); setAuditResource(null); setAuditOpen(false) }}>拒绝</Button>
+                    </span>
+                  )},
+                ]} rowKey="id" pagination={false} size="small" />
+            )}
+          </div>
+        )}
       </Modal>
 
       {/* Detail Modal */}
