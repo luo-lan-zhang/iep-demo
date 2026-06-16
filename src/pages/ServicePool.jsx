@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Progress, Row, Col, Empty, Descriptions, Popconfirm } from 'antd'
+import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Progress, Row, Col, Empty, Descriptions, Popconfirm, Typography } from 'antd'
 import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, ToolOutlined, TeamOutlined, TrophyOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockSchools } from '../mock/schools'
 import { mockTeachers } from '../mock/teachers'
 import { useAuth } from '../context/AuthContext'
+
+const { Paragraph } = Typography
 
 // ==================== Mock Data ====================
 
