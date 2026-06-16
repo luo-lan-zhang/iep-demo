@@ -437,7 +437,7 @@ export default function ProjectCooperation() {
                 { value: 'completed', label: '已结项' },
               ]}
             />
-            {(role === 'enterprise' || role === 'council') && (
+            {role === 'enterprise' && (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布新项目</Button>
             )}
           </div>
@@ -450,7 +450,7 @@ export default function ProjectCooperation() {
       )
     })
 
-    if (role === 'enterprise' || role === 'council') {
+    if (role === 'enterprise') {
       items.push({
         key: 'publish', label: '发布项目', children: (
           <div style={{ maxWidth: 500 }}>
@@ -484,7 +484,7 @@ export default function ProjectCooperation() {
   }, [filteredProjects, projectColumns, taskColumns, studentTaskColumns, filterStatus, role, teacherId, visibleTasks])
 
   return (
-    <Card title="项目合作管理">
+    <Card title="项目管理">
       <Tabs items={tabItems} />
 
       {/* 发布项目 */}

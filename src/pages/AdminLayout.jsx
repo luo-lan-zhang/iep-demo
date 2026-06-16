@@ -16,7 +16,7 @@ const { Header, Sider, Content } = Layout
 
 const ALL_MENU_ITEMS = [
   { key: '/admin/dashboard',    icon: <DashboardOutlined />,      label: '总览面板' },
-  { key: '/admin/projects',     icon: <ProjectOutlined />,        label: '项目合作' },
+  { key: '/admin/projects',     icon: <ProjectOutlined />,        label: '项目管理' },
   { key: '/admin/talent',       icon: <NodeIndexOutlined />,      label: '人才对接' },
   { key: '/admin/achievements', icon: <TrophyOutlined />,         label: '成果广场' },
   { key: '/admin/resources',    icon: <ExperimentOutlined />,     label: '共享资源池' },
@@ -40,7 +40,7 @@ const ROLE_MENUS = {
 
 const pageTitles = {
   '/admin/dashboard':    '总览面板',
-  '/admin/projects':     '项目合作',
+  '/admin/projects':     '项目管理',
   '/admin/talent':       '人才对接',
   '/admin/achievements': '成果广场',
   '/admin/resources':    '共享资源池',
