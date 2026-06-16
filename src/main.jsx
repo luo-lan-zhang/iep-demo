@@ -9,7 +9,7 @@ import './App.css'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ConfigProvider locale={zhCN} theme={{ token: { colorPrimary: '#1677ff' } }}>
-      <BrowserRouter>
+      <BrowserRouter basename="/iep-demo">
         <App />
       </BrowserRouter>
     </ConfigProvider>
