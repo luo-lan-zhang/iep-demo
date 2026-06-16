@@ -30,6 +30,7 @@ const statusMap = {
   pending: { text: '待承接', color: 'orange' },
   in_progress: { text: '进行中', color: 'blue' },
   completed: { text: '已完成', color: 'green' },
+  rejected: { text: '已拒绝', color: 'red' },
 }
 
 const techStatusMap = {
@@ -88,6 +89,10 @@ export default function ServicePool() {
   const [proofOpen, setProofOpen] = useState(false)
   const [proofService, setProofService] = useState(null)
   const [proofForm] = Form.useForm()
+
+  // Audit modal for council
+  const [auditOpen, setAuditOpen] = useState(false)
+  const [auditQuota, setAuditQuota] = useState(null)
 
   const role = user?.role || 'admin'
   const schoolId = user?.schoolId
@@ -229,6 +234,12 @@ export default function ServicePool() {
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     { title: '总积分', dataIndex: 'points', key: 'points', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
     { title: '操作', key: 'action', render: (_, r) => {
+      if (role === 'council') {
+        return <span style={{ display: 'inline-flex', gap: 4 }}>
+          <Button size="small" onClick={() => message.info(`培训指标详情\n企业: ${r.enterpriseName}\n目标: ${r.targetCount}人\n已完成: ${r.completedCount}人\n积分: ${r.points}\n截止: ${r.deadline}`)}>查看</Button>
+          {r.status === 'pending' && <Button size="small" type="primary" onClick={() => { setAuditQuota(r); setAuditOpen(true) }}>审核</Button>}
+        </span>
+      }
       if (hasPermission('quota.accept') && r.status === 'pending') {
         return <Button size="small" type="primary" onClick={() => { setAcceptQuota(r); setAcceptOpen(true) }}>承接培训</Button>
       }
@@ -283,12 +294,12 @@ export default function ServicePool() {
       children: (
         <div>
           <div style={{ marginBottom: 16 }}>
-            {hasPermission('quota.publish') && (
+            {hasPermission('quota.publish') && role !== 'council' && (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => setQuotaPublishOpen(true)} style={{ marginRight: 16 }}>发布培训指标</Button>
             )}
           </div>
           <Table dataSource={quotas} columns={quotaColumns} rowKey="id" pagination={false} style={{ marginBottom: 24 }} />
-          {(role === 'admin' || role === 'enterprise' || role === 'school') && (
+          {(role === 'admin' || role === 'enterprise' || role === 'school') && role !== 'council' && (
             <Card title="承接列表" size="small" style={{ marginTop: 16 }}>
               <Table dataSource={filteredAcceptances} columns={acceptColumns} rowKey="id" pagination={false} />
             </Card>
@@ -490,6 +501,42 @@ export default function ServicePool() {
                 <Input placeholder="代码仓库/文档链接（模拟）" />
               </Form.Item>
             </Form>
+          </div>
+        )}
+      </Modal>
+
+      {/* Council Audit Modal for Training Quotas */}
+      <Modal title={<span>审核培训指标 — {auditQuota?.title}</span>}
+        open={auditOpen} onCancel={() => { setAuditOpen(false); setAuditQuota(null) }}
+        width={550} footer={null}>
+        {auditQuota && (
+          <div>
+            <div style={{ marginBottom: 12 }}>
+              <Tag color="blue">{auditQuota.enterpriseName}</Tag>
+              <span style={{ fontWeight: 500, marginLeft: 8 }}>{auditQuota.title}</span>
+            </div>
+            <Descriptions column={1} bordered size="small">
+              <Descriptions.Item label="企业">{auditQuota.enterpriseName}</Descriptions.Item>
+              <Descriptions.Item label="目标人数">{auditQuota.targetCount}人</Descriptions.Item>
+              <Descriptions.Item label="已完成">{auditQuota.completedCount}人</Descriptions.Item>
+              <Descriptions.Item label="截止日期">{auditQuota.deadline}</Descriptions.Item>
+              <Descriptions.Item label="总积分">{auditQuota.points}</Descriptions.Item>
+            </Descriptions>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 24 }}>
+              <Button type="primary" size="large" icon={<CheckCircleOutlined />}
+                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                onClick={() => {
+                  setQuotas(quotas.map(q => q.id === auditQuota.id ? { ...q, status: 'in_progress' } : q))
+                  message.success('培训指标审核通过！')
+                  setAuditOpen(false); setAuditQuota(null)
+                }}>审核通过</Button>
+              <Button danger size="large" icon={<CloseCircleOutlined />}
+                onClick={() => {
+                  setQuotas(quotas.map(q => q.id === auditQuota.id ? { ...q, status: 'rejected' } : q))
+                  message.success('已拒绝该培训指标')
+                  setAuditOpen(false); setAuditQuota(null)
+                }}>拒绝</Button>
+            </div>
           </div>
         )}
       </Modal>
