@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/iep-demo/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>产教融合云平台</title>
+    <script type="module" crossorigin src="/iep-demo/assets/index-WRVhndkd.js"></script>
+    <link rel="stylesheet" crossorigin href="/iep-demo/assets/index-DRPeoWbK.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
