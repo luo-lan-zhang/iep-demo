@@ -13,6 +13,8 @@ import TeachingResource from './pages/TeachingResource'
 import DataCockpit from './pages/DataCockpit'
 import PointsManagement from './pages/PointsManagement'
 import SystemSettings from './pages/SystemSettings'
+import IndustryReport from './pages/IndustryReport'
+import TalentReport from './pages/TalentReport'
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
@@ -37,6 +39,8 @@ function AppRoutes() {
         <Route path="cockpit" element={<DataCockpit />} />
         <Route path="points" element={<PointsManagement />} />
         <Route path="system" element={<SystemSettings />} />
+        <Route path="industry-report" element={<IndustryReport />} />
+        <Route path="talent-report" element={<TalentReport />} />
       </Route>
       <Route path="/" element={user ? <Navigate to="/admin/dashboard" replace /> : <LandingPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />

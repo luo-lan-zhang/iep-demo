@@ -82,6 +82,11 @@ export default function ServicePool() {
   const [capPublishOpen, setCapPublishOpen] = useState(false)
   const [capForm] = Form.useForm()
 
+  // Completion proof
+  const [proofOpen, setProofOpen] = useState(false)
+  const [proofService, setProofService] = useState(null)
+  const [proofForm] = Form.useForm()
+
   const role = user?.role || 'admin'
   const schoolId = user?.schoolId
   const enterpriseId = user?.enterpriseId
@@ -179,6 +184,21 @@ export default function ServicePool() {
     })
   }
 
+  const handleSubmitProof = () => {
+    proofForm.validateFields().then(values => {
+      setTechInterests(techInterests.map(ti =>
+        ti.serviceId === proofService.id ? { ...ti, status: 'completed', proof: values.proof, proofNote: values.note } : ti
+      ))
+      setTechServices(techServices.map(ts =>
+        ts.id === proofService.id ? { ...ts, status: 'completed' } : ts
+      ))
+      message.success('完成证明已提交！')
+      setProofOpen(false)
+      setProofService(null)
+      proofForm.resetFields()
+    })
+  }
+
   const handleCapPublish = () => {
     capForm.validateFields().then(values => {
       message.success('服务能力发布成功！')
@@ -237,6 +257,12 @@ export default function ServicePool() {
       if (role === 'teacher' || role === 'school') {
         if (r.status === 'pending') {
           return <Button size="small" type="primary" onClick={() => { setInterestService(r); setInterestOpen(true) }}>表达意向</Button>
+        }
+        if (r.status === 'in_progress') {
+          const myInterest = techInterests.find(ti => ti.serviceId === r.id && (ti.type === 'teacher' || ti.type === 'school'))
+          if (myInterest && myInterest.status !== 'completed') {
+            return <Button size="small" type="primary" onClick={() => { setProofService(r); setProofOpen(true) }}>提交完成证明</Button>
+          }
         }
       }
       return <Button size="small" onClick={() => message.info('查看详细')}>查看</Button>
@@ -438,6 +464,32 @@ export default function ServicePool() {
             <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Completion Proof Modal */}
+      <Modal title={<span><CheckCircleOutlined /> 提交完成证明</span>}
+        open={proofOpen} onOk={handleSubmitProof}
+        onCancel={() => { setProofOpen(false); setProofService(null); proofForm.resetFields() }}
+        width={550} okText="提交">
+        {proofService && (
+          <div>
+            <p style={{ marginBottom: 16, color: '#666' }}>
+              服务：<strong>{proofService.name}</strong>
+              <span style={{ marginLeft: 16 }}>预算：¥{proofService.budget.toLocaleString()}</span>
+            </p>
+            <Form form={proofForm} layout="vertical">
+              <Form.Item name="proof" label="完成证明" rules={[{ required: true }]}>
+                <Input.TextArea rows={3} placeholder="描述完成的成果、效果等" />
+              </Form.Item>
+              <Form.Item name="note" label="补充说明">
+                <Input.TextArea rows={3} placeholder="可选：补充说明完成情况" />
+              </Form.Item>
+              <Form.Item name="attachment" label="附件链接">
+                <Input placeholder="代码仓库/文档链接（模拟）" />
+              </Form.Item>
+            </Form>
+          </div>
+        )}
       </Modal>
     </Card>
   )

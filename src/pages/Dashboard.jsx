@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Row, Col, Card, Statistic, Table, Tag, Progress, Descriptions, Divider, Empty, Button, message, Tooltip, Modal } from 'antd'
+import { Row, Col, Card, Statistic, Table, Tag, Progress, Descriptions, Divider, Empty, Button, message, Tooltip, Modal, Tabs } from 'antd'
 import {
   ApartmentOutlined, BankOutlined, GlobalOutlined, UserOutlined,
   TeamOutlined, ExperimentOutlined, ProjectOutlined,
@@ -194,28 +194,66 @@ export default function Dashboard() {
 
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           <Col span={24}>
-            <Card title={<span><ProjectOutlined /> 教师发布的项目</span>}>
-              <Table dataSource={mockStudentProjects.filter(p => p.assignedStudents?.includes(sid))} columns={[
-                { title: '项目名称', dataIndex: 'name', key: 'name' },
-                { title: '负责教师', dataIndex: 'teacher', key: 'teacher', render: (t) => <Tag color="cyan">{t}</Tag> },
-                { title: '企业', dataIndex: 'enterprise', key: 'enterprise', render: (t) => <Tag color="blue">{t}</Tag> },
-                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" /> },
-                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={s === 'in_progress' ? 'processing' : 'green'}>{s === 'in_progress' ? '进行中' : '已结项'}</Tag> },
+            <Card title={<span><ProjectOutlined /> 项目看板</span>} style={{ marginBottom: 16 }}>
+              <Tabs items={[
                 {
-                  title: '接收', key: 'accept', render: (_, r) => {
-                    const k = `${sid}_${r.id}`
-                    return accepted.includes(k) ? <Tag color="green">已接收</Tag> : <Tag color="orange">待接收</Tag>
-                  }
+                  key: 'kanban', label: '看板视图', children: (
+                    <div style={{ display: 'flex', gap: 12, overflow: 'auto', paddingBottom: 16 }}>
+                      {[
+                        { title: '待接收', key: 'pending', color: '#1677ff', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && !accepted.includes(`${sid}_${p.id}`)) },
+                        { title: '进行中', key: 'active', color: '#52c41a', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && accepted.includes(`${sid}_${p.id}`) && p.status !== 'completed') },
+                        { title: '已结项', key: 'done', color: '#999', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && p.status === 'completed') },
+                      ].map(col => (
+                        <div key={col.key} style={{ minWidth: 260, background: `${col.color}08`, borderRadius: 12, padding: 12, border: `1px solid ${col.color}22` }}>
+                          <div style={{ fontWeight: 600, fontSize: 14, color: col.color, marginBottom: 12, paddingBottom: 8, borderBottom: `2px solid ${col.color}33` }}>
+                            {col.title} <span style={{ fontSize: 12, opacity: 0.7 }}>({col.items.length})</span>
+                          </div>
+                          {col.items.length === 0 ? (
+                            <div style={{ color: '#ccc', textAlign: 'center', padding: 20 }}>暂无项目</div>
+                          ) : col.items.map(p => (
+                            <div key={p.id} style={{ background: '#fff', borderRadius: 8, padding: 12, marginBottom: 8, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+                              onClick={() => handleShowDetail(p)}>
+                              <div style={{ fontWeight: 500, fontSize: 13, marginBottom: 4 }}>{p.name}</div>
+                              <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>{p.teacher} · {p.enterprise}</div>
+                              <Progress percent={p.progress} size="small" />
+                              <div style={{ marginTop: 8, display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
+                                {col.key === 'pending' && (
+                                  <Button size="small" type="primary" onClick={(e) => { e.stopPropagation(); handleAccept(p.id) }}>接收</Button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )
                 },
                 {
-                  title: '操作', key: 'action', render: (_, r) => {
-                    const k = `${sid}_${r.id}`
-                    return accepted.includes(k)
-                      ? <Button size="small" onClick={() => handleShowDetail(r)}>查看详情</Button>
-                      : <Button size="small" type="primary" onClick={() => handleAccept(r.id)}>接收项目</Button>
-                  }
+                  key: 'list', label: '列表视图', children: (
+                    <Table dataSource={mockStudentProjects.filter(p => p.assignedStudents?.includes(sid))} columns={[
+                      { title: '项目名称', dataIndex: 'name', key: 'name' },
+                      { title: '负责教师', dataIndex: 'teacher', key: 'teacher', render: (t) => <Tag color="cyan">{t}</Tag> },
+                      { title: '企业', dataIndex: 'enterprise', key: 'enterprise', render: (t) => <Tag color="blue">{t}</Tag> },
+                      { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" /> },
+                      { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={s === 'in_progress' ? 'processing' : 'green'}>{s === 'in_progress' ? '进行中' : '已结项'}</Tag> },
+                      {
+                        title: '接收', key: 'accept', render: (_, r) => {
+                          const k = `${sid}_${r.id}`
+                          return accepted.includes(k) ? <Tag color="green">已接收</Tag> : <Tag color="orange">待接收</Tag>
+                        }
+                      },
+                      {
+                        title: '操作', key: 'action', render: (_, r) => {
+                          const k = `${sid}_${r.id}`
+                          return accepted.includes(k)
+                            ? <Button size="small" onClick={() => handleShowDetail(r)}>查看详情</Button>
+                            : <Button size="small" type="primary" onClick={() => handleAccept(r.id)}>接收项目</Button>
+                        }
+                      },
+                    ]} rowKey="id" pagination={false} size="small" />
+                  )
                 },
-              ]} rowKey="id" pagination={false} size="small" />
+              ]} />
             </Card>
           </Col>
         </Row>

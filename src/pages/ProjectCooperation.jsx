@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Progress, Descriptions, Rate, Slider, Row, Col, Divider, Empty, Tooltip } from 'antd'
-import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, SendOutlined, StarOutlined, BarChartOutlined } from '@ant-design/icons'
+import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, SendOutlined, StarOutlined, BarChartOutlined, TeamOutlined, ScheduleOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockTeachers } from '../mock/teachers'
 import { mockSchools } from '../mock/schools'
@@ -109,7 +109,35 @@ export default function ProjectCooperation() {
     return tasks
   }, [role, tasks, user, teacherId, projects])
 
-  // ─── Handlers ────────────────────────────────────────────────────────────
+  // Gantt Chart
+  const [ganttOpen, setGanttOpen] = useState(false)
+  const [ganttProject, setGanttProject] = useState(null)
+  const [teamOpen, setTeamOpen] = useState(false)
+  const [teamProject, setTeamProject] = useState(null)
+  const [teamMembers, setTeamMembers] = useState([])
+
+  const handleAddTeamMember = (studentIds) => {
+    if (!teamProject) return
+    setProjects(projects.map(p =>
+      p.id === teamProject.id ? { ...p, assignedStudents: [...new Set([...(p.assignedStudents||[]), ...studentIds])] } : p
+    ))
+    message.success(`已将 ${studentIds.length} 名学生加入项目团队`)
+    setTeamOpen(false); setTeamProject(null)
+  }
+
+  // Gantt chart: compute task positions
+  const getGanttData = (projectId) => {
+    const projTasks = tasks.filter(t => t.projectId === projectId)
+    if (projTasks.length === 0) return { tasks: [], weeks: 0, startDate: '' }
+    const startDates = projTasks.map(t => {
+      const d = new Date(t.deadline)
+      return isNaN(d.getTime()) ? new Date() : d
+    })
+    const minDate = new Date(Math.min(...startDates))
+    const maxDate = new Date(Math.max(...startDates))
+    const weekDiff = Math.max(4, Math.ceil((maxDate - minDate) / (7 * 24 * 60 * 60 * 1000)) + 2)
+    return { tasks: projTasks, weeks: weekDiff, startDate: minDate.toISOString().split('T')[0], minDate }
+  }
   const handlePublish = () => {
     publishForm.validateFields().then(v => {
       const ent = mockEnterprises.find(e => e.id === v.enterpriseId)
@@ -244,7 +272,11 @@ export default function ProjectCooperation() {
         if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => { setAuditProject(r); setAuditStep('teacher'); setAuditOpen(true) }}>教师审核</Button>)
         if (r.status === 'teacher_approved' && role === 'school') acts.push(<Button key="sa" size="small" type="primary" onClick={() => { setAuditProject(r); setAuditStep('school'); setAuditOpen(true) }}>学校审核</Button>)
         if (r.status === 'pending_publish' && r.teacherId === teacherId) acts.push(<Button key="pp" size="small" type="primary" onClick={() => { setPublishConfirmProject(r); setPublishConfirmOpen(true) }}>下发项目</Button>)
-        if (r.status === 'in_progress' && r.teacherId === teacherId) acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
+        if (r.status === 'in_progress' && r.teacherId === teacherId) {
+          acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
+          acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
+          acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
+        }
         if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
         return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
       }
@@ -591,6 +623,87 @@ export default function ProjectCooperation() {
                 <Input.TextArea rows={3} placeholder="请对学生的整体表现进行评价" />
               </Form.Item>
             </Form>
+          </div>
+        )}
+      </Modal>
+
+      {/* 甘特图 */}
+      <Modal title={<span><ScheduleOutlined /> 项目甘特图 — {ganttProject?.name}</span>}
+        open={ganttOpen} onCancel={() => setGanttOpen(false)} footer={null} width={900}>
+        {ganttProject && (() => {
+          const gData = getGanttData(ganttProject.id)
+          if (gData.tasks.length === 0) return <Empty description="暂无任务数据" />
+          const statusColors = { pending: '#d9d9d9', in_progress: '#1677ff', submitted: '#faad14', completed: '#52c41a' }
+          const weekMs = 7 * 24 * 60 * 60 * 1000
+          return (
+            <div>
+              <p style={{ color: '#666', marginBottom: 16 }}>任务时间线（甘特图），按截止日期排列</p>
+              <div style={{ overflowX: 'auto', position: 'relative' }}>
+                <div style={{ display: 'flex', marginBottom: 8, fontSize: 12, color: '#999', paddingLeft: 180 }}>
+                  {Array.from({ length: gData.weeks }, (_, i) => (
+                    <div key={i} style={{ width: 60, minWidth: 60, textAlign: 'center', borderLeft: '1px solid #f0f0f0' }}>
+                      W{i + 1}
+                    </div>
+                  ))}
+                </div>
+                {gData.tasks.map(t => {
+                  const taskStart = new Date(t.deadline)
+                  const daysFromStart = Math.max(0, Math.floor((taskStart - gData.minDate) / (24 * 60 * 60 * 1000)))
+                  const weekPos = Math.floor(daysFromStart / 7)
+                  const taskWeeks = 1.5
+                  return (
+                    <div key={t.id} style={{ display: 'flex', alignItems: 'center', marginBottom: 6, height: 32 }}>
+                      <div style={{ width: 180, minWidth: 180, fontSize: 13, paddingRight: 8, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <Tag color={statusColors[t.status]} style={{ fontSize: 10, marginRight: 4 }}>{t.assignee}</Tag>
+                        {t.name}
+                      </div>
+                      <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+                        {Array.from({ length: gData.weeks }, (_, i) => (
+                          <div key={i} style={{ width: 60, minWidth: 60, borderLeft: '1px solid #f5f5f5', height: 24 }} />
+                        ))}
+                        <div style={{
+                          position: 'absolute', top: 2, left: weekPos * 60, width: 60 * taskWeeks, height: 20,
+                          background: statusColors[t.status], borderRadius: 4, opacity: 0.8,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 10, color: '#fff'
+                        }}>
+                          {t.status === 'completed' ? '✓' : t.status === 'in_progress' ? '▶' : '○'}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
+      </Modal>
+
+      {/* 团队管理 */}
+      <Modal title={<span><TeamOutlined /> 项目团队 — {teamProject?.name}</span>}
+        open={teamOpen} onOk={() => handleAddTeamMember(teamMembers)} onCancel={() => { setTeamOpen(false); setTeamProject(null); setTeamMembers([]) }}
+        okText="确认添加" width={520}>
+        {teamProject && (
+          <div>
+            <p style={{ color: '#666', marginBottom: 16 }}>选择需要加入此项目的学生：</p>
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              placeholder="选择学生加入团队"
+              value={teamMembers}
+              onChange={setTeamMembers}
+              options={mockStudents.map(s => ({ value: s.id, label: `${s.name} (${s.major})` }))}
+            />
+            <div style={{ marginTop: 16, padding: 12, background: '#fafafa', borderRadius: 6 }}>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>当前团队成员：</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {(teamProject.assignedStudents || []).map(sid => {
+                  const stu = mockStudents.find(s => s.id === sid)
+                  return stu ? <Tag key={sid} color="blue">{stu.name}</Tag> : null
+                })}
+                <Tag><TeamOutlined /> 共{(teamProject.assignedStudents || []).length}人</Tag>
+              </div>
+            </div>
           </div>
         )}
       </Modal>

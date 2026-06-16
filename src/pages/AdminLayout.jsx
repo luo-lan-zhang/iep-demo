@@ -6,7 +6,7 @@ import {
   SettingOutlined, LogoutOutlined, BookOutlined,
   TrophyOutlined, ProjectOutlined, NodeIndexOutlined,
   DeploymentUnitOutlined, FundOutlined, GiftOutlined,
-  ExperimentOutlined
+  ExperimentOutlined, ThunderboltOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 import './AdminLayout.css'
@@ -25,14 +25,16 @@ const ALL_MENU_ITEMS = [
   { key: '/admin/cockpit',      icon: <FundOutlined />,           label: '数据驾驶舱' },
   { key: '/admin/points',       icon: <GiftOutlined />,           label: '积分管理' },
   { key: '/admin/system',       icon: <SettingOutlined />,        label: '系统设置' },
+  { key: '/admin/industry-report', icon: <ThunderboltOutlined />, label: '产业报告' },
+  { key: '/admin/talent-report',   icon: <NodeIndexOutlined />,   label: '人才需求报告' },
 ]
 
 const ROLE_MENUS = {
   council:    ALL_MENU_ITEMS,
   park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/resources', '/admin/services', '/admin/cockpit', '/admin/system'].includes(m.key)),
-  enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points'].includes(m.key)),
+  enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report'].includes(m.key)),
   mentor:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent'].includes(m.key)),
-  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/cockpit'].includes(m.key)),
+  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/cockpit', '/admin/industry-report'].includes(m.key)),
   teacher:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/achievements', '/admin/services', '/admin/teaching'].includes(m.key)),
   student:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/talent'].includes(m.key)),
 }
@@ -48,6 +50,8 @@ const pageTitles = {
   '/admin/cockpit':      '数据驾驶舱',
   '/admin/points':       '积分管理',
   '/admin/system':       '系统设置',
+  '/admin/industry-report': '产业报告',
+  '/admin/talent-report':   '人才需求报告',
 }
 
 export default function AdminLayout() {
