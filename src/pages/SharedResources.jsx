@@ -45,8 +45,11 @@ export default function SharedResources() {
     { title: '操作', key: 'action', render: (_, r) => (
       <span>
         <a onClick={() => { setDetailResource(r); setDetailOpen(true) }}>查看</a>
-        {r.status === 'idle' && hasPermission('resource.apply') && <span> | <Button type="link" size="small" onClick={() => { setApplyResource(r); setApplyOpen(true) }}>申请使用</Button></span>}
-        {role === 'council' && r.status === 'pending' && <span> | <Button type="link" size="small" style={{ color: '#faad14' }} onClick={() => { setAuditResource(r); setAuditOpen(true) }}>审核</Button></span>}
+        {role === 'council'
+          ? <span> | <Button type="link" size="small" style={{ color: '#faad14' }} onClick={() => { setAuditResource(r); setAuditOpen(true) }}>审核</Button></span>
+          : (r.status === 'idle' && hasPermission('resource.apply')) ? <span> | <Button type="link" size="small" onClick={() => { setApplyResource(r); setApplyOpen(true) }}>申请使用</Button></span>
+          : null
+        }
       </span>
     )},
   ]
@@ -125,8 +128,12 @@ export default function SharedResources() {
   const handleReject = (id) => {
     const app = applications.find(a => a.id === id)
     setApplications(applications.map(a => a.id === id ? { ...a, status: 'rejected' } : a))
-    setResources(resources.map(r => r.id === app?.resourceId ? { ...r, status: 'idle' } : r))
+    const hasOtherPending = applications.filter(a => a.resourceId === app?.resourceId && a.id !== id && a.status === 'pending').length > 0
+    if (!hasOtherPending) {
+      setResources(resources.map(r => r.id === app?.resourceId ? { ...r, status: 'idle' } : r))
+    }
     message.success('已拒绝申请')
+    setAuditResource(resources.find(r => r.id === app?.resourceId))
   }
 
   // Role-based tabs
@@ -138,8 +145,8 @@ export default function SharedResources() {
       <Table dataSource={resources} columns={resourceColumns} rowKey="id" />
     )})
 
-    // 发布资源 - school & admin
-    if (hasPermission('resource.publish') || role === 'admin') {
+    // 发布资源 - school only (not council)
+    if ((hasPermission('resource.publish') || role === 'admin') && role !== 'council') {
       items.push({ key: 'publish', label: '发布资源', children: (
         <div style={{ maxWidth: 500 }}>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setPublishOpen(true)}>发布新资源</Button>
@@ -201,26 +208,54 @@ export default function SharedResources() {
         width={700} footer={null}>
         {auditResource && (
           <div>
-            {applications.filter(a => a.resourceId === auditResource.id && a.status === 'pending').length === 0 ? (
-              <Empty description="此资源暂无待审核的申请" />
+            <div style={{ marginBottom: 16, display: 'flex', gap: 12, alignItems: 'center' }}>
+              <Tag>{auditResource.category}</Tag>
+              <Tag color={statusMap[auditResource.status]?.color}>{statusMap[auditResource.status]?.text}</Tag>
+              <span style={{ color: '#999', fontSize: 13 }}>每日积分：{auditResource.dailyPoints}</span>
+            </div>
+            {applications.filter(a => a.resourceId === auditResource.id).length === 0 ? (
+              <Empty description="该资源暂无企业提交使用申请" />
             ) : (
-              <Table
-                dataSource={applications.filter(a => a.resourceId === auditResource.id && a.status === 'pending')}
-                columns={[
-                  { title: '申请企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
-                  { title: '使用理由', dataIndex: 'reason', key: 'reason' },
-                  { title: '使用周期', dataIndex: 'period', key: 'period' },
-                  { title: '总积分', dataIndex: 'points', key: 'points', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
-                  { title: '申请日期', dataIndex: 'applyDate', key: 'applyDate' },
-                  { title: '操作', key: 'action', render: (_, app) => (
-                    <span style={{ display: 'flex', gap: 8 }}>
-                      <Button size="small" type="primary" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-                        onClick={() => { handleApprove(app.id); setAuditResource(null); setAuditOpen(false) }}>通过</Button>
-                      <Button size="small" danger icon={<CloseCircleOutlined />}
-                        onClick={() => { handleReject(app.id); setAuditResource(null); setAuditOpen(false) }}>拒绝</Button>
-                    </span>
-                  )},
-                ]} rowKey="id" pagination={false} size="small" />
+              <div>
+                {applications.filter(a => a.resourceId === auditResource.id && a.status === 'pending').length > 0 && (
+                  <div style={{ marginBottom: 16 }}>
+                    <h4 style={{ marginBottom: 8, color: '#faad14' }}>待审核申请</h4>
+                    <Table
+                      dataSource={applications.filter(a => a.resourceId === auditResource.id && a.status === 'pending')}
+                      columns={[
+                        { title: '申请企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                        { title: '使用理由', dataIndex: 'reason', key: 'reason' },
+                        { title: '使用周期', dataIndex: 'period', key: 'period' },
+                        { title: '总积分', dataIndex: 'points', key: 'points', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
+                        { title: '操作', key: 'action', render: (_, app) => (
+                          <span style={{ display: 'flex', gap: 8 }}>
+                            <Button size="small" type="primary" icon={<CheckCircleOutlined />}
+                              style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                              onClick={() => { handleApprove(app.id); setAuditResource(null); setAuditOpen(false) }}>通过</Button>
+                            <Button size="small" danger icon={<CloseCircleOutlined />}
+                              onClick={() => { handleReject(app.id); }}>拒绝</Button>
+                          </span>
+                        )},
+                      ]} rowKey="id" pagination={false} size="small" />
+                  </div>
+                )}
+                {applications.filter(a => a.resourceId === auditResource.id && a.status !== 'pending').length > 0 && (
+                  <div>
+                    <h4 style={{ marginBottom: 8, color: '#666' }}>历史记录</h4>
+                    <Table
+                      dataSource={applications.filter(a => a.resourceId === auditResource.id && a.status !== 'pending')}
+                      columns={[
+                        { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                        { title: '周期', dataIndex: 'period', key: 'period' },
+                        { title: '积分', dataIndex: 'points', key: 'points' },
+                        { title: '状态', dataIndex: 'status', key: 'status', render: (s) => {
+                          const m = { approved: { text: '已通过', color: 'green' }, rejected: { text: '已拒绝', color: 'red' } }
+                          return <Tag color={m[s]?.color}>{m[s]?.text}</Tag>
+                        }},
+                      ]} rowKey="id" pagination={false} size="small" />
+                  </div>
+                )}
+              </div>
             )}
           </div>
         )}
