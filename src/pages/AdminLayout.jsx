@@ -6,7 +6,8 @@ import {
   SettingOutlined, LogoutOutlined, BookOutlined,
   TrophyOutlined, ProjectOutlined, NodeIndexOutlined,
   DeploymentUnitOutlined, FundOutlined, GiftOutlined,
-  ExperimentOutlined, ThunderboltOutlined
+  ExperimentOutlined, ThunderboltOutlined,
+  FileTextOutlined, BellOutlined, SafetyCertificateOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 import './AdminLayout.css'
@@ -26,14 +27,17 @@ const ALL_MENU_ITEMS = [
   { key: '/admin/system',       icon: <SettingOutlined />,        label: '系统设置' },
   { key: '/admin/industry-report', icon: <ThunderboltOutlined />, label: '产业报告' },
   { key: '/admin/talent-report',   icon: <NodeIndexOutlined />,   label: '人才需求报告' },
+  { key: '/admin/news',        icon: <FileTextOutlined />,        label: '新闻管理' },
+  { key: '/admin/policies',    icon: <SafetyCertificateOutlined />, label: '政策管理' },
+  { key: '/admin/notices',     icon: <BellOutlined />,           label: '通知管理' },
 ]
 
 const ROLE_MENUS = {
   council:    ALL_MENU_ITEMS,
-  park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system'].includes(m.key)),
-  enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report'].includes(m.key)),
+  park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
+  enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
   mentor:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent'].includes(m.key)),
-  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report'].includes(m.key)),
+  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
   teacher:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/achievements', '/admin/services', '/admin/teaching'].includes(m.key)),
   student:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/talent'].includes(m.key)),
 }
@@ -50,6 +54,9 @@ const pageTitles = {
   '/admin/system':       '系统设置',
   '/admin/industry-report': '产业报告',
   '/admin/talent-report':   '人才需求报告',
+  '/admin/news':        '新闻管理',
+  '/admin/policies':    '政策管理',
+  '/admin/notices':     '通知管理',
 }
 
 export default function AdminLayout() {

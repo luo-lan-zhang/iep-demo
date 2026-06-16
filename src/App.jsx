@@ -15,6 +15,9 @@ import PointsManagement from './pages/PointsManagement'
 import SystemSettings from './pages/SystemSettings'
 import IndustryReport from './pages/IndustryReport'
 import TalentReport from './pages/TalentReport'
+import NewsManagement from './pages/NewsManagement'
+import PolicyManagement from './pages/PolicyManagement'
+import NoticesManagement from './pages/NoticesManagement'
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
@@ -40,6 +43,9 @@ function AppRoutes() {
         <Route path="system" element={<SystemSettings />} />
         <Route path="industry-report" element={<IndustryReport />} />
         <Route path="talent-report" element={<TalentReport />} />
+        <Route path="news" element={<NewsManagement />} />
+        <Route path="policies" element={<PolicyManagement />} />
+        <Route path="notices" element={<NoticesManagement />} />
       </Route>
       <Route path="/" element={user ? <Navigate to="/admin/dashboard" replace /> : <LandingPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
