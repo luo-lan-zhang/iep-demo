@@ -30,6 +30,8 @@ export default function NoticesManagement() {
   const [publishOpen, setPublishOpen] = useState(false)
   const [reviewOpen, setReviewOpen] = useState(false)
   const [reviewItem, setReviewItem] = useState(null)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [detailItem, setDetailItem] = useState(null)
   const [publishForm] = Form.useForm()
   const [reviewForm] = Form.useForm()
 
@@ -65,6 +67,7 @@ export default function NoticesManagement() {
     {
       title: '操作', key: 'action', render: (_, r) => (
         <span style={{ display: 'inline-flex', gap: 4 }}>
+          <Button size="small" onClick={() => { setDetailItem(r); setDetailOpen(true) }}>查看</Button>
           {role === 'council' && r.status === 'pending' && (
             <Button size="small" type="primary" onClick={() => { setReviewItem(r); reviewForm.resetFields(); setReviewOpen(true) }}>审核</Button>
           )}
@@ -82,6 +85,20 @@ export default function NoticesManagement() {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布通知</Button>
       </div>
       <Table dataSource={filtered} columns={columns} rowKey="id" />
+
+      {/* Detail Modal */}
+      <Modal title="通知详情" open={detailOpen} onCancel={() => { setDetailOpen(false); setDetailItem(null) }} footer={null} width={650}>
+        {detailItem && (
+          <div>
+            <Tag color={priorityColors[detailItem.priority]?.color}>{priorityColors[detailItem.priority]?.text}</Tag>
+            <Tag>{targetLabels[detailItem.target] || detailItem.target}</Tag>
+            <Tag color={statusColors[detailItem.status]?.color}>{statusColors[detailItem.status]?.text}</Tag>
+            <h3 style={{ fontSize: 18, marginTop: 12 }}>{detailItem.title}</h3>
+            <div style={{ color: '#999', fontSize: 12, marginBottom: 16 }}>发布方：{detailItem.publisherName} | {detailItem.publishDate || '未发布'}</div>
+            <div style={{ lineHeight: 1.8, color: '#333', whiteSpace: 'pre-wrap' }}>{detailItem.content}</div>
+          </div>
+        )}
+      </Modal>
 
       <Modal title="发布通知" open={publishOpen} onOk={handlePublish} onCancel={() => { setPublishOpen(false); publishForm.resetFields() }} width={600}>
         <Form form={publishForm} layout="vertical">
