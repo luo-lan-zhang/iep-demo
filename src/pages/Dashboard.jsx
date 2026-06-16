@@ -6,6 +6,7 @@ import {
   NodeIndexOutlined, SafetyCertificateOutlined, BarChartOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import { mockParks } from '../mock/parks'
 import { mockSchools } from '../mock/schools'
 import { mockEnterprises } from '../mock/enterprises'
@@ -86,6 +87,7 @@ function RadarChart({ dims, size = 260 }) {
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const role = user?.role
 
   // ═══ Student Dashboard ═══════════════════════════════
@@ -306,7 +308,7 @@ export default function Dashboard() {
       </Row>
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={12}>
-          <Card title="最新合作项目" extra={<a href="/admin/projects">查看全部</a>}>
+          <Card title="最新合作项目" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/projects')}>查看全部</span>}>
             <Table dataSource={projData} columns={[
               { title: '项目名称', dataIndex: 'name', key: 'name' },
               { title: '企业', dataIndex: 'enterprise', key: 'enterprise' },
@@ -317,7 +319,7 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="人才对接概览" extra={<a href="/admin/talent">查看全部</a>}>
+          <Card title="人才对接概览" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/talent')}>查看全部</span>}>
             <Row gutter={[16, 16]}>
               <Col span={8}><Card size="small"><Statistic title="在招岗位" value={3} prefix={<NodeIndexOutlined />} valueStyle={{ color: '#1677ff' }} /></Card></Col>
               <Col span={8}><Card size="small"><Statistic title="简历投递" value={24} prefix={<TeamOutlined />} valueStyle={{ color: '#52c41a' }} /></Card></Col>
@@ -328,7 +330,7 @@ export default function Dashboard() {
       </Row>
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={12}>
-          <Card title="最新共享资源" extra={<a href="/admin/resources">查看全部</a>}>
+          <Card title="最新共享资源" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/resources')}>查看全部</span>}>
             <Table dataSource={latestResources} columns={[
               { title: '资源名称', dataIndex: 'name', key: 'name' },
               { title: '所属院校', dataIndex: 'school', key: 'school' },
@@ -338,7 +340,7 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="培训指标进展" extra={<a href="/admin/services">查看全部</a>}>
+          <Card title="培训指标进展" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/services')}>查看全部</span>}>
             <Table dataSource={latestTraining} columns={[
               { title: '培训指标', dataIndex: 'title', key: 'title' },
               { title: '企业', dataIndex: 'enterprise', key: 'enterprise' },
