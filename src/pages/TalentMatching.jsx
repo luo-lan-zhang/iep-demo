@@ -487,14 +487,14 @@ export default function TalentMatching() {
                 { title: '本校学生投递', value: applications.length, icon: <SendOutlined />, color: '#52c41a' },
                 { title: '企业面试邀约', value: interviews.length, icon: <TeamOutlined />, color: '#fa8c16' },
                 { title: '成功匹配数', value: applications.filter(a => a.status === 'approved').length, icon: <CheckCircleOutlined />, color: '#722ed1' },
-              ].map((s, i) => (
+              ].map((s, i) =>
                 <Col xs={24} sm={12} lg={6} key={i}>
                   <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
                     <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
                     <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
                   </Card>
                 </Col>
-              )))}
+              )}
             </Row>
             <h4 style={{ marginBottom: 12 }}>热门岗位需求排行</h4>
             <Table dataSource={positions.filter(p => p.status === 'active').map(p => ({ ...p, appCount: applications.filter(a => a.positionId === p.id).length })).sort((a, b) => b.appCount - a.appCount)} columns={[
@@ -519,14 +519,14 @@ export default function TalentMatching() {
                 { title: '成功匹配', value: applications.filter(a => a.status === 'approved').length, icon: <CheckCircleOutlined />, color: '#722ed1' },
                 { title: '面试邀约', value: interviews.length, icon: <StarOutlined />, color: '#eb2f96' },
                 { title: '教师推荐', value: recommendations.length, icon: <TrophyOutlined />, color: '#13c2c2' },
-              ].map((s, i) => (
+              ].map((s, i) =>
                 <Col xs={24} sm={12} lg={8} xl={4} key={i}>
                   <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
                     <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
                     <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
                   </Card>
                 </Col>
-              )))}
+              )}
             </Row>
             <h4 style={{ marginBottom: 12 }}>人才供需热力图 — 按技术方向</h4>
             <Table dataSource={[
