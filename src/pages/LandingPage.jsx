@@ -113,31 +113,6 @@ const getCityPieOption = () => ({
   }],
 })
 
-const getRadarOption = () => ({
-  title: { text: '产教融合能力评估', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
-  tooltip: {},
-  radar: {
-    center: ['50%', '55%'],
-    radius: '65%',
-    indicator: [
-      { name: '协同育人', max: 100 },
-      { name: '标准制定', max: 100 },
-      { name: '资源整合', max: 100 },
-      { name: '人才培养', max: 100 },
-      { name: '科研转化', max: 100 },
-      { name: '就业服务', max: 100 },
-    ],
-    axisName: { color: '#8ba9cc', fontSize: 10 },
-    splitArea: { areaStyle: { color: ['rgba(0,212,255,0.02)', 'rgba(0,212,255,0.02)'] } },
-    splitLine: { lineStyle: { color: '#1a3350' } },
-    axisLine: { lineStyle: { color: '#1a3350' } },
-  },
-  series: [
-    { type: 'radar', data: [{ value: [88, 75, 82, 90, 68, 85], name: '2024', areaStyle: { color: 'rgba(0,212,255,0.15)' }, lineStyle: { color: '#00d4ff', width: 2 }, itemStyle: { color: '#00d4ff' }, symbol: 'circle', symbolSize: 4 }] },
-    { type: 'radar', data: [{ value: [72, 60, 65, 78, 52, 70], name: '2023', areaStyle: { color: 'rgba(22,119,255,0.1)' }, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 4 }] },
-  ],
-})
-
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function LandingPage() {
   const { user } = useAuth()
@@ -151,7 +126,8 @@ export default function LandingPage() {
   const pieRef = useRef(null)
   const lineRef = useRef(null)
   const cityPieRef = useRef(null)
-  const radarRef = useRef(null)
+  const mapRef = useRef(null)
+  const [mapReady, setMapReady] = useState(false)
   const chartInstances = useRef([])
 
   const disposeCharts = useCallback(() => {
@@ -170,6 +146,20 @@ export default function LandingPage() {
     return () => clearInterval(id)
   }, [])
 
+  // Load china map geojson from local
+  useEffect(() => {
+    let cancelled = false
+    fetch('./china.json')
+      .then(r => r.json())
+      .then(geo => {
+        if (cancelled) return
+        echarts.registerMap('china', geo)
+        setMapReady(true)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+
   // Create charts
   useEffect(() => {
     disposeCharts()
@@ -186,9 +176,55 @@ export default function LandingPage() {
     create(pieRef, getPieOption)
     create(lineRef, getLineOption)
     create(cityPieRef, getCityPieOption)
-    create(radarRef, getRadarOption)
     return disposeCharts
   }, [disposeCharts])
+
+  // Create map chart
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return
+    const inst = echarts.init(mapRef.current)
+    const flowSeries = [
+      [[114.07, 22.62], [116.40, 39.90]],
+      [[114.07, 22.62], [121.47, 31.23]],
+      [[113.26, 23.13], [114.30, 30.60]],
+      [[114.07, 22.62], [104.06, 30.67]],
+      [[113.26, 23.13], [120.15, 30.28]],
+    ].map((coords, i) => ({
+      type: 'lines', coordinateSystem: 'geo', polyline: false,
+      data: [{ coords }],
+      lineStyle: { color: '#00e5ff', width: 1.5, opacity: 0.6, curveness: 0.2 },
+      effect: { show: true, period: 4 + i * 0.5, trailLength: 0.2, symbol: 'arrow', symbolSize: 6, color: '#fff' },
+    }))
+    inst.setOption({
+      tooltip: { trigger: 'item' },
+      geo: {
+        map: 'china', roam: false, zoom: 1.22, center: [108, 35],
+        itemStyle: { areaColor: '#0d2b52', borderColor: '#1a5080', borderWidth: 1 },
+        emphasis: { itemStyle: { areaColor: '#1a4478' }, label: { show: false } },
+      },
+      series: [
+        ...flowSeries,
+        {
+          type: 'effectScatter', coordinateSystem: 'geo',
+          data: [
+            { name: '深圳', value: [114.07, 22.62, 120] },
+            { name: '广州', value: [113.26, 23.13, 90] },
+            { name: '北京', value: [116.40, 39.90, 80] },
+            { name: '上海', value: [121.47, 31.23, 70] },
+            { name: '武汉', value: [114.30, 30.60, 50] },
+            { name: '成都', value: [104.06, 30.67, 45] },
+            { name: '杭州', value: [120.15, 30.28, 40] },
+            { name: '重庆', value: [106.55, 29.57, 55] },
+          ],
+          symbolSize: v => Math.sqrt(v[2]) * 3,
+          showEffectOn: 'render', rippleEffect: { brushType: 'stroke', scale: 3, period: 4 },
+          itemStyle: { color: '#00e5ff' }, label: { show: true, position: 'right', formatter: '{b}', color: '#b8d4ff', fontSize: 10 },
+        },
+      ],
+    })
+    chartInstances.current.push(inst)
+    return () => { try { inst.dispose() } catch {} }
+  }, [mapReady])
 
   // Resize handler
   useEffect(() => {
@@ -285,16 +321,11 @@ export default function LandingPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', padding: 10, minHeight: 260 }} ref={radarRef} />
-              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 20, textAlign: 'center' }}>
-                <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>覆盖省市</div>
-                <div style={{ fontSize: 36, fontWeight: 700, color: '#00e5ff', fontFamily: 'DIN, monospace' }}>31</div>
-                <div style={{ fontSize: 11, color: '#8ba9cc', marginTop: 4 }}>个省级行政区</div>
-              </div>
-              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 20, textAlign: 'center' }}>
-                <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>合作企业</div>
-                <div style={{ fontSize: 36, fontWeight: 700, color: '#ff9800', fontFamily: 'DIN, monospace' }}>156</div>
-                <div style={{ fontSize: 11, color: '#8ba9cc', marginTop: 4 }}>家产教融合型企业</div>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', minHeight: 520, position: 'relative', overflow: 'hidden' }}>
+                <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+                {!mapReady && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a7aaa', fontSize: 13 }}>加载地图数据中...</div>
+                )}
               </div>
             </div>
 
