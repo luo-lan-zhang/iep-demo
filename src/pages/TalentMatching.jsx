@@ -479,6 +479,42 @@ export default function TalentMatching() {
             </div>
           </div>
         )}
+        {role === 'mentor' && (
+          <div>
+            <h4 style={{ marginBottom: 12 }}>匹配学生 — 为所属企业项目推荐人选</h4>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+              {[
+                { title: '可用岗位', value: positions.filter(p => p.status === 'active').length, icon: <NodeIndexOutlined />, color: '#1677ff' },
+                { title: '推荐学生', value: recommendations.length, icon: <TeamOutlined />, color: '#52c41a' },
+                { title: '面试邀约', value: interviews.length, icon: <StarOutlined />, color: '#fa8c16' },
+                { title: '已入职', value: applications.filter(a => a.status === 'approved').length, icon: <CheckCircleOutlined />, color: '#722ed1' },
+              ].map((s, i) =>
+                <Col xs={24} sm={12} lg={6} key={i}>
+                  <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
+                    <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
+                    <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
+                  </Card>
+                </Col>
+              )}
+            </Row>
+            <h4 style={{ marginBottom: 12 }}>推荐学生投递</h4>
+            <Table dataSource={positions.filter(p => p.status === 'active')} columns={[
+              { title: '岗位名称', dataIndex: 'title', key: 'title' },
+              { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+              { title: '薪资', dataIndex: 'salary', key: 'salary' },
+              { title: '匹配学生', key: 'match', render: (_, r) => {
+                const apps = applications.filter(a => a.positionId === r.id)
+                return apps.length > 0 ? <Tag color="green">{apps.length} 名投递</Tag> : <Tag color="orange">暂无投递</Tag>
+              }},
+              { title: '操作', key: 'action', render: (_, r) =>
+                <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setRecommendPosition(r); setRecommendOpen(true) }}>推荐学生</Button>
+              },
+            ]} rowKey="id" />
+            <div style={{ marginTop: 16, padding: 12, background: '#f0f5ff', borderRadius: 8, fontSize: 13, color: '#1677ff' }}>
+              <strong>导师建议：</strong>作为企业导师，您可以发挥自身行业经验优势，为学生提供精准的岗位匹配推荐，帮助企业快速锁定优秀人才。
+            </div>
+          </div>
+        )}
         {role === 'school' && (
           <div>
             <h4 style={{ marginBottom: 16 }}>人才匹配分析（本校）</h4>
