@@ -4,7 +4,7 @@ const AuthContext = createContext(null)
 
 const roleMeta = {
   council:    { schoolId: null,      enterpriseId: null,  teacherId: null,  label: '产教融合理事会' },
-  park:       { schoolId: null,      enterpriseId: null,  teacherId: null,  label: '园区' },
+  park:       { schoolId: null,      enterpriseId: null,  teacherId: null,  label: '园区', parkId: 1 },
   enterprise: { schoolId: null,      enterpriseId: 1,     teacherId: null,  label: '企业' },
   mentor:     { schoolId: null,      enterpriseId: 1,     teacherId: null,  label: '企业导师' },
   school:     { schoolId: 1,         enterpriseId: null,  teacherId: null,  label: '院校' },

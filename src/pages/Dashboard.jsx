@@ -290,8 +290,19 @@ export default function Dashboard() {
     )
   }
 
+  const parkId = user?.parkId
+  const isPark = role === 'park'
+
+  const parkEnterprises = isPark ? mockEnterprises.filter(e => e.parkId === parkId) : mockEnterprises
+  const parkName = isPark ? mockParks.find(p => p.id === parkId)?.name || '本园区' : ''
+
   // ═══ General Dashboard ═══════════════════════════════
-  const statsCards = [
+  const statsCards = isPark ? [
+    { title: '园区企业', value: parkEnterprises.length, icon: <GlobalOutlined />, color: '#1677ff', bg: '#e6f4ff' },
+    { title: '合作院校', value: mockSchools.length, icon: <BankOutlined />, color: '#52c41a', bg: '#f6ffed' },
+    { title: '教师资源', value: mockTeachers.length, icon: <UserOutlined />, color: '#722ed1', bg: '#f9f0ff' },
+    { title: '共享资源', value: mockResources.length, icon: <ExperimentOutlined />, color: '#eb2f96', bg: '#fff0f6' },
+  ] : [
     { title: '园区数量', value: mockParks.length, icon: <ApartmentOutlined />, color: '#1677ff', bg: '#e6f4ff' },
     { title: '院校数量', value: mockSchools.length, icon: <BankOutlined />, color: '#52c41a', bg: '#f6ffed' },
     { title: '企业数量', value: mockEnterprises.length, icon: <GlobalOutlined />, color: '#faad14', bg: '#fffbe6' },
@@ -320,8 +331,23 @@ export default function Dashboard() {
     statusText: q.status === 'completed' ? '已完成' : q.status === 'in_progress' ? '进行中' : '待承接',
   }))
 
+  const displayProj = isPark ? projData.filter(p => parkEnterprises.some(e => e.name === p.enterprise)) : projData
+  const displayTraining = isPark ? latestTraining.filter(t => parkEnterprises.some(e => e.name === t.enterprise)) : latestTraining
+
   return (
     <div>
+      {isPark && (
+        <div style={{ background: 'linear-gradient(135deg, #e6f4ff, #f0f5ff)', borderRadius: 14, padding: '20px 28px', marginBottom: 20, border: '1px solid #d6e4ff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ color: '#1677ff', fontSize: 13, fontWeight: 500, marginBottom: 2 }}>园区工作台</div>
+            <div style={{ color: '#1a1a1a', fontSize: 22, fontWeight: 700 }}>{parkName} <span style={{ fontSize: 14, fontWeight: 400, color: '#666' }}>— 园区数据概览</span></div>
+          </div>
+          <div style={{ display: 'flex', gap: 24 }}>
+            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: '#1677ff' }}>{parkEnterprises.length}</div><div style={{ color: '#666', fontSize: 12 }}>园区企业</div></div>
+            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: '#52c41a' }}>{displayProj.length}</div><div style={{ color: '#666', fontSize: 12 }}>关联项目</div></div>
+          </div>
+        </div>
+      )}
       <Row gutter={[16, 16]}>
         {statsCards.map((card, i) => (
           <Col xs={12} sm={8} md={6} lg={4} key={i}>
@@ -336,7 +362,7 @@ export default function Dashboard() {
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={12}>
           <Card title="最新合作项目" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/projects')}>查看全部</span>}>
-            <Table dataSource={projData} columns={[
+            <Table dataSource={displayProj} columns={[
               { title: '项目名称', dataIndex: 'name', key: 'name' },
               { title: '企业', dataIndex: 'enterprise', key: 'enterprise' },
               { title: '预算(元)', dataIndex: 'budget', key: 'budget', render: (v) => `¥${v.toLocaleString()}` },
@@ -368,7 +394,7 @@ export default function Dashboard() {
         </Col>
         <Col xs={24} lg={12}>
           <Card title="培训指标进展" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/services')}>查看全部</span>}>
-            <Table dataSource={latestTraining} columns={[
+            <Table dataSource={displayTraining} columns={[
               { title: '培训指标', dataIndex: 'title', key: 'title' },
               { title: '企业', dataIndex: 'enterprise', key: 'enterprise' },
               { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => `${r.completedCount}/${r.targetCount}`} /> },
