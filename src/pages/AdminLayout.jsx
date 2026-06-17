@@ -34,7 +34,7 @@ const ALL_MENU_ITEMS = [
 
 const ROLE_MENUS = {
   council:    ALL_MENU_ITEMS,
-  park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system', '/admin/news', '/admin/policies', '/admin/notices', '/admin/industry-report'].includes(m.key)),
+  park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/industry-report', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
   enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
   mentor:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent'].includes(m.key)),
   school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report', '/admin/talent-report', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
