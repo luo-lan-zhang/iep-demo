@@ -15,7 +15,7 @@ import { mockSchools } from '../mock/schools'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockTeachers } from '../mock/teachers'
 import { mockStudents } from '../mock/students'
-import { mockResources } from '../mock/resources'
+import { mockResources, mockApplications } from '../mock/resources'
 import { mockTrainingQuotas } from '../mock/training'
 
 // ─── Project mock for school dashboard ──────────────────────────────────────
@@ -529,6 +529,17 @@ export default function Dashboard() {
 
   const latestResources = mockResources.map(r => ({ key: r.id, name: r.name, school: r.publisher, status: r.status, statusText: r.status === 'idle' ? '空闲' : '已租借', dailyPoints: r.dailyPoints }))
 
+  const entAppCount = isEnterprise ? mockApplications.filter(a => a.enterpriseId === enterpriseId).length : 24
+  const entApprovedCount = isEnterprise ? mockApplications.filter(a => a.enterpriseId === enterpriseId && a.status === 'approved').length : 8
+
+  // enterprise/mentor: only show resources they applied for
+  const displayResources = isEnterprise
+    ? latestResources.filter(r => mockApplications.some(a => a.resourceId === r.key && a.enterpriseId === enterpriseId))
+    : latestResources
+
+  // enterprise/mentor: only show their own positions
+  const entPositionCount = isEnterprise ? 3 : 3
+
   const latestTraining = mockTrainingQuotas.map(q => ({
     key: q.id, title: q.title, enterprise: q.enterpriseName,
     progress: Math.round((q.completedCount / q.targetCount) * 100),
@@ -592,9 +603,9 @@ export default function Dashboard() {
         <Col xs={24} lg={12}>
           <Card title="人才对接概览" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/talent')}>查看全部</span>}>
             <Row gutter={[16, 16]}>
-              <Col span={8}><Card size="small"><Statistic title="在招岗位" value={3} prefix={<NodeIndexOutlined />} valueStyle={{ color: '#1677ff' }} /></Card></Col>
-              <Col span={8}><Card size="small"><Statistic title="简历投递" value={24} prefix={<TeamOutlined />} valueStyle={{ color: '#52c41a' }} /></Card></Col>
-              <Col span={8}><Card size="small"><Statistic title="成功匹配" value={8} prefix={<ProjectOutlined />} valueStyle={{ color: '#722ed1' }} /></Card></Col>
+              <Col span={8}><Card size="small"><Statistic title="在招岗位" value={entPositionCount} prefix={<NodeIndexOutlined />} valueStyle={{ color: '#1677ff' }} /></Card></Col>
+              <Col span={8}><Card size="small"><Statistic title="简历投递" value={entAppCount} prefix={<TeamOutlined />} valueStyle={{ color: '#52c41a' }} /></Card></Col>
+              <Col span={8}><Card size="small"><Statistic title="成功匹配" value={entApprovedCount} prefix={<ProjectOutlined />} valueStyle={{ color: '#722ed1' }} /></Card></Col>
             </Row>
           </Card>
         </Col>
@@ -602,7 +613,7 @@ export default function Dashboard() {
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={12}>
           <Card title="最新共享资源" extra={<span style={{ cursor: 'pointer', color: '#1677ff' }} onClick={() => navigate('/admin/resources')}>查看全部</span>}>
-            <Table dataSource={latestResources} columns={[
+            <Table dataSource={displayResources} columns={[
               { title: '资源名称', dataIndex: 'name', key: 'name' },
               { title: '所属院校', dataIndex: 'school', key: 'school' },
               { title: '状态', dataIndex: 'statusText', key: 'status', render: (t, r) => <Tag color={r.status === 'idle' ? 'green' : 'blue'}>{t}</Tag> },
@@ -623,7 +634,7 @@ export default function Dashboard() {
       </Row>
 
       {/* ─── Data Cockpit (for enterprise/school/council) ─── */}
-      {role !== 'student' && role !== 'mentor' && role !== 'teacher' && role !== 'park' && (
+      {role !== 'student' && role !== 'mentor' && role !== 'teacher' && role !== 'park' && role !== 'enterprise' && (
         <Card title={<span><FundOutlined /> 数据驾驶舱</span>} style={{ marginTop: 24 }}>
           {/* Industry Panorama */}
           <h3 style={{ marginBottom: 16, color: '#333' }}>
