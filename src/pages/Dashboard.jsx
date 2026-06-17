@@ -108,6 +108,12 @@ export default function Dashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const role = user?.role
+  const [accepted, setAccepted] = useState(() => {
+    const s = localStorage.getItem('student_accepted')
+    return s ? JSON.parse(s) : []
+  })
+  const [submitModal, setSubmitModal] = useState(null)
+  const [submitNote, setSubmitNote] = useState('')
 
   // ═══ Student Dashboard ═══════════════════════════════
   if (role === 'student') {
@@ -115,13 +121,6 @@ export default function Dashboard() {
     const liveDims = getStudentDims(sid)
     const evalHistory = getEvalHistory(sid)
     const avgScore = Math.round(Object.values(liveDims).reduce((a, b) => a + b, 0) / 5)
-    const [accepted, setAccepted] = useState(() => {
-      const s = localStorage.getItem('student_accepted')
-      return s ? JSON.parse(s) : []
-    })
-
-    const [submitModal, setSubmitModal] = useState(null)
-    const [submitNote, setSubmitNote] = useState('')
     const getSubmissions = () => JSON.parse(localStorage.getItem('project_submissions') || '[]')
     const hasSubmitted = (pid) => getSubmissions().some(s => s.projectId === pid && s.studentId === sid)
 
