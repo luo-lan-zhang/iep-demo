@@ -94,6 +94,10 @@ export default function ServicePool() {
   const [auditOpen, setAuditOpen] = useState(false)
   const [auditQuota, setAuditQuota] = useState(null)
 
+  // Detail modal for training quotas
+  const [quotaDetailOpen, setQuotaDetailOpen] = useState(false)
+  const [quotaDetailItem, setQuotaDetailItem] = useState(null)
+
   const role = user?.role || 'admin'
   const schoolId = user?.schoolId
   const enterpriseId = user?.enterpriseId
@@ -236,7 +240,7 @@ export default function ServicePool() {
     { title: '操作', key: 'action', render: (_, r) => {
       if (role === 'council') {
         return <span style={{ display: 'inline-flex', gap: 4 }}>
-          <Button size="small" onClick={() => message.info(`培训指标详情\n企业: ${r.enterpriseName}\n目标: ${r.targetCount}人\n已完成: ${r.completedCount}人\n积分: ${r.points}\n截止: ${r.deadline}`)}>查看</Button>
+          <Button size="small" onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</Button>
           {r.status === 'pending' && <Button size="small" type="primary" onClick={() => { setAuditQuota(r); setAuditOpen(true) }}>审核</Button>}
         </span>
       }
@@ -501,6 +505,29 @@ export default function ServicePool() {
                 <Input placeholder="代码仓库/文档链接（模拟）" />
               </Form.Item>
             </Form>
+          </div>
+        )}
+      </Modal>
+
+      {/* Training Quota Detail Modal */}
+      <Modal title="培训指标详情" open={quotaDetailOpen} onCancel={() => { setQuotaDetailOpen(false); setQuotaDetailItem(null) }} footer={null} width={600}>
+        {quotaDetailItem && (
+          <div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+              <Tag color="blue">{quotaDetailItem.enterpriseName}</Tag>
+              <Tag color={statusMap[quotaDetailItem.status]?.color}>{statusMap[quotaDetailItem.status]?.text}</Tag>
+            </div>
+            <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>{quotaDetailItem.title}</h3>
+            <Descriptions column={1} bordered size="small">
+              <Descriptions.Item label="企业名称">{quotaDetailItem.enterpriseName}</Descriptions.Item>
+              <Descriptions.Item label="培训目标人数">{quotaDetailItem.targetCount}人</Descriptions.Item>
+              <Descriptions.Item label="已完成培训">{quotaDetailItem.completedCount}人</Descriptions.Item>
+              <Descriptions.Item label="培训进度">
+                <Progress percent={Math.round((quotaDetailItem.completedCount / quotaDetailItem.targetCount) * 100)} format={() => `${quotaDetailItem.completedCount}/${quotaDetailItem.targetCount}`} />
+              </Descriptions.Item>
+              <Descriptions.Item label="截止日期">{quotaDetailItem.deadline}</Descriptions.Item>
+              <Descriptions.Item label="总积分"><span style={{ color: '#faad14', fontWeight: 'bold' }}>{quotaDetailItem.points}</span></Descriptions.Item>
+            </Descriptions>
           </div>
         )}
       </Modal>
