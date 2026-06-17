@@ -299,7 +299,7 @@ export default function ServicePool() {
     { title: '完成日期', dataIndex: 'completeDate', key: 'completeDate', render: (d) => d || '-' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     { title: '操作', key: 'action', render: (_, r) => (
-      r.status === 'in_progress' && hasPermission('quota.complete') ? <Button size="small" type="primary" onClick={() => handleComplete(r.id)}>标记完成</Button> : '-'
+      r.status === 'in_progress' && hasPermission('quota.complete') ? <Button size="small" type="primary" onClick={() => handleComplete(r.id)}>标记完成</Button> : <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
     )},
   ]
 
