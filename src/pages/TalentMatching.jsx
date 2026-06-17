@@ -204,6 +204,10 @@ export default function TalentMatching() {
         positionTitle: inviteTarget.positionTitle, status: 'pending',
         interviewDate: v.interviewDate, inviteDate: new Date().toISOString().split('T')[0], source: v.source || 'enterprise',
       }])
+      setApplications(applications.map(a =>
+        a.positionId === inviteTarget.positionId && a.studentId === inviteTarget.studentId
+          ? { ...a, status: 'interviewed' } : a
+      ))
       message.success(`已向 ${inviteTarget.studentName} 发送面试邀请！`)
       setInviteOpen(false); setInviteTarget(null); inviteForm.resetFields()
     })
@@ -311,13 +315,26 @@ export default function TalentMatching() {
     { title: '专业', dataIndex: 'major', key: 'major' },
     { title: '匹配度', dataIndex: 'matchScore', key: 'matchScore', render: (v) => <Progress percent={v} size="small" format={() => `${v}%`} strokeColor={v >= 90 ? '#52c41a' : v >= 80 ? '#1677ff' : '#faad14'} /> },
     { title: '投递日期', dataIndex: 'applyDate', key: 'applyDate' },
-    { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
+    { title: '投递状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
+    { title: '面试状态', key: 'inviteStatus', render: (_, r) => {
+      const hasInvite = interviews.some(ri => ri.studentId === r.studentId && ri.positionId === r.positionId)
+      if (!hasInvite) return <Tag color="default">未发面试</Tag>
+      const inv = interviews.find(ri => ri.studentId === r.studentId && ri.positionId === r.positionId)
+      const st = { pending: { text: '等待确认', color: 'orange' }, accepted: { text: '已接受', color: 'green' }, confirmed: { text: '已确认', color: 'purple' }, rejected: { text: '已拒绝', color: 'red' } }
+      return <Tag color={st[inv.status]?.color}>{st[inv.status]?.text}</Tag>
+    }},
     { title: '操作', key: 'action', render: (_, r) => {
       if (r.status === 'pending') {
         return <span style={{ display: 'flex', gap: 4 }}>
           <Button size="small" type="primary" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleApproveApp(r.id)}>通过</Button>
           <Button size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectApp(r.id)}>拒绝</Button>
         </span>
+      }
+      if (r.status === 'approved') {
+        const hasInvite = interviews.some(ri => ri.studentId === r.studentId && ri.positionId === r.positionId)
+        if (hasInvite) return <span style={{ color: '#999' }}>-</span>
+        const pos = positions.find(p => p.id === r.positionId)
+        return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setInviteTarget({ studentId: r.studentId, studentName: r.studentName, positionId: r.positionId, positionTitle: r.positionTitle, enterpriseName: pos?.enterpriseName || '' }); inviteForm.resetFields(); setInviteOpen(true) }}>发送面试</Button>
       }
       return <span style={{ color: '#999' }}>-</span>
     }},
