@@ -309,7 +309,7 @@ export default function Dashboard() {
   const parkId = user?.parkId
   const isPark = role === 'park'
   const enterpriseId = user?.enterpriseId
-  const isEnterprise = role === 'enterprise'
+  const isEnterprise = role === 'enterprise' || role === 'mentor'
   const schoolId = user?.schoolId
   const isSchool = role === 'school'
 
