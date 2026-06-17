@@ -12,9 +12,14 @@ const priorityColors = {
 const targetLabels = { all: '全体', enterprise: '企业', school: '院校', park: '园区' }
 
 const initialNotices = [
-  { id: 1, title: '关于2024年产教融合项目申报的通知', content: '各合作企业、院校：2024年度产教融合项目申报工作现已启动，请各单位于2024年9月30日前提交申报材料。', priority: 'high', status: 'published', publishDate: '2024-07-01', publisherName: '产教融合理事会', publisherType: 'council', target: 'all' },
-  { id: 2, title: '产教融合示范基地认定办法发布', content: '为进一步推动产教融合深度发展，现发布《产教融合示范基地认定办法》，自发布之日起施行。', priority: 'normal', status: 'published', publishDate: '2024-07-10', publisherName: '产教融合理事会', publisherType: 'council', target: 'all' },
-  { id: 3, title: '关于召开理事会年度会议的通知', content: '定于2024年8月20日在深圳大学召开产教融合理事会年度会议，请各理事单位准时参加。', priority: 'high', status: 'draft', publishDate: '', publisherName: '华为技术有限公司', publisherType: 'enterprise', target: 'all' },
+  { id: 1, title: '关于2024年产教融合项目申报的通知', content: '各合作企业、院校：2024年度产教融合项目申报工作现已启动，请各单位于2024年9月30日前提交申报材料。项目申报方向包括人工智能应用、智能制造升级、新能源技术开发、数字经济发展等重点领域。申报材料请发送至指定邮箱。', priority: 'high', status: 'published', publishDate: '2024-07-01', publisherName: '产教融合理事会', publisherType: 'council', target: 'all' },
+  { id: 2, title: '产教融合示范基地认定办法发布', content: '为进一步推动产教融合深度发展，现发布《产教融合示范基地认定办法》，自发布之日起施行。认定条件包括：基地面积不少于1000平方米、年服务学生不少于500人、合作企业不少于10家。通过认定的基地将获得政府专项资金支持。', priority: 'normal', status: 'published', publishDate: '2024-07-10', publisherName: '产教融合理事会', publisherType: 'council', target: 'all' },
+  { id: 3, title: '关于召开理事会年度会议的通知', content: '定于2024年8月20日在深圳大学召开产教融合理事会年度会议，请各理事单位准时参加。会议议程：一、总结2023-2024年度工作；二、审议新增理事单位名单；三、讨论下年度重点工作计划；四、表彰优秀合作单位。', priority: 'high', status: 'published', publishDate: '2024-07-15', publisherName: '产教融合理事会', publisherType: 'council', target: 'all' },
+  { id: 4, title: '园区企业安全生产检查通知', content: '根据上级部门工作部署，园区管理办公室将于2024年8月1日至15日对园区各入驻企业开展安全生产专项检查。检查内容包括消防设施、用电安全、危化品管理等。请各企业提前做好自查自纠工作，配合检查组完成检查。', priority: 'high', status: 'published', publishDate: '2024-07-20', publisherName: '深圳南山科技园管理办公室', publisherType: 'park', target: 'enterprise' },
+  { id: 5, title: '华为鸿蒙生态合作企业招募公告', content: '华为技术有限公司现面向园区企业招募鸿蒙生态合作伙伴。入选企业将获得华为提供的技术支持、开发工具、市场推广等资源。优先招募领域：智能家居、智慧办公、智慧出行、影音娱乐等场景应用开发企业。', priority: 'normal', status: 'published', publishDate: '2024-07-25', publisherName: '华为技术有限公司', publisherType: 'enterprise', target: 'enterprise' },
+  { id: 6, title: '深圳大学产学研合作项目征集', content: '深圳大学科技处现面向企业征集2024年产学研合作项目。合作形式包括联合实验室建设、技术委托开发、成果转化等。学校提供科研团队、实验设备、知识产权等资源支持。有意向的企业请于8月30日前提交合作意向书。', priority: 'normal', status: 'published', publishDate: '2024-08-01', publisherName: '深圳大学', publisherType: 'school', target: 'enterprise' },
+  { id: 7, title: '园区企业用电高峰限电通知', content: '接供电部门通知，近期持续高温天气导致电力供应紧张，园区将于2024年8月5日至20日期间实施错峰用电。各企业请合理安排生产计划，避开高峰时段用电。具体错峰时段安排详见附件。如有特殊情况请提前联系园区管理处。', priority: 'high', status: 'pending', publishDate: '', publisherName: '深圳南山科技园管理办公室', publisherType: 'park', target: 'all' },
+  { id: 8, title: '关于举办产教融合成果展览会的通知', content: '为展示产教融合工作成果，促进校企深入合作，定于2024年9月10日至12日在深圳会展中心举办产教融合成果展览会。本次展会设置企业展区、院校展区、创新成果展区三大板块，欢迎各单位踊跃报名参展。', priority: 'low', status: 'draft', publishDate: '', publisherName: '深圳职业技术学院', publisherType: 'school', target: 'all' },
 ]
 
 const statusColors = {
@@ -36,7 +41,7 @@ export default function NoticesManagement() {
   const [reviewForm] = Form.useForm()
 
   const role = user?.role || 'council'
-  const filtered = role === 'council' ? notices : notices.filter(n => n.publisherType === role)
+  const filtered = role === 'council' || role === 'park' ? notices : notices.filter(n => n.publisherType === role)
 
   const handlePublish = () => {
     publishForm.validateFields().then(v => {

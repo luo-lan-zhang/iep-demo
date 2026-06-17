@@ -11,9 +11,14 @@ const policyTypes = [
 ]
 
 const initialPolicies = [
-  { id: 1, title: '关于促进产教融合的若干政策措施', type: 'education', content: '为深化产教融合，促进教育链、人才链与产业链、创新链有机衔接，现提出政策措施如下...', publisherName: '产教融合理事会', publisherType: 'council', status: 'published', publishDate: '2024-07-01', target: 'all', reviewComment: '' },
-  { id: 2, title: '2024年产教融合项目申报指南', type: 'industry', content: '2024年度产教融合项目申报工作现已启动，请各企业、院校于规定时间内提交申报材料。', publisherName: '华为技术有限公司', publisherType: 'enterprise', status: 'draft', publishDate: '2024-07-10', target: 'school', reviewComment: '' },
-  { id: 3, title: '校企合作实训基地建设方案', type: 'innovation', content: '为进一步推进校企合作，现发布实训基地建设方案，鼓励院校与企业共建共享实训资源。', publisherName: '深圳大学', publisherType: 'school', status: 'pending', publishDate: '2024-07-15', target: 'enterprise', reviewComment: '' },
+  { id: 1, title: '关于促进产教融合的若干政策措施', type: 'education', content: '为深化产教融合，促进教育链、人才链与产业链、创新链有机衔接，现提出政策措施如下：一、支持企业深度参与职业教育，对参与产教融合的企业给予税收优惠；二、鼓励院校与企业共建实训基地，政府给予建设补贴；三、建立产教融合型企业和院校认证制度，对认证单位给予政策倾斜。', publisherName: '产教融合理事会', publisherType: 'council', status: 'published', publishDate: '2024-07-01', target: 'all', reviewComment: '' },
+  { id: 2, title: '2024年产教融合项目申报指南', type: 'industry', content: '2024年度产教融合项目申报工作现已启动，请各企业、院校于规定时间内提交申报材料。本年度重点支持人工智能、集成电路、新能源、智能制造等领域的校企合作项目。申报截止日期：2024年9月30日。', publisherName: '产教融合理事会', publisherType: 'council', status: 'published', publishDate: '2024-07-10', target: 'all', reviewComment: '' },
+  { id: 3, title: '校企合作实训基地建设方案', type: 'innovation', content: '为进一步推进校企合作，现发布实训基地建设方案。方案鼓励院校与企业共建共享实训资源，对符合条件的实训基地给予最高200万元的建设补贴。建设标准包括：实训场地面积不少于500平方米，设备总值不少于300万元，年服务学生不少于200人。', publisherName: '深圳大学', publisherType: 'school', status: 'published', publishDate: '2024-07-15', target: 'enterprise', reviewComment: '' },
+  { id: 4, title: '技能人才引进与培育扶持办法', type: 'talent', content: '为加快技能人才队伍建设，制定本扶持办法。一、企业引进高技能人才给予每人最高10万元安家补贴；二、院校开设紧缺技能专业给予每个专业50万元建设资金；三、校企联合培养技能人才按每人5000元标准给予企业培训补贴。', publisherName: '产教融合理事会', publisherType: 'council', status: 'published', publishDate: '2024-07-20', target: 'all', reviewComment: '' },
+  { id: 5, title: '科技创新券使用管理办法', type: 'innovation', content: '为鼓励中小企业利用高校科研资源开展技术创新，特制定科技创新券使用管理办法。创新券面值分为5万元、10万元、20万元三档，可用于支付高校实验室使用、技术检测、专利评估等费用。每家企业年度申领上限为50万元。', publisherName: '产教融合办公室', publisherType: 'school', status: 'published', publishDate: '2024-07-25', target: 'enterprise', reviewComment: '' },
+  { id: 6, title: '园区企业人才需求信息采集通知', type: 'talent', content: '为全面掌握园区企业人才需求状况，现面向园区各入驻企业开展人才需求信息采集工作。请各企业填写《人才需求信息表》，包括岗位名称、专业要求、学历要求、招聘数量等信息。采集结果将作为园区人才服务工作的决策依据。', publisherName: '深圳南山科技园', publisherType: 'park', status: 'pending', publishDate: '2024-08-01', target: 'enterprise', reviewComment: '' },
+  { id: 7, title: '物联网产业技术标准征求意见稿', type: 'industry', content: '由产教融合理事会牵头制定的《物联网产业技术标准（征求意见稿）》现面向各单位公开征求意见。标准涵盖传感器接口规范、数据传输协议、设备互操作等关键技术要求。意见反馈截止日期为2024年9月15日。', publisherName: '华为技术有限公司', publisherType: 'enterprise', status: 'pending', publishDate: '2024-08-05', target: 'all', reviewComment: '' },
+  { id: 8, title: '深化现代职业教育体系建设改革方案', type: 'education', content: '贯彻落实国家关于深化现代职业教育体系建设改革的要求，结合本区域产业特点，制定本方案。重点任务包括：建设3个高水平产教融合实训基地、培育50家产教融合型企业、培养100名双师型骨干教师。', publisherName: '深圳职业技术学院', publisherType: 'school', status: 'draft', publishDate: '', target: 'school', reviewComment: '' },
 ]
 
 const statusColors = {
@@ -38,7 +43,7 @@ export default function PolicyManagement() {
 
   const role = user?.role || 'council'
 
-  const filtered = role === 'council' ? policies : policies.filter(p => p.publisherType === role)
+  const filtered = role === 'council' || role === 'park' ? policies : policies.filter(p => p.publisherType === role)
 
   const handlePublish = () => {
     publishForm.validateFields().then(v => {
