@@ -1,15 +1,26 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, Select, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { mockMentors } from '../mock/mentors'
 import { mockEnterprises } from '../mock/enterprises'
+import { useAuth } from '../context/AuthContext'
 
 export default function MentorManagement() {
+  const { user } = useAuth()
   const [mentors, setMentors] = useState(mockMentors)
   const [modalOpen, setModalOpen] = useState(false)
   const [form] = Form.useForm()
 
   const enterpriseMap = Object.fromEntries(mockEnterprises.map(e => [e.id, e.name]))
+  const role = user?.role || 'admin'
+  const enterpriseId = user?.enterpriseId
+
+  const filteredMentors = useMemo(() => {
+    if (role === 'enterprise') {
+      return mentors.filter(m => m.enterpriseId === enterpriseId)
+    }
+    return mentors
+  }, [mentors, role, enterpriseId])
 
   const columns = [
     { title: '姓名', dataIndex: 'name', key: 'name' },
@@ -30,8 +41,10 @@ export default function MentorManagement() {
   }
 
   return (
-    <Card title="导师管理" extra={<Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>添加导师</Button>}>
-      <Table dataSource={mentors} columns={columns} rowKey="id" />
+    <Card title="企业导师管理" extra={
+      <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>添加导师</Button>
+    }>
+      <Table dataSource={filteredMentors} columns={columns} rowKey="id" />
       <Modal title="添加导师" open={modalOpen} onOk={handleAdd} onCancel={() => setModalOpen(false)}>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="姓名" rules={[{ required: true }]}><Input /></Form.Item>

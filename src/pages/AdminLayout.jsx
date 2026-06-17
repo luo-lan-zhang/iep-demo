@@ -31,12 +31,13 @@ const ALL_MENU_ITEMS = [
   { key: '/admin/policies',    icon: <SafetyCertificateOutlined />, label: '政策管理' },
   { key: '/admin/notices',     icon: <BellOutlined />,           label: '通知管理' },
   { key: '/admin/enterprises', icon: <SafetyCertificateOutlined />, label: '园区企业管理' },
+  { key: '/admin/mentors', icon: <UserOutlined />, label: '企业导师管理' },
 ]
 
 const ROLE_MENUS = {
   council:    ALL_MENU_ITEMS,
   park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/industry-report', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system', '/admin/news', '/admin/policies', '/admin/notices', '/admin/enterprises'].includes(m.key)),
-  enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
+  enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report', '/admin/news', '/admin/policies', '/admin/notices', '/admin/mentors'].includes(m.key)),
   mentor:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent'].includes(m.key)),
   school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report', '/admin/talent-report', '/admin/news', '/admin/policies', '/admin/notices'].includes(m.key)),
   teacher:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/achievements', '/admin/services', '/admin/teaching'].includes(m.key)),
@@ -59,6 +60,7 @@ const pageTitles = {
   '/admin/policies':    '政策管理',
   '/admin/notices':     '通知管理',
   '/admin/enterprises': '园区企业管理',
+  '/admin/mentors':     '企业导师管理',
 }
 
 export default function AdminLayout() {

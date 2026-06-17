@@ -80,6 +80,8 @@ export default function ServicePool() {
   const [interestService, setInterestService] = useState(null)
   const [techForm] = Form.useForm()
   const [interestForm] = Form.useForm()
+  const [auditInterestOpen, setAuditInterestOpen] = useState(false)
+  const [auditInterestService, setAuditInterestService] = useState(null)
 
   // Capability modals
   const [capPublishOpen, setCapPublishOpen] = useState(false)
@@ -195,6 +197,41 @@ export default function ServicePool() {
     })
   }
 
+  const handleApproveInterest = (interestId) => {
+    setTechInterests(techInterests.map(ti =>
+      ti.id === interestId ? { ...ti, status: 'approved' } : ti
+    ))
+    const interest = techInterests.find(ti => ti.id === interestId)
+    if (interest) {
+      setTechServices(techServices.map(ts =>
+        ts.id === interest.serviceId ? { ...ts, status: 'in_progress' } : ts
+      ))
+    }
+    message.success('已确认承接意向')
+  }
+
+  const handleRejectInterest = (interestId) => {
+    setTechInterests(techInterests.map(ti =>
+      ti.id === interestId ? { ...ti, status: 'rejected' } : ti
+    ))
+    message.success('已拒绝该承接意向')
+  }
+
+  const handleConfirmComplete = (interestId) => {
+    setTechInterests(techInterests.map(ti =>
+      ti.id === interestId ? { ...ti, status: 'completed' } : ti
+    ))
+    const interest = techInterests.find(ti => ti.id === interestId)
+    if (interest) {
+      setTechServices(techServices.map(ts =>
+        ts.id === interest.serviceId ? { ...ts, status: 'completed' } : ts
+      ))
+    }
+    message.success('已完成确认！')
+    setAuditInterestOpen(false)
+    setAuditInterestService(null)
+  }
+
   const handleSubmitProof = () => {
     proofForm.validateFields().then(values => {
       setTechInterests(techInterests.map(ti =>
@@ -285,7 +322,16 @@ export default function ServicePool() {
           }
         }
       }
-      return <Button size="small" onClick={() => message.info('查看详细')}>查看</Button>
+      if (role === 'enterprise' && r.enterpriseId === enterpriseId) {
+        const pendingInterests = techInterests.filter(ti => ti.serviceId === r.id && ti.status === 'pending')
+        if (r.status === 'pending' && pendingInterests.length > 0) {
+          return <Button size="small" type="primary" onClick={() => { setAuditInterestService(r); setAuditInterestOpen(true) }}>承接确认</Button>
+        }
+        if (r.status === 'in_progress') {
+          return <Button size="small" type="primary" onClick={() => { setAuditInterestService(r); setAuditInterestOpen(true) }}>完成确认</Button>
+        }
+      }
+      return <a onClick={() => { setInterestService(r); setInterestOpen(true) }}>查看</a>
     }},
   ]
 
@@ -461,6 +507,41 @@ export default function ServicePool() {
                 <Input.TextArea rows={3} placeholder="请说明技术能力和承接方案..." />
               </Form.Item>
             </Form>
+          </div>
+        )}
+      </Modal>
+
+      {/* Enterprise Audit Interest Modal — 承接确认 / 完成确认 */}
+      <Modal title={auditInterestService?.status === 'pending' ? '承接确认' : '完成确认'}
+        open={auditInterestOpen} onCancel={() => { setAuditInterestOpen(false); setAuditInterestService(null) }}
+        width={600} footer={null}>
+        {auditInterestService && (
+          <div>
+            <p style={{ marginBottom: 16, color: '#666' }}>
+              服务：<strong>{auditInterestService.name}</strong> | 预算：<strong style={{ color: '#faad14' }}>¥{auditInterestService.budget.toLocaleString()}</strong>
+            </p>
+            {techInterests.filter(ti => ti.serviceId === auditInterestService.id).length === 0 ? (
+              <div style={{ color: '#999', padding: 20, textAlign: 'center' }}>暂无院校/教师表达承接意向</div>
+            ) : (
+              techInterests.filter(ti => ti.serviceId === auditInterestService.id).map(ti => (
+                <Card key={ti.id} size="small" style={{ marginBottom: 12 }}>
+                  <p><strong>承接方：</strong>{ti.unitName}</p>
+                  <p><strong>联系人：</strong>{ti.contact}</p>
+                  <p><strong>类型：</strong>{ti.type === 'school' ? '院校' : '教师个人'}</p>
+                  <p><strong>说明：</strong>{ti.message}</p>
+                  <p><strong>状态：</strong><Tag color={ti.status === 'approved' ? 'green' : ti.status === 'rejected' ? 'red' : 'orange'}>{ti.status === 'approved' ? '已确认承接' : ti.status === 'rejected' ? '已拒绝' : '待确认'}</Tag></p>
+                  {ti.status === 'approved' && auditInterestService.status === 'in_progress' && (
+                    <Button type="primary" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleConfirmComplete(ti.id)}>确认完成</Button>
+                  )}
+                  {ti.status === 'pending' && auditInterestService.status === 'pending' && (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <Button type="primary" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleApproveInterest(ti.id)}>确认承接</Button>
+                      <Button size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectInterest(ti.id)}>拒绝</Button>
+                    </div>
+                  )}
+                </Card>
+              ))
+            )}
           </div>
         )}
       </Modal>
