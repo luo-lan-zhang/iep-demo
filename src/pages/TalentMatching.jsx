@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, Select, Tabs, message, Descriptions, Empty, Space, Progress, Tooltip, Row, Col } from 'antd'
-import { PlusOutlined, SendOutlined, StarOutlined, CheckCircleOutlined, CloseCircleOutlined, TeamOutlined, FileTextOutlined, NodeIndexOutlined, TrophyOutlined } from '@ant-design/icons'
+import { PlusOutlined, SendOutlined, StarOutlined, CheckCircleOutlined, CloseCircleOutlined, TeamOutlined, FileTextOutlined, NodeIndexOutlined, TrophyOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockStudents } from '../mock/students'
 import { mockTeachers } from '../mock/teachers'
@@ -90,6 +90,7 @@ export default function TalentMatching() {
   const [detailOpen, setDetailOpen] = useState(false); const [detailPosition, setDetailPosition] = useState(null)
   const [inviteOpen, setInviteOpen] = useState(false); const [inviteTarget, setInviteTarget] = useState(null); const [inviteForm] = Form.useForm()
   const [studentDetailOpen, setStudentDetailOpen] = useState(false); const [detailStudent, setDetailStudent] = useState(null)
+  const [viewAppOpen, setViewAppOpen] = useState(false); const [viewApp, setViewApp] = useState(null)
 
   const role = user?.role || 'admin'
   const enterpriseId = user?.enterpriseId
@@ -301,7 +302,7 @@ export default function TalentMatching() {
     { title: '匹配度', dataIndex: 'matchScore', key: 'matchScore', render: (v) => v ? <Tag color={v >= 90 ? 'green' : v >= 80 ? 'blue' : 'orange'}>{v}%</Tag> : '-' },
     { title: '投递日期', dataIndex: 'applyDate', key: 'applyDate' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
-    { title: '操作', key: 'action', render: (_, r) => <span style={{ color: '#999' }}>-</span> },
+    { title: '操作', key: 'action', render: (_, r) => <Button size="small" icon={<EyeOutlined />} onClick={() => { setViewApp(r); setViewAppOpen(true) }}>查看</Button> },
   ]
 
   // 我的投递列（企业）= 企业看谁投了+审核
@@ -710,6 +711,22 @@ export default function TalentMatching() {
             <Descriptions.Item label="匹配岗位">{detailStudent.positionTitle}</Descriptions.Item>
             <Descriptions.Item label="匹配度">
               <Progress percent={detailStudent.matchScore} format={() => `${detailStudent.matchScore}%`} strokeColor={detailStudent.matchScore >= 90 ? '#52c41a' : detailStudent.matchScore >= 80 ? '#1677ff' : '#faad14'} />
+            </Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
+
+      <Modal title="投递详情" open={viewAppOpen} onCancel={() => { setViewAppOpen(false); setViewApp(null) }} footer={null} width={520}>
+        {viewApp && (
+          <Descriptions column={2} bordered size="small">
+            <Descriptions.Item label="岗位名称">{viewApp.positionTitle}</Descriptions.Item>
+            <Descriptions.Item label="企业">{viewApp.enterpriseName}</Descriptions.Item>
+            <Descriptions.Item label="投递日期">{viewApp.applyDate}</Descriptions.Item>
+            <Descriptions.Item label="匹配度">
+              <Tag color={viewApp.matchScore >= 90 ? 'green' : viewApp.matchScore >= 80 ? 'blue' : 'orange'}>{viewApp.matchScore}%</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="状态" span={2}>
+              <Tag color={statusMap[viewApp.status]?.color}>{statusMap[viewApp.status]?.text}</Tag>
             </Descriptions.Item>
           </Descriptions>
         )}
