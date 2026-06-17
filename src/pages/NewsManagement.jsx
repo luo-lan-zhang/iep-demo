@@ -46,7 +46,7 @@ export default function NewsManagement() {
   const role = user?.role || 'council'
   const enterpriseId = user?.enterpriseId
 
-  const filteredNews = role === 'council' || role === 'park' ? news : news.filter(n => n.publisherType === role && (role === 'enterprise' ? n.publisherId : true))
+  const filteredNews = role === 'council' || role === 'park' ? news : news.filter(n => n.publisherType === role)
 
   const handlePublish = () => {
     publishForm.validateFields().then(v => {
