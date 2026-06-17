@@ -124,6 +124,13 @@ export default function ProjectCooperation() {
   const [reviews, setReviews] = useState(() => {
     try { return JSON.parse(localStorage.getItem('project_reviews') || '{}') } catch { return {} }
   })
+  // Teacher create own project
+  const [teacherCreateOpen, setTeacherCreateOpen] = useState(false)
+  const [teacherCreateForm] = Form.useForm()
+  // Member review
+  const [memberReviewOpen, setMemberReviewOpen] = useState(false)
+  const [memberReviewTarget, setMemberReviewTarget] = useState(null)
+  const [memberReviewProject, setMemberReviewProject] = useState(null)
 
   const saveReviews = (r) => { setReviews(r); localStorage.setItem('project_reviews', JSON.stringify(r)) }
 
@@ -155,6 +162,41 @@ export default function ProjectCooperation() {
         message.success('中期评审已保存！')
       }
       setReviewOpen(false); setReviewProject(null); reviewForm.resetFields()
+    })
+  }
+
+  const handleTeacherCreate = () => {
+    teacherCreateForm.validateFields().then(v => {
+      const newProject = {
+        id: projects.length + 1,
+        name: v.name,
+        enterpriseId: null, enterpriseName: '教师自建',
+        budget: v.budget || 0,
+        teacherId, teacherName: user?.name, schoolId: schoolId || 1,
+        status: 'in_progress', progress: 5,
+        description: v.description || '',
+        deliverables: v.deliverables || '',
+        requirements: v.requirements || '',
+        tags: v.tags ? v.tags.split(',').map(t => t.trim()) : [],
+        assignedStudents: [],
+        teamData: { students: [], mentors: [], teachers: [] },
+      }
+      setProjects([newProject, ...projects])
+      message.success('项目已创建，请添加团队成员！')
+      setTeacherCreateOpen(false)
+      teacherCreateForm.resetFields()
+    })
+  }
+
+  const handleMemberReview = () => {
+    reviewForm.validateFields().then(v => {
+      const key = `${memberReviewProject.id}_member_${memberReviewTarget.id}_${reviewType}`
+      const record = { ...v, date: new Date().toISOString().split('T')[0], reviewer: user?.name, memberName: memberReviewTarget.name }
+      const updated = { ...reviews, [key]: record }
+      saveReviews(updated)
+      message.success(`${memberReviewTarget.name} ${reviewType === 'mid' ? '中期' : '结项'}评审已保存！`)
+      setMemberReviewOpen(false); setMemberReviewTarget(null); setMemberReviewProject(null)
+      reviewForm.resetFields()
     })
   }
 
@@ -300,9 +342,7 @@ export default function ProjectCooperation() {
           acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>团队</Button>)
           acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
           acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
-            onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>中期评审</Button>)
-          if (r.progress >= 80) acts.push(<Button key="fr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a', color: '#fff' }}
-            onClick={() => { setReviewProject(r); setReviewType('final'); reviewForm.resetFields(); setReviewOpen(true) }}>结项评审</Button>)
+            onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
         }
         if (role === 'enterprise' || role === 'mentor' || role === 'park') {
           acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
@@ -470,6 +510,9 @@ export default function ProjectCooperation() {
             {role === 'enterprise' && (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布新项目</Button>
             )}
+            {role === 'teacher' && (
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => { teacherCreateForm.resetFields(); setTeacherCreateOpen(true) }}>创建项目</Button>
+            )}
           </div>
           {filteredProjects.length === 0 ? (
             <Empty description="暂无项目" />
@@ -567,6 +610,55 @@ export default function ProjectCooperation() {
       )
     })
 
+    // Teacher: 评审记录 (view all review history)
+    if (role === 'teacher') {
+      const reviewEntries = []
+      const teacherProjectIds = projects.filter(p => p.teacherId === teacherId).map(p => p.id)
+      teacherProjectIds.forEach(pId => {
+        const p = projects.find(pr => pr.id === pId)
+        if (!p) return
+        ;['mid', 'final'].forEach(type => {
+          const key = `${pId}_${type}`
+          if (reviews[key]) reviewEntries.push({ ...reviews[key], projectName: p.name, projectId: pId, type, memberName: null })
+        })
+        // member reviews
+        const teamMembers = [
+          ...(p.assignedStudents || []).map(sid => { const s = mockStudents.find(st => st.id === sid); return s ? { id: sid, name: s.name, role: '学生' } : null }),
+          ...(p.teamData?.mentors || []).map(mid => { const m = mockMentors.find(mt => mt.id === mid); return m ? { id: mid, name: m.name, role: '导师' } : null }),
+          ...(p.teamData?.teachers || []).map(tid => { const t = mockTeachers.find(tr => tr.id === tid); return t ? { id: tid, name: t.name, role: '教师' } : null }),
+        ].filter(Boolean)
+        teamMembers.forEach(m => {
+          ;['mid', 'final'].forEach(type => {
+            const k = `${pId}_member_${m.id}_${type}`
+            if (reviews[k]) reviewEntries.push({ ...reviews[k], projectName: p.name, projectId: pId, type, memberName: m.name, memberRole: m.role })
+          })
+        })
+      })
+      reviewEntries.sort((a, b) => b.date.localeCompare(a.date))
+      items.push({
+        key: 'reviews', label: '评审记录', children: (
+          <div>
+            <p style={{ color: '#666', marginBottom: 12 }}>项目和团队成员的中期/结项评审记录</p>
+            {reviewEntries.length === 0 ? <Empty description="暂无评审记录" /> : (
+              <Table dataSource={reviewEntries} columns={[
+                { title: '项目', dataIndex: 'projectName', key: 'projectName' },
+                { title: '对象', key: 'target', render: (_, r) => r.memberName
+                  ? <span><Tag color="orange">{r.memberRole}</Tag> {r.memberName}</span>
+                  : <Tag color="blue">项目整体</Tag>
+                },
+                { title: '类型', dataIndex: 'type', key: 'type', render: (t) => <Tag color={t === 'mid' ? 'blue' : 'green'}>{t === 'mid' ? '中期' : '结项'}</Tag> },
+                { title: '评审人', dataIndex: 'reviewer', key: 'reviewer' },
+                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={parseInt(r.progress) || 0} size="small" format={() => `${r.progress}%`} /> },
+                { title: '评分', dataIndex: 'score', key: 'score', render: (v) => <Tag color="gold">{v}分</Tag> },
+                { title: '日期', dataIndex: 'date', key: 'date' },
+                { title: '意见', dataIndex: 'comment', key: 'comment', ellipsis: true },
+              ]} rowKey={(_r, i) => i} size="small" pagination={{ pageSize: 10 }} />
+            )}
+          </div>
+        )
+      })
+    }
+
     return items
   }, [filteredProjects, projectColumns, taskColumns, studentTaskColumns, filterStatus, role, teacherId, visibleTasks])
 
@@ -580,6 +672,18 @@ export default function ProjectCooperation() {
           <Form.Item name="name" label="项目名称" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="description" label="项目描述"><Input.TextArea rows={4} /></Form.Item>
           <Form.Item name="budget" label="拟投入金额(元)" rules={[{ required: true }]}><InputNumber min={1} style={{ width: '100%' }} /></Form.Item>
+          <Form.Item name="deliverables" label="交付物要求"><Input.TextArea rows={3} /></Form.Item>
+          <Form.Item name="requirements" label="技术要求"><Input.TextArea rows={3} /></Form.Item>
+          <Form.Item name="tags" label="标签"><Input placeholder="用逗号分隔" /></Form.Item>
+        </Form>
+      </Modal>
+
+      {/* 教师创建项目 */}
+      <Modal title="创建新项目" open={teacherCreateOpen} onOk={handleTeacherCreate} onCancel={() => { setTeacherCreateOpen(false); teacherCreateForm.resetFields() }} width={640}>
+        <Form form={teacherCreateForm} layout="vertical">
+          <Form.Item name="name" label="项目名称" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="description" label="项目描述"><Input.TextArea rows={4} /></Form.Item>
+          <Form.Item name="budget" label="拟投入金额(元)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
           <Form.Item name="deliverables" label="交付物要求"><Input.TextArea rows={3} /></Form.Item>
           <Form.Item name="requirements" label="技术要求"><Input.TextArea rows={3} /></Form.Item>
           <Form.Item name="tags" label="标签"><Input placeholder="用逗号分隔" /></Form.Item>
@@ -802,6 +906,41 @@ export default function ProjectCooperation() {
         )}
       </Modal>
 
+      {/* 成员评审 */}
+      <Modal title={<span><CheckCircleOutlined /> 成员{reviewType === 'mid' ? '中期' : '结项'}评审 — {memberReviewProject?.name}</span>}
+        open={memberReviewOpen} onOk={handleMemberReview}
+        onCancel={() => { setMemberReviewOpen(false); setMemberReviewTarget(null); setMemberReviewProject(null); reviewForm.resetFields() }}
+        okText="提交评审" width={560}>
+        {memberReviewTarget && memberReviewProject && (
+          <div>
+            <Descriptions column={2} size="small" style={{ marginBottom: 16 }}>
+              <Descriptions.Item label="项目">{memberReviewProject.name}</Descriptions.Item>
+              <Descriptions.Item label="成员"><Tag color="blue">{memberReviewTarget.name}</Tag></Descriptions.Item>
+            </Descriptions>
+            {reviews[`${memberReviewProject.id}_member_${memberReviewTarget.id}_mid`] && (
+              <div style={{ background: '#e6f4ff', padding: 12, borderRadius: 6, marginBottom: 16 }}>
+                <div style={{ fontWeight: 500 }}>中期评审记录</div>
+                <div style={{ fontSize: 13, color: '#666', marginTop: 4 }}>
+                  进度：{reviews[`${memberReviewProject.id}_member_${memberReviewTarget.id}_mid`].progress}% | 评分：{reviews[`${memberReviewProject.id}_member_${memberReviewTarget.id}_mid`].score}分
+                </div>
+                <div style={{ fontSize: 13, color: '#666' }}>评语：{reviews[`${memberReviewProject.id}_member_${memberReviewTarget.id}_mid`].comment}</div>
+              </div>
+            )}
+            <Form form={reviewForm} layout="vertical">
+              <Form.Item name="progress" label="评审进度(%)" rules={[{ required: true }]}>
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item name="score" label="评分(0-100)" rules={[{ required: true }]}>
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item name="comment" label="评审意见" rules={[{ required: true }]}>
+                <Input.TextArea rows={3} placeholder={reviewType === 'mid' ? '评估该成员的阶段表现' : '对该成员整个项目周期的工作进行综合评价'} />
+              </Form.Item>
+            </Form>
+          </div>
+        )}
+      </Modal>
+
       {/* 详情 */}
       <Modal title="项目详情" open={detailOpen} onCancel={() => setDetailOpen(false)} footer={null} width={640}>
         {detailProject && (
@@ -834,6 +973,42 @@ export default function ProjectCooperation() {
                 </div>
               }
             </Descriptions.Item>
+            {role === 'teacher' && detailProject.teacherId === teacherId && detailProject.status === 'in_progress' && (
+              <Descriptions.Item label="成员评审" span={2}>
+                {(() => {
+                  const allMembers = [
+                    ...(detailProject.assignedStudents || []).map(sid => { const s = mockStudents.find(st => st.id === sid); return s ? { ...s, memberRole: '学生' } : null }),
+                    ...(detailProject.teamData?.mentors || []).map(mid => { const m = mockMentors.find(mt => mt.id === mid); return m ? { ...m, memberRole: '导师' } : null }),
+                    ...(detailProject.teamData?.teachers || []).map(tid => { const t = mockTeachers.find(tr => tr.id === tid); return t ? { ...t, memberRole: '教师' } : null }),
+                  ].filter(Boolean)
+                  if (allMembers.length === 0) return <span style={{ color: '#ccc' }}>暂无成员</span>
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {allMembers.map(m => {
+                        const midKey = `${detailProject.id}_member_${m.id}_mid`
+                        const finalKey = `${detailProject.id}_member_${m.id}_final`
+                        return (
+                          <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+                            <span>
+                              <Tag color={m.memberRole === '学生' ? 'blue' : m.memberRole === '导师' ? 'orange' : 'purple'}>{m.memberRole}</Tag>
+                              {m.name}
+                            </span>
+                            <span style={{ display: 'flex', gap: 4 }}>
+                              <Button size="small" onClick={() => { setMemberReviewProject(detailProject); setMemberReviewTarget(m); setReviewType('mid'); reviewForm.resetFields(); setMemberReviewOpen(true) }}>
+                                中期 {reviews[midKey] ? <Tag color="green" style={{ marginLeft: 2, lineHeight: '14px', padding: '0 3px', fontSize: 10 }}>✓</Tag> : null}
+                              </Button>
+                              <Button size="small" style={{ borderColor: '#52c41a', color: '#52c41a' }} onClick={() => { setMemberReviewProject(detailProject); setMemberReviewTarget(m); setReviewType('final'); reviewForm.resetFields(); setMemberReviewOpen(true) }}>
+                                结项 {reviews[finalKey] ? <Tag color="green" style={{ marginLeft: 2, lineHeight: '14px', padding: '0 3px', fontSize: 10 }}>✓</Tag> : null}
+                              </Button>
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                })()}
+              </Descriptions.Item>
+            )}
             {reviews[`${detailProject.id}_mid`] && (
               <Descriptions.Item label="中期评审">
                 {reviews[`${detailProject.id}_mid`].reviewer} | {reviews[`${detailProject.id}_mid`].date} | 进度 {reviews[`${detailProject.id}_mid`].progress}% | 评分 {reviews[`${detailProject.id}_mid`].score}分
