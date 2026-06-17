@@ -287,7 +287,7 @@ export default function ServicePool() {
       if (role === 'park') {
         return <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
       }
-      return '-'
+      return <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
     }},
   ]
 
