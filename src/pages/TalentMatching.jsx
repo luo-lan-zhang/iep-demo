@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, Select, Tabs, message, Descriptions, Empty, Space, Progress, Tooltip } from 'antd'
-import { PlusOutlined, SendOutlined, StarOutlined, CheckCircleOutlined, CloseCircleOutlined, TeamOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Card, Table, Tag, Button, Modal, Form, Input, Select, Tabs, message, Descriptions, Empty, Space, Progress, Tooltip, Row, Col } from 'antd'
+import { PlusOutlined, SendOutlined, StarOutlined, CheckCircleOutlined, CloseCircleOutlined, TeamOutlined, FileTextOutlined, NodeIndexOutlined, TrophyOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockStudents } from '../mock/students'
 import { mockTeachers } from '../mock/teachers'
@@ -440,10 +440,11 @@ export default function TalentMatching() {
         {role === 'student' && (
           <div>
             <h4 style={{ marginBottom: 16 }}>推荐岗位（基于您的专业方向）</h4>
-            <Table dataSource={positions.filter(p => p.status === 'active').slice(0, 3)} columns={[
+            <Table dataSource={positions.filter(p => p.status === 'active').slice(0, 5)} columns={[
               { title: '岗位名称', dataIndex: 'title', key: 'title' },
               { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
               { title: '薪资', dataIndex: 'salary', key: 'salary' },
+              { title: '匹配度', key: 'match', render: () => <Progress percent={Math.round(70 + Math.random() * 25)} size="small" /> },
               { title: '操作', key: 'action', render: (_, r) => <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button> },
             ]} rowKey="id" />
           </div>
@@ -458,6 +459,92 @@ export default function TalentMatching() {
               { title: '匹配度', dataIndex: 'matchScore', key: 'matchScore', render: (v) => <Progress percent={v} size="small" format={() => `${v}%`} /> },
               { title: '操作', key: 'action', render: (_, r) => <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setInviteTarget({ studentId: r.studentId, studentName: r.studentName, positionId: r.positionId, positionTitle: r.positionTitle, enterpriseName: positions.find(p => p.id === r.positionId)?.enterpriseName || '' }); inviteForm.resetFields(); setInviteOpen(true) }}>发送面试邀请</Button> },
             ]} rowKey="key" />
+          </div>
+        )}
+        {role === 'teacher' && (
+          <div>
+            <h4 style={{ marginBottom: 12 }}>推荐适合推荐的岗位 — 为学生匹配合适机会</h4>
+            <Table dataSource={positions.filter(p => p.status === 'active')} columns={[
+              { title: '岗位名称', dataIndex: 'title', key: 'title' },
+              { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+              { title: '薪资', dataIndex: 'salary', key: 'salary' },
+              { title: '推荐理由', key: 'reason', render: (_, r) => {
+                const recs = recommendations.filter(rec => rec.positionId === r.id && rec.teacherId === teacherId)
+                return recs.length > 0 ? <Tag color="green">已推荐 {recs.length} 名学生</Tag> : <Tag color="orange">待推荐</Tag>
+              }},
+              { title: '操作', key: 'action', render: (_, r) => <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setRecommendPosition(r); setRecommendOpen(true) }}>推荐学生</Button> },
+            ]} rowKey="id" />
+            <div style={{ marginTop: 16, padding: 12, background: '#fff7e6', borderRadius: 8, fontSize: 13, color: '#666' }}>
+              <strong>推荐提示：</strong>选择学生时，优先考虑专业方向对口、有相关项目经验的学生，推荐理由写清楚能为企业解决什么问题。
+            </div>
+          </div>
+        )}
+        {role === 'school' && (
+          <div>
+            <h4 style={{ marginBottom: 16 }}>人才匹配分析（本校）</h4>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+              {[{ title: '本校在招岗位', value: positions.filter(p => p.status === 'active').length, icon: <NodeIndexOutlined />, color: '#1677ff' },
+                { title: '本校学生投递', value: applications.length, icon: <SendOutlined />, color: '#52c41a' },
+                { title: '企业面试邀约', value: interviews.length, icon: <TeamOutlined />, color: '#fa8c16' },
+                { title: '成功匹配数', value: applications.filter(a => a.status === 'approved').length, icon: <CheckCircleOutlined />, color: '#722ed1' },
+              ].map((s, i) => (
+                <Col xs={24} sm={12} lg={6} key={i}>
+                  <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
+                    <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
+                    <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
+                  </Card>
+                </Col>
+              )))}
+            </Row>
+            <h4 style={{ marginBottom: 12 }}>热门岗位需求排行</h4>
+            <Table dataSource={positions.filter(p => p.status === 'active').map(p => ({ ...p, appCount: applications.filter(a => a.positionId === p.id).length })).sort((a, b) => b.appCount - a.appCount)} columns={[
+              { title: '排名', key: 'rank', width: 60, render: (_, __, i) => <Tag color={i === 0 ? 'red' : i === 1 ? 'orange' : i === 2 ? 'blue' : 'default'}>{i + 1}</Tag> },
+              { title: '岗位名称', dataIndex: 'title', key: 'title' },
+              { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+              { title: '薪资', dataIndex: 'salary', key: 'salary' },
+              { title: '投递数', dataIndex: 'appCount', key: 'appCount' },
+            ]} rowKey="id" pagination={false} />
+            <div style={{ marginTop: 16, padding: 12, background: '#f0f5ff', borderRadius: 8, fontSize: 13, color: '#1677ff' }}>
+              <strong>AI 分析：</strong>当前本校学生最热门的岗位方向为计算机/软件方向，人工智能相关岗位需求增长迅速，建议学校增加 AI 实训课程开设比例。
+            </div>
+          </div>
+        )}
+        {(role === 'council' || role === 'park') && (
+          <div>
+            <h4 style={{ marginBottom: 16 }}>人才供需智能分析</h4>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+              {[{ title: '平台总岗位', value: positions.length, icon: <NodeIndexOutlined />, color: '#1677ff' },
+                { title: '招聘中岗位', value: positions.filter(p => p.status === 'active').length, icon: <SendOutlined />, color: '#52c41a' },
+                { title: '累计投递', value: applications.length, icon: <TeamOutlined />, color: '#fa8c16' },
+                { title: '成功匹配', value: applications.filter(a => a.status === 'approved').length, icon: <CheckCircleOutlined />, color: '#722ed1' },
+                { title: '面试邀约', value: interviews.length, icon: <StarOutlined />, color: '#eb2f96' },
+                { title: '教师推荐', value: recommendations.length, icon: <TrophyOutlined />, color: '#13c2c2' },
+              ].map((s, i) => (
+                <Col xs={24} sm={12} lg={8} xl={4} key={i}>
+                  <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
+                    <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
+                    <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
+                  </Card>
+                </Col>
+              )))}
+            </Row>
+            <h4 style={{ marginBottom: 12 }}>人才供需热力图 — 按技术方向</h4>
+            <Table dataSource={[
+              { field: 'AI/机器学习', positions: 3, candidates: 2, ratio: '67%' },
+              { field: '嵌入式/IoT', positions: 2, candidates: 1, ratio: '50%' },
+              { field: '自动驾驶', positions: 1, candidates: 1, ratio: '100%' },
+              { field: '云计算/后端', positions: 2, candidates: 1, ratio: '50%' },
+              { field: '前端/移动端', positions: 1, candidates: 0, ratio: '0%' },
+            ]} columns={[
+              { title: '技术方向', dataIndex: 'field', key: 'field', render: (t) => <Tag color="purple">{t}</Tag> },
+              { title: '岗位需求', dataIndex: 'positions', key: 'positions' },
+              { title: '候选人数', dataIndex: 'candidates', key: 'candidates' },
+              { title: '匹配率', dataIndex: 'ratio', key: 'ratio', render: (v) => <Progress percent={parseInt(v)} size="small" strokeColor={parseInt(v) >= 50 ? '#52c41a' : '#ff4d4f'} /> },
+              { title: '状态', key: 'status', render: (_, r) => parseInt(r.ratio) >= 80 ? <Tag color="green">供不应求</Tag> : parseInt(r.ratio) >= 40 ? <Tag color="orange">基本平衡</Tag> : <Tag color="red">缺口较大</Tag> },
+            ]} rowKey="field" pagination={false} />
+            <div style={{ marginTop: 16, padding: 12, background: '#fff7e6', borderRadius: 8, fontSize: 13, color: '#666' }}>
+              <strong>AI 建议：</strong>AI/机器学习与嵌入式方向人才供需缺口明显，建议加大产教融合培养力度，鼓励相关专业院校与企业对接开展定向培养项目。
+            </div>
           </div>
         )}
       </div>
