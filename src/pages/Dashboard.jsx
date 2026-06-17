@@ -64,9 +64,11 @@ const mockStudentResume = {
 }
 
 const mockStudentProjects = [
-  { id: 1, name: '智能仓储管理系统开发', teacher: '张教授', enterprise: '华为', status: 'in_progress', progress: 65, tags: ['仓储', 'RFID'], assignedStudents: [1, 2, 3, 7] },
-  { id: 2, name: 'AI质检模型训练', teacher: '李教授', enterprise: '腾讯', status: 'in_progress', progress: 40, tags: ['AI', 'CV'], assignedStudents: [1, 5, 7] },
-  { id: 5, name: '学生成绩分析平台', teacher: '张教授', enterprise: '腾讯', status: 'completed', progress: 100, tags: ['大数据'], assignedStudents: [1, 2, 7] },
+  { id: 1, name: '智能仓储管理系统开发', teacher: '张教授', enterprise: '华为', status: 'in_progress', progress: 65, tags: ['仓储', 'RFID'], assignedStudents: [1, 2, 3, 7], description: '开发一套基于RFID和AGV的智能仓储管理系统，包含Web端和移动端' },
+  { id: 2, name: 'AI质检模型训练', teacher: '李教授', enterprise: '腾讯', status: 'in_progress', progress: 40, tags: ['AI', 'CV'], assignedStudents: [1, 5, 7], description: '基于深度学习的工业质检模型训练和部署，目标检测准确率99%以上' },
+  { id: 5, name: '学生成绩分析平台', teacher: '张教授', enterprise: '腾讯', status: 'completed', progress: 100, tags: ['大数据'], assignedStudents: [1, 2, 7], description: '在校学生学业成绩分析平台，支持多维度数据可视化和成绩预警' },
+  { id: 6, name: '5G基站天线优化设计', teacher: '陈教授', enterprise: '大疆', status: 'in_progress', progress: 25, tags: ['5G', '天线', '通信'], assignedStudents: [1, 6, 7], description: '5G基站天线阵列的优化设计，提升信号覆盖范围和抗干扰能力' },
+  { id: 7, name: '自动驾驶感知算法优化', teacher: '黄老师', enterprise: '广州小鹏汽车', status: 'in_progress', progress: 50, tags: ['自动驾驶', 'AI', '传感器'], assignedStudents: [1, 3, 4], description: '基于多传感器融合的自动驾驶环境感知算法优化，提升雨天和夜间检测精度' },
 ]
 
 // ─── Simple SVG Radar Chart ────────────────────────────────────────────────
