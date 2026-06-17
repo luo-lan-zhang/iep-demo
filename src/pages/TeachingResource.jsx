@@ -191,11 +191,11 @@ export default function TeachingResource() {
 
     items.push({ key: 'library', label: '教学项目库', children: <ProjectLibrary /> })
 
-    if (hasPermission('teaching.upload')) {
+    if (hasPermission('teaching.upload') && role !== 'council') {
       items.push({ key: 'upload', label: '上传教学文件', children: <UploadSection /> })
     }
 
-    if (hasPermission('teaching.review')) {
+    if (hasPermission('teaching.review') && role !== 'council') {
       items.push({ key: 'review', label: '教学评审', children: <ReviewSection /> })
     }
 
