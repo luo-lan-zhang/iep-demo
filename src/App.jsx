@@ -24,6 +24,7 @@ import TeacherManagement from './pages/TeacherManagement'
 import StudentManagement from './pages/StudentManagement'
 import PlatformManagement from './pages/PlatformManagement'
 import SchoolManagement from './pages/SchoolManagement'
+import SchoolPermissionManagement from './pages/SchoolPermissionManagement'
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
@@ -58,6 +59,7 @@ function AppRoutes() {
         <Route path="students" element={<StudentManagement />} />
         <Route path="platform" element={<PlatformManagement />} />
         <Route path="schools" element={<SchoolManagement />} />
+        <Route path="school-permissions" element={<SchoolPermissionManagement />} />
       </Route>
       <Route path="/" element={user ? <Navigate to="/admin/dashboard" replace /> : <LandingPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />

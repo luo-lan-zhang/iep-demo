@@ -37,6 +37,7 @@ const ALL_MENU_ITEMS = [
   { key: '/admin/students',   icon: <TeamOutlined />,            label: '学生管理' },
   { key: '/admin/platform',   icon: <ExperimentOutlined />,      label: '平台管理' },
   { key: '/admin/schools',    icon: <ApartmentOutlined />,             label: '院校管理' },
+  { key: '/admin/school-permissions', icon: <SafetyCertificateOutlined />, label: '权限管理' },
 ]
 
 const ROLE_MENUS = {
@@ -44,7 +45,7 @@ const ROLE_MENUS = {
   park:       ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/industry-report', '/admin/projects', '/admin/resources', '/admin/services', '/admin/system', '/admin/news', '/admin/policies', '/admin/notices', '/admin/enterprises'].includes(m.key)),
   enterprise: ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/points', '/admin/industry-report', '/admin/news', '/admin/policies', '/admin/notices', '/admin/mentors'].includes(m.key)),
   mentor:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent'].includes(m.key)),
-  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report', '/admin/talent-report', '/admin/news', '/admin/policies', '/admin/notices', '/admin/teachers', '/admin/students', '/admin/platform'].includes(m.key)),
+  school:     ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/resources', '/admin/services', '/admin/teaching', '/admin/industry-report', '/admin/talent-report', '/admin/news', '/admin/policies', '/admin/notices', '/admin/teachers', '/admin/students', '/admin/platform', '/admin/school-permissions'].includes(m.key)),
   teacher:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/projects', '/admin/talent', '/admin/achievements', '/admin/services', '/admin/teaching'].includes(m.key)),
   student:    ALL_MENU_ITEMS.filter(m => ['/admin/dashboard', '/admin/talent'].includes(m.key)),
 }
@@ -69,7 +70,8 @@ const pageTitles = {
   '/admin/teachers':   '教师管理',
   '/admin/students':   '学生管理',
   '/admin/platform':   '平台管理',
-  '/admin/schools':    '院校管理',
+  '/admin/schools':              '院校管理',
+  '/admin/school-permissions':   '权限管理',
 }
 
 export default function AdminLayout() {
