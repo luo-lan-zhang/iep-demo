@@ -8,7 +8,7 @@ import {
   DeploymentUnitOutlined, FundOutlined, GiftOutlined,
   ExperimentOutlined, ThunderboltOutlined,
   FileTextOutlined, BellOutlined, SafetyCertificateOutlined,
-  UserSwitchOutlined, TeamOutlined
+  UserSwitchOutlined, TeamOutlined, ApartmentOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 import './AdminLayout.css'
@@ -36,6 +36,7 @@ const ALL_MENU_ITEMS = [
   { key: '/admin/teachers',   icon: <UserSwitchOutlined />,      label: '教师管理' },
   { key: '/admin/students',   icon: <TeamOutlined />,            label: '学生管理' },
   { key: '/admin/platform',   icon: <ExperimentOutlined />,      label: '平台管理' },
+  { key: '/admin/schools',    icon: <ApartmentOutlined />,             label: '院校管理' },
 ]
 
 const ROLE_MENUS = {
@@ -68,6 +69,7 @@ const pageTitles = {
   '/admin/teachers':   '教师管理',
   '/admin/students':   '学生管理',
   '/admin/platform':   '平台管理',
+  '/admin/schools':    '院校管理',
 }
 
 export default function AdminLayout() {
