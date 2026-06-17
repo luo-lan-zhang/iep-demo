@@ -309,19 +309,19 @@ export default function TalentMatching() {
     { title: '操作', key: 'action', render: (_, r) => <Button size="small" icon={<EyeOutlined />} onClick={() => { setViewApp(r); setViewAppOpen(true) }}>查看</Button> },
   ]
 
-  // 我的投递列（企业）= 企业看谁投了+审核
+  // 我的投递列（企业）= 企业看谁投了+审核+面试
   const entAppCols = [
     { title: '学生姓名', dataIndex: 'studentName', key: 'studentName' },
     { title: '专业', dataIndex: 'major', key: 'major' },
     { title: '匹配度', dataIndex: 'matchScore', key: 'matchScore', render: (v) => <Progress percent={v} size="small" format={() => `${v}%`} strokeColor={v >= 90 ? '#52c41a' : v >= 80 ? '#1677ff' : '#faad14'} /> },
     { title: '投递日期', dataIndex: 'applyDate', key: 'applyDate' },
-    { title: '投递状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
-    { title: '面试状态', key: 'inviteStatus', render: (_, r) => {
-      const hasInvite = interviews.some(ri => ri.studentId === r.studentId && ri.positionId === r.positionId)
-      if (!hasInvite) return <Tag color="default">未发面试</Tag>
-      const inv = interviews.find(ri => ri.studentId === r.studentId && ri.positionId === r.positionId)
-      const st = { pending: { text: '等待确认', color: 'orange' }, accepted: { text: '已接受', color: 'green' }, confirmed: { text: '已确认', color: 'purple' }, rejected: { text: '已拒绝', color: 'red' } }
-      return <Tag color={st[inv.status]?.color}>{st[inv.status]?.text}</Tag>
+    { title: '状态', key: 'status', render: (_, r) => {
+      const inv = interviews.find(i => i.studentId === r.studentId && i.positionId === r.positionId)
+      if (inv) {
+        const ist = { pending: { text: '等待确认', color: 'orange' }, accepted: { text: '已接受面试', color: 'green' }, confirmed: { text: '已确认面试', color: 'purple' }, rejected: { text: '已拒绝面试', color: 'red' } }
+        return <Tag color={ist[inv.status]?.color}>{ist[inv.status]?.text}</Tag>
+      }
+      return <Tag color={statusMap[r.status]?.color}>{statusMap[r.status]?.text}</Tag>
     }},
     { title: '操作', key: 'action', render: (_, r) => {
       if (r.status === 'pending') {
