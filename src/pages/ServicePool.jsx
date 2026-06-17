@@ -247,6 +247,9 @@ export default function ServicePool() {
       if (hasPermission('quota.accept') && r.status === 'pending') {
         return <Button size="small" type="primary" onClick={() => { setAcceptQuota(r); setAcceptOpen(true) }}>承接培训</Button>
       }
+      if (role === 'park') {
+        return <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
+      }
       return '-'
     }},
   ]
