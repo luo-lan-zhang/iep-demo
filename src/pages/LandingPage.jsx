@@ -113,43 +113,36 @@ const getCityPieOption = () => ({
   }],
 })
 
-// ─── Line colors for China map ───────────────────────────────────────────────
-const MAP_LINES = [
-  { from: '深圳', to: '北京', coords: [[114.07, 22.62], [116.40, 39.90]] },
-  { from: '深圳', to: '上海', coords: [[114.07, 22.62], [121.47, 31.23]] },
-  { from: '广州', to: '武汉', coords: [[113.26, 23.13], [114.30, 30.60]] },
-  { from: '深圳', to: '成都', coords: [[114.07, 22.62], [104.06, 30.67]] },
-  { from: '广州', to: '杭州', coords: [[113.26, 23.13], [120.15, 30.28]] },
-  { from: '深圳', to: '重庆', coords: [[114.07, 22.62], [106.55, 29.57]] },
-]
-
-const SCATTER_CITIES = [
-  { name: '深圳', value: [114.07, 22.62, 120] },
-  { name: '广州', value: [113.26, 23.13, 90] },
-  { name: '北京', value: [116.40, 39.90, 80] },
-  { name: '上海', value: [121.47, 31.23, 70] },
-  { name: '武汉', value: [114.30, 30.60, 50] },
-  { name: '成都', value: [104.06, 30.67, 45] },
-  { name: '杭州', value: [120.15, 30.28, 40] },
-  { name: '重庆', value: [106.55, 29.57, 55] },
-  { name: '东莞', value: [113.75, 23.05, 35] },
-  { name: '佛山', value: [113.12, 23.02, 30] },
-]
-
-const FLOW_POINTS = [
-  { coords: [[114.07, 22.62], [116.40, 39.90]] },
-  { coords: [[114.07, 22.62], [121.47, 31.23]] },
-  { coords: [[113.26, 23.13], [114.30, 30.60]] },
-  { coords: [[114.07, 22.62], [104.06, 30.67]] },
-  { coords: [[113.26, 23.13], [120.15, 30.28]] },
-]
+const getRadarOption = () => ({
+  title: { text: '产教融合能力评估', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: {},
+  radar: {
+    center: ['50%', '55%'],
+    radius: '65%',
+    indicator: [
+      { name: '协同育人', max: 100 },
+      { name: '标准制定', max: 100 },
+      { name: '资源整合', max: 100 },
+      { name: '人才培养', max: 100 },
+      { name: '科研转化', max: 100 },
+      { name: '就业服务', max: 100 },
+    ],
+    axisName: { color: '#8ba9cc', fontSize: 10 },
+    splitArea: { areaStyle: { color: ['rgba(0,212,255,0.02)', 'rgba(0,212,255,0.02)'] } },
+    splitLine: { lineStyle: { color: '#1a3350' } },
+    axisLine: { lineStyle: { color: '#1a3350' } },
+  },
+  series: [
+    { type: 'radar', data: [{ value: [88, 75, 82, 90, 68, 85], name: '2024', areaStyle: { color: 'rgba(0,212,255,0.15)' }, lineStyle: { color: '#00d4ff', width: 2 }, itemStyle: { color: '#00d4ff' }, symbol: 'circle', symbolSize: 4 }] },
+    { type: 'radar', data: [{ value: [72, 60, 65, 78, 52, 70], name: '2023', areaStyle: { color: 'rgba(22,119,255,0.1)' }, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 4 }] },
+  ],
+})
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function LandingPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [currentTime, setCurrentTime] = useState('')
-  const [mapRegistered, setMapRegistered] = useState(false)
 
   // Refs for charts
   const barRef = useRef(null)
@@ -158,32 +151,12 @@ export default function LandingPage() {
   const pieRef = useRef(null)
   const lineRef = useRef(null)
   const cityPieRef = useRef(null)
-  const mapRef = useRef(null)
+  const radarRef = useRef(null)
   const chartInstances = useRef([])
 
   const disposeCharts = useCallback(() => {
     chartInstances.current.forEach(c => { try { c.dispose() } catch {} })
     chartInstances.current = []
-  }, [])
-
-  // Load china map geojson
-  const [mapError, setMapError] = useState(false)
-  useEffect(() => {
-    let cancelled = false
-    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
-      })
-      .then(geo => {
-        if (cancelled) return
-        echarts.registerMap('china', geo)
-        setMapRegistered(true)
-      })
-      .catch(() => {
-        if (!cancelled) setMapError(true)
-      })
-    return () => { cancelled = true }
   }, [])
 
   // Clock
@@ -213,41 +186,9 @@ export default function LandingPage() {
     create(pieRef, getPieOption)
     create(lineRef, getLineOption)
     create(cityPieRef, getCityPieOption)
+    create(radarRef, getRadarOption)
     return disposeCharts
   }, [disposeCharts])
-
-  // Create map chart after geo is registered
-  useEffect(() => {
-    if (!mapRegistered || !mapRef.current) return
-    const inst = echarts.init(mapRef.current)
-    const FLOW_SERIES = FLOW_POINTS.map((fp, i) => ({
-      type: 'lines', coordinateSystem: 'geo', polyline: false,
-      data: [{ coords: fp.coords }],
-      lineStyle: { color: '#00e5ff', width: 1.5, opacity: 0.6, curveness: 0.2 },
-      effect: { show: true, period: 4 + i * 0.5, trailLength: 0.2, symbol: 'arrow', symbolSize: 6, color: '#fff' },
-      zlevel: i,
-    }))
-    inst.setOption({
-      tooltip: { trigger: 'item' },
-      geo: {
-        map: 'china', roam: false, zoom: 1.22, center: [108, 35],
-        itemStyle: { areaColor: '#0d2b52', borderColor: '#1a5080', borderWidth: 1 },
-        emphasis: { itemStyle: { areaColor: '#1a4478' }, label: { show: false } },
-      },
-      series: [
-        ...FLOW_SERIES,
-        {
-          type: 'effectScatter', coordinateSystem: 'geo',
-          data: SCATTER_CITIES.map(c => ({ name: c.name, value: c.value })),
-          symbolSize: v => Math.sqrt(v[2]) * 3,
-          showEffectOn: 'render', rippleEffect: { brushType: 'stroke', scale: 3, period: 4 },
-          itemStyle: { color: '#00e5ff' }, label: { show: true, position: 'right', formatter: '{b}', color: '#b8d4ff', fontSize: 10 },
-        },
-      ],
-    })
-    chartInstances.current.push(inst)
-    return () => { try { inst.dispose() } catch {} }
-  }, [mapRegistered])
 
   // Resize handler
   useEffect(() => {
@@ -344,23 +285,16 @@ export default function LandingPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', minHeight: 260, position: 'relative', overflow: 'hidden' }}>
-                {mapRegistered ? (
-                  <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-                ) : mapError ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 260, color: '#8ba9cc' }}>
-                    <div style={{ fontSize: 48, marginBottom: 12 }}>🗺️</div>
-                    <div style={{ fontSize: 13, marginBottom: 8 }}>中国产教融合地图数据暂不可用</div>
-                    <div style={{ fontSize: 11, color: '#4a7aaa' }}>请使用兼容浏览器或稍后再试</div>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 260, color: '#4a7aaa', fontSize: 13 }}>加载地图数据中...</div>
-                )}
-              </div>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', padding: 10, minHeight: 260 }} ref={radarRef} />
               <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 20, textAlign: 'center' }}>
                 <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>覆盖省市</div>
                 <div style={{ fontSize: 36, fontWeight: 700, color: '#00e5ff', fontFamily: 'DIN, monospace' }}>31</div>
                 <div style={{ fontSize: 11, color: '#8ba9cc', marginTop: 4 }}>个省级行政区</div>
+              </div>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 20, textAlign: 'center' }}>
+                <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>合作企业</div>
+                <div style={{ fontSize: 36, fontWeight: 700, color: '#ff9800', fontFamily: 'DIN, monospace' }}>156</div>
+                <div style={{ fontSize: 11, color: '#8ba9cc', marginTop: 4 }}>家产教融合型企业</div>
               </div>
             </div>
 
