@@ -23,7 +23,11 @@ const initialApplications = [
   { id: 5, positionId: 2, studentId: 1, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-08', matchScore: 85 },
   { id: 6, positionId: 4, studentId: 2, studentName: '李四', major: '软件工程', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'approved', applyDate: '2024-07-03', matchScore: 82 },
   { id: 7, positionId: 3, studentId: 5, studentName: '孙七', major: '物联网工程', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', applyDate: '2024-07-10', matchScore: 91 },
-  { id: 8, positionId: 1, studentId: 7, studentName: '吴九', major: '自动化', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'rejected', applyDate: '2024-07-06', matchScore: 68 },
+  { id: 8, positionId: 1, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'rejected', applyDate: '2024-07-06', matchScore: 68 },
+  { id: 9, positionId: 2, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-15', matchScore: 87 },
+  { id: 10, positionId: 3, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', applyDate: '2024-07-18', matchScore: 83 },
+  { id: 11, positionId: 4, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'approved', applyDate: '2024-07-12', matchScore: 90 },
+  { id: 12, positionId: 5, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: '产品经理', status: 'rejected', applyDate: '2024-06-25', matchScore: 72 },
 ]
 
 const initialInterviews = [
@@ -32,7 +36,9 @@ const initialInterviews = [
   { id: 3, positionId: 4, studentId: 3, studentName: '王五', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'rejected', interviewDate: '2024-08-10 15:00', inviteDate: '2024-07-25', source: 'enterprise' },
   { id: 4, positionId: 1, studentId: 3, studentName: '王五', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'accepted', interviewDate: '2024-08-08 09:30', inviteDate: '2024-07-24', source: 'enterprise' },
   { id: 5, positionId: 3, studentId: 1, studentName: '张三', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', interviewDate: '2024-08-12 15:00', inviteDate: '2024-07-26', source: 'teacher' },
-  { id: 6, positionId: 2, studentId: 7, studentName: '吴九', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'confirmed', interviewDate: '2024-08-15 10:00', inviteDate: '2024-07-28', source: 'enterprise' },
+  { id: 6, positionId: 2, studentId: 7, studentName: '张三', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'confirmed', interviewDate: '2024-08-15 10:00', inviteDate: '2024-07-28', source: 'enterprise' },
+  { id: 7, positionId: 1, studentId: 7, studentName: '张三', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'pending', interviewDate: '2024-08-18 14:00', inviteDate: '2024-07-30', source: 'enterprise' },
+  { id: 8, positionId: 3, studentId: 7, studentName: '张三', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'accepted', interviewDate: '2024-08-20 10:00', inviteDate: '2024-08-01', source: 'teacher' },
 ]
 
 const initialRecommendations = [
