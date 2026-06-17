@@ -32,14 +32,28 @@ const mockAuditLog = [
   { id: 4, operator: '理事会管理员', action: '积分调整', target: '深圳大学 调整余额', time: '2024-05-15 11:00:00' },
 ]
 
+const defaultRules = [
+  { id: 1, name: 'GPU服务器租赁', unit: '台/天', points: 500, scope: '计算设备', status: 'active' },
+  { id: 2, name: '3D打印机使用', unit: '台/天', points: 300, scope: '制造设备', status: 'active' },
+  { id: 3, name: '示波器套装租赁', unit: '套/天', points: 100, scope: '测试仪器', status: 'active' },
+  { id: 4, name: '工业机器人实训平台', unit: '台/天', points: 400, scope: '教学设备', status: 'active' },
+  { id: 5, name: '高性能计算工作站', unit: '台/天', points: 350, scope: '计算设备', status: 'active' },
+]
+
 export default function PointsManagement() {
   const { user, hasPermission } = useAuth()
   const [balance, setBalance] = useState(mockPointsBalance)
   const [adjustments, setAdjustments] = useState(mockAdjustments)
   const [auditLog] = useState(mockAuditLog)
+  const [rules, setRules] = useState(defaultRules)
 
   const [applyOpen, setApplyOpen] = useState(false)
   const [applyForm] = Form.useForm()
+  const [ruleOpen, setRuleOpen] = useState(false)
+  const [ruleForm] = Form.useForm()
+  const [editRule, setEditRule] = useState(null)
+  const [fileOpen, setFileOpen] = useState(false)
+  const [fileText, setFileText] = useState('')
 
   const role = user?.role || 'admin'
 
@@ -239,7 +253,78 @@ export default function PointsManagement() {
       })
     }
 
-    // Tab 3: Audit management
+    // Tab 3: Batch file adjustment (council)
+    if (hasPermission('points.audit')) {
+      items.push({
+        key: 'batch',
+        label: <span><UploadOutlined /> 文件调整</span>,
+        children: (
+          <div>
+            <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
+              <Col span={8}><Card size="small"><Statistic title="系统总积分" value={totalPoints.toLocaleString()} prefix={<FundOutlined />} valueStyle={{ color: '#1677ff' }} /></Card></Col>
+              <Col span={8}><Card size="small"><Statistic title="待处理申请" value={pendingAdjustments.length} prefix={<HistoryOutlined />} valueStyle={{ color: '#faad14' }} /></Card></Col>
+              <Col span={8}><Card size="small"><Statistic title="已完成" value={adjustments.filter(a => a.status !== 'pending').length} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#52c41a' }} /></Card></Col>
+            </Row>
+            <Card title="上传调整文件" size="small" style={{ marginBottom: 24, border: '1px solid #e8e8e8' }}>
+              <div style={{ marginBottom: 12 }}>
+                <Button icon={<UploadOutlined />} onClick={() => document.getElementById('file-input').click()} style={{ borderRadius: 6 }}>选择文件</Button>
+                <input id="file-input" type="file" accept=".txt,.csv" style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    const reader = new FileReader()
+                    reader.onload = (ev) => {
+                      const text = ev.target?.result
+                      if (typeof text === 'string') { setFileText(text); message.info('文件已读取，可查看并编辑调整条目') }
+                    }
+                    reader.readAsText(file)
+                  }}
+                />
+                <span style={{ marginLeft: 12, color: '#666', fontSize: 13 }}>支持 .txt .csv 格式</span>
+              </div>
+              <div style={{ color: '#999', fontSize: 12, marginBottom: 8, background: '#fafafa', padding: '8px 12px', borderRadius: 6 }}>
+                文件格式：每行一条记录，格式：<code style={{ background: '#e6f4ff', padding: '2px 6px', borderRadius: 3 }}>对象名称,增加/减少,数量,理由</code>
+              </div>
+              <Input.TextArea rows={6} value={fileText} onChange={e => setFileText(e.target.value)}
+                placeholder="请在此处粘贴或输入积分调整数据"
+                style={{ marginBottom: 12, borderRadius: 6 }}
+              />
+              <Button type="primary" onClick={() => {
+                const lines = fileText.split('\n').filter(l => l.trim())
+                const parsed = []
+                for (const line of lines) {
+                  const parts = line.split(',').map(p => p.trim())
+                  if (parts.length >= 3) {
+                    const target = balance.find(b => b.name.includes(parts[0]) || parts[0].includes(b.name))
+                    if (target) {
+                      const isIncrease = parts[1].includes('增加') || parts[1] === 'increase'
+                      const amount = parseInt(parts[2]) || 0
+                      if (amount > 0) parsed.push({ targetName: target.name, type: isIncrease ? 'increase' : 'decrease', amount, reason: parts[3] || '理事会直接调整' })
+                    }
+                  }
+                }
+                if (parsed.length === 0) { message.warning('未能识别出有效的调整条目，请检查格式'); return }
+                message.success(`成功识别 ${parsed.length} 条调整记录`)
+                // Apply adjustments
+                let newBalance = [...balance]
+                parsed.forEach(p => {
+                  const idx = newBalance.findIndex(b => b.name === p.targetName)
+                  if (idx >= 0) {
+                    const delta = p.type === 'increase' ? p.amount : -p.amount
+                    newBalance[idx] = { ...newBalance[idx], currentPoints: newBalance[idx].currentPoints + delta, totalEarned: p.type === 'increase' ? newBalance[idx].totalEarned + p.amount : newBalance[idx].totalEarned }
+                  }
+                })
+                setBalance(newBalance)
+                message.success(`成功执行 ${parsed.length} 条积分调整！`)
+                setFileText('')
+              }} style={{ borderRadius: 6 }}>执行调整</Button>
+            </Card>
+          </div>
+        ),
+      })
+    }
+
+    // Tab 4: Audit management
     if (hasPermission('points.audit')) {
       items.push({
         key: 'audit',
@@ -261,8 +346,36 @@ export default function PointsManagement() {
       })
     }
 
+    // Tab 5: Points rules config (council)
+    if (hasPermission('points.audit')) {
+      items.push({
+        key: 'rules',
+        label: <span><FundOutlined /> 积分规则</span>,
+        children: (
+          <div>
+            <div style={{ marginBottom: 16 }}>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditRule(null); ruleForm.resetFields(); setRuleOpen(true) }}>新增规则</Button>
+            </div>
+            <Table dataSource={rules} columns={[
+              { title: '规则名称', dataIndex: 'name', key: 'name' },
+              { title: '计价单位', dataIndex: 'unit', key: 'unit' },
+              { title: '积分', dataIndex: 'points', key: 'points', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
+              { title: '适用范围', dataIndex: 'scope', key: 'scope', render: (t) => <Tag>{t}</Tag> },
+              { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={s === 'active' ? 'green' : 'default'}>{s === 'active' ? '启用' : '停用'}</Tag> },
+              { title: '操作', key: 'action', render: (_, r) => (
+                <span style={{ display: 'inline-flex', gap: 4 }}>
+                  <Button size="small" onClick={() => { setEditRule(r); ruleForm.setFieldsValue(r); setRuleOpen(true) }}>编辑</Button>
+                  <Button size="small" danger onClick={() => { setRules(rules.map(x => x.id === r.id ? { ...x, status: x.status === 'active' ? 'inactive' : 'active' } : x)); message.success(r.status === 'active' ? '已停用' : '已启用') }}>{r.status === 'active' ? '停用' : '启用'}</Button>
+                </span>
+              )},
+            ]} rowKey="id" pagination={false} />
+          </div>
+        ),
+      })
+    }
+
     return items
-  }, [balance, adjustments, pendingAdjustments, auditLog, totalPoints, role, hasPermission])
+  }, [balance, adjustments, pendingAdjustments, auditLog, rules, totalPoints, role, hasPermission])
 
   return (
     <Card title="积分管理">
@@ -297,6 +410,31 @@ export default function PointsManagement() {
               <p>点击或拖拽证明材料</p>
               <p style={{ color: '#999', fontSize: 12 }}>支持PDF、图片、Word等格式</p>
             </Upload.Dragger>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Rule Config Modal */}
+      <Modal title={editRule ? '编辑积分规则' : '新增积分规则'} open={ruleOpen} onOk={() => {
+        ruleForm.validateFields().then(v => {
+          if (editRule) {
+            setRules(rules.map(r => r.id === editRule.id ? { ...r, ...v } : r))
+            message.success('规则已更新')
+          } else {
+            setRules([...rules, { id: rules.length + 1, ...v, status: 'active' }])
+            message.success('规则已添加')
+          }
+          setRuleOpen(false); ruleForm.resetFields(); setEditRule(null)
+        })
+      }} onCancel={() => { setRuleOpen(false); ruleForm.resetFields(); setEditRule(null) }} width={500}>
+        <Form form={ruleForm} layout="vertical">
+          <Form.Item name="name" label="规则名称" rules={[{ required: true }]}><Input placeholder="例如: GPU服务器租赁" /></Form.Item>
+          <Form.Item name="unit" label="计价单位" rules={[{ required: true }]}><Input placeholder="例如: 台/天" /></Form.Item>
+          <Form.Item name="points" label="积分" rules={[{ required: true }]}>
+            <InputNumber min={1} style={{ width: '100%' }} placeholder="例如: 500" />
+          </Form.Item>
+          <Form.Item name="scope" label="适用范围" rules={[{ required: true }]}>
+            <Select options={[{ value: '计算设备', label: '计算设备' }, { value: '制造设备', label: '制造设备' }, { value: '测试仪器', label: '测试仪器' }, { value: '教学设备', label: '教学设备' }]} />
           </Form.Item>
         </Form>
       </Modal>
