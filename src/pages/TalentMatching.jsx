@@ -244,7 +244,7 @@ export default function TalentMatching() {
       if (r.status !== 'active') return <span style={{ color: '#999' }}>-</span>
       if (role === 'student') return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button>
       if (role === 'teacher') return <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setRecommendPosition(r); setRecommendOpen(true) }}>推荐学生</Button>
-      if (role === 'enterprise') return <Button size="small" onClick={() => { setDetailPosition(r); setDetailOpen(true) }}>查看</Button>
+      if (role === 'enterprise') return <a onClick={() => { setDetailPosition(r); setDetailOpen(true) }}>查看</a>
       return <span style={{ color: '#999' }}>-</span>
     }},
   ]
