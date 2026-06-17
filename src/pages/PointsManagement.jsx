@@ -236,8 +236,8 @@ export default function PointsManagement() {
       ),
     })
 
-    // Tab 2: Apply for adjustment
-    if (hasPermission('points.apply')) {
+    // Tab 2: Apply for adjustment (not for council)
+    if (hasPermission('points.apply') && role !== 'council') {
       items.push({
         key: 'apply',
         label: '积分调整申请',
