@@ -17,6 +17,20 @@ import { mockStudents } from '../mock/students'
 import { mockResources } from '../mock/resources'
 import { mockTrainingQuotas } from '../mock/training'
 
+// ─── Project mock for school dashboard ──────────────────────────────────────
+const schoolProjectsData = [
+  { id: 1, name: '智能仓储管理系统开发', enterpriseId: 1, enterpriseName: '华为', budget: 500000, schoolId: 1, status: 'in_progress', progress: 65 },
+  { id: 2, name: 'AI质检模型训练', enterpriseId: 2, enterpriseName: '腾讯', budget: 300000, schoolId: 1, status: 'in_progress', progress: 40 },
+  { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '华为', budget: 800000, schoolId: null, status: 'pending', progress: 0 },
+  { id: 4, name: '工业机器人控制算法', enterpriseId: 5, enterpriseName: '大疆', budget: 600000, schoolId: 1, status: 'in_progress', progress: 40 },
+  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '腾讯', budget: 200000, schoolId: 1, status: 'completed', progress: 100 },
+]
+const projectStatusMap = {
+  pending: { text: '待审核', color: 'orange' },
+  in_progress: { text: '进行中', color: 'processing' },
+  completed: { text: '已结项', color: 'green' },
+}
+
 // ─── Five-dimension config ──────────────────────────────────────────────────
 const FIVE_DIMS = [
   { key: 'profession',  label: '职业胜任力', color: '#1677ff' },
@@ -302,7 +316,7 @@ export default function Dashboard() {
   if (isSchool) {
     const schoolTeachers = mockTeachers.filter(t => t.schoolId === schoolId)
     const schoolStudents = mockStudents.filter(s => s.schoolId === schoolId)
-    const schoolProjects = initialProjects.filter(p => p.schoolId === schoolId || !p.schoolId)
+    const schoolProjects = schoolProjectsData.filter(p => p.schoolId === schoolId || !p.schoolId)
     return (
       <div>
         <div style={{ marginBottom: 16 }}>
@@ -330,7 +344,7 @@ export default function Dashboard() {
                 { title: '项目名称', dataIndex: 'name', key: 'name' },
                 { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
                 { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
-                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={projectStatusMap[s]?.color}>{projectStatusMap[s]?.text}</Tag> },
               ]} pagination={false} size="small" rowKey="id" />
             </Card>
           </Col>
