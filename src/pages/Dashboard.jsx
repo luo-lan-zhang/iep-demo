@@ -525,7 +525,7 @@ export default function Dashboard() {
     { title: '共享资源', value: mockResources.length, icon: <ExperimentOutlined />, color: '#eb2f96', bg: '#fff0f6' },
   ]
 
-  const sm = { pending: { text: '待审核', color: 'orange' }, recruiting: { text: '招募中', color: 'blue' }, in_progress: { text: '进行中', color: 'processing' }, completed: { text: '已结项', color: 'green' } }
+  const sm = { pending: { text: '待教师承接', color: 'orange' }, teacher_accepted: { text: '待企业确认', color: 'purple' }, in_progress: { text: '进行中', color: 'processing' }, pending_complete: { text: '待确认结项', color: 'geekblue' }, completed: { text: '已结项', color: 'green' } }
 
   const latestResources = mockResources.map(r => ({ key: r.id, name: r.name, school: r.publisher, status: r.status, statusText: r.status === 'idle' ? '空闲' : '已租借', dailyPoints: r.dailyPoints }))
 

@@ -37,9 +37,11 @@ const initialTasks = [
 ]
 
 const statusMap = {
-  pending:          { text: '待教师承接',   color: 'orange' },
-  in_progress:      { text: '进行中',       color: 'processing' },
-  completed:        { text: '已结项',       color: 'green' },
+  pending:           { text: '待教师承接',   color: 'orange' },
+  teacher_accepted:  { text: '待企业确认',   color: 'purple' },
+  in_progress:       { text: '进行中',       color: 'processing' },
+  pending_complete:  { text: '待确认结项',   color: 'geekblue' },
+  completed:         { text: '已结项',       color: 'green' },
 }
 
 const taskStatusMap = {
@@ -150,9 +152,23 @@ export default function ProjectCooperation() {
 
   const handleTeacherAccept = (projectId) => {
     setProjects(projects.map(p =>
-      p.id === projectId ? { ...p, status: 'in_progress', teacherId, teacherName: user?.name, schoolId: schoolId || 1, progress: 5 } : p
+      p.id === projectId ? { ...p, status: 'teacher_accepted', teacherId, teacherName: user?.name, schoolId: schoolId || 1, progress: 5 } : p
     ))
-    message.success('已承接该项目，可分配任务给学生')
+    message.success('已承接该项目，等待企业确认！')
+  }
+
+  const handleEnterpriseConfirm = (projectId) => {
+    setProjects(projects.map(p =>
+      p.id === projectId ? { ...p, status: 'in_progress' } : p
+    ))
+    message.success('已确认教师承接，项目进入执行阶段！')
+  }
+
+  const handleEnterpriseCompleteConfirm = (projectId) => {
+    setProjects(projects.map(p =>
+      p.id === projectId ? { ...p, status: 'completed', progress: 100 } : p
+    ))
+    message.success('已确认项目结项！')
   }
 
   const handleStudentAccept = (projectId) => {
@@ -219,8 +235,12 @@ export default function ProjectCooperation() {
       const p = projects.find(pj => pj.id === evaluateTask.projectId)
       if (p && p.status === 'in_progress') {
         const newProgress = Math.min(100, Math.round((completed / total) * 100))
-        setProjects(projects.map(pj => pj.id === evaluateTask.projectId ? { ...pj, progress: newProgress } : pj))
-        if (newProgress >= 100) message.success('🎉 项目所有任务已完成！')
+        setProjects(projects.map(pj => {
+          if (pj.id !== evaluateTask.projectId) return pj
+          if (newProgress >= 100) return { ...pj, progress: 100, status: 'pending_complete' }
+          return { ...pj, progress: newProgress }
+        }))
+        if (newProgress >= 100) message.success('🎉 项目所有任务已完成，等待企业确认结项！')
       }
     })
   }
@@ -237,6 +257,8 @@ export default function ProjectCooperation() {
       title: '操作', key: 'action', width: 250, render: (_, r) => {
         const acts = []
         if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
+        if (r.status === 'teacher_accepted' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认承接</Button>)
+        if (r.status === 'pending_complete' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="cc" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseCompleteConfirm(r.id)}>确认结项</Button>)
         if (r.status === 'in_progress' && r.teacherId === teacherId) {
           acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
           acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
@@ -399,7 +421,9 @@ export default function ProjectCooperation() {
               options={[
                 { value: 'all', label: '全部状态' },
                 { value: 'pending', label: '待教师承接' },
+                { value: 'teacher_accepted', label: '待企业确认' },
                 { value: 'in_progress', label: '进行中' },
+                { value: 'pending_complete', label: '待确认结项' },
                 { value: 'completed', label: '已结项' },
               ]}
             />
@@ -485,7 +509,7 @@ export default function ProjectCooperation() {
     }
 
     // 任务分配/管理
-    if (role !== 'mentor') items.push({
+    if (role !== 'mentor' && role !== 'enterprise') items.push({
       key: 'tasks', label: '任务分配', children: (
         <div>
           {role === 'teacher' && (
