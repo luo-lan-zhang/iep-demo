@@ -5,7 +5,8 @@ import {
   TeamOutlined, ExperimentOutlined, ProjectOutlined,
   NodeIndexOutlined, SafetyCertificateOutlined, BarChartOutlined,
   ArrowUpOutlined, ArrowDownOutlined, ShopOutlined, FundOutlined,
-  TrophyOutlined, BookOutlined, PieChartOutlined
+  TrophyOutlined, BookOutlined, PieChartOutlined,
+  StarOutlined, DeploymentUnitOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -394,6 +395,95 @@ export default function Dashboard() {
                 { title: '院系', dataIndex: 'department', key: 'department' },
                 { title: '邮箱', dataIndex: 'email', key: 'email', ellipsis: true },
               ]} pagination={false} size="small" rowKey="id" />
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    )
+  }
+
+  // ═══ Teacher Dashboard ═════════════════════════════════
+  if (role === 'teacher') {
+    const teacherId = user?.teacherId
+    const teacherName = user?.name || '教师'
+    const myProjects = schoolProjectsData.filter(p => p.teacherId === teacherId || p.status === 'pending')
+    const myCompleted = myProjects.filter(p => p.status === 'completed').length
+    const myInProgress = myProjects.filter(p => p.status === 'in_progress').length
+    const myPending = myProjects.filter(p => p.status === 'pending').length
+    const myTasks = [
+      { id: 1, projectName: '智能仓储管理系统开发', taskName: '后端API开发', student: '李四', status: 'submitted', deadline: '2024-09-30' },
+      { id: 2, projectName: 'AI质检模型训练', taskName: '数据集标注', student: '孙七', status: 'completed', deadline: '2024-08-30', score: 88 },
+      { id: 3, projectName: '智能仓储管理系统开发', taskName: '需求分析', student: '张三', status: 'completed', deadline: '2024-08-15', score: 92 },
+    ]
+    const pendingEv = myTasks.filter(t => t.status === 'submitted').length
+    const myRecs = [
+      { id: 1, student: '孙七', position: 'HarmonyOS开发工程师', enterprise: '华为', status: 'pending', date: '2024-07-10' },
+      { id: 2, student: '张三', position: 'AI算法工程师', enterprise: '腾讯', status: 'pending', date: '2024-07-12' },
+    ]
+    return (
+      <div>
+        <div style={{ marginBottom: 20 }}>
+          <h2 style={{ margin: 0 }}>{teacherName}</h2>
+          <span style={{ color: '#999', fontSize: 13 }}>教师工作台</span>
+        </div>
+        <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
+          {[
+            { title: '我的项目', value: myProjects.length, icon: <ProjectOutlined />, color: '#1677ff', bg: '#e6f4ff' },
+            { title: '进行中', value: myInProgress, icon: <PieChartOutlined />, color: '#13c2c2', bg: '#e6fffb' },
+            { title: '待审核项目', value: myPending, icon: <SafetyCertificateOutlined />, color: '#fa8c16', bg: '#fff7e6' },
+            { title: '已完成项目', value: myCompleted, icon: <TrophyOutlined />, color: '#389e0d', bg: '#f6ffed' },
+            { title: '待评价任务', value: pendingEv, icon: <StarOutlined />, color: '#eb2f96', bg: '#fff0f6' },
+            { title: '学生推荐', value: myRecs.length, icon: <TeamOutlined />, color: '#722ed1', bg: '#f9f0ff' },
+          ].map((s, i) => (
+            <Col xs={24} sm={12} lg={8} xl={4} key={i}>
+              <Card size="small" style={{ background: s.bg, border: 'none', borderRadius: 8 }}>
+                <Statistic title={s.title} value={s.value} prefix={s.icon} valueStyle={{ color: s.color }} />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={14}>
+            <Card title="项目一览" size="small" extra={<a onClick={() => navigate('/admin/projects')} style={{ fontSize: 12 }}>进入项目管理</a>}>
+              <Table dataSource={myProjects} columns={[
+                { title: '项目名称', dataIndex: 'name', key: 'name' },
+                { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '进度', key: 'progress', width: 120, render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={projectStatusMap[s]?.color}>{projectStatusMap[s]?.text}</Tag> },
+              ]} pagination={false} size="small" rowKey="id" />
+            </Card>
+          </Col>
+          <Col xs={24} lg={10}>
+            <Card title="待评审任务" size="small" extra={<a onClick={() => navigate('/admin/projects')} style={{ fontSize: 12 }}>去评审</a>}>
+              <Table dataSource={myTasks} columns={[
+                { title: '学生', dataIndex: 'student', key: 'student' },
+                { title: '任务', dataIndex: 'taskName', key: 'taskName', ellipsis: true },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={s === 'submitted' ? 'orange' : 'green'}>{s === 'submitted' ? '待评价' : '已完成'}</Tag> },
+                { title: '分数', dataIndex: 'score', key: 'score', render: (v) => v || '-' },
+              ]} pagination={false} size="small" rowKey="id" />
+            </Card>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+          <Col xs={24} lg={12}>
+            <Card title="学生推荐记录" size="small" extra={<a onClick={() => navigate('/admin/talent')} style={{ fontSize: 12 }}>去人才对接</a>}>
+              <Table dataSource={myRecs} columns={[
+                { title: '学生', dataIndex: 'student', key: 'student' },
+                { title: '岗位', dataIndex: 'position', key: 'position', ellipsis: true },
+                { title: '企业', dataIndex: 'enterprise', key: 'enterprise', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color="orange">待处理</Tag> },
+              ]} pagination={false} size="small" rowKey="id" />
+            </Card>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card title="快捷入口" size="small">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <Button icon={<ProjectOutlined />} onClick={() => navigate('/admin/projects')}>项目管理</Button>
+                <Button icon={<TrophyOutlined />} onClick={() => navigate('/admin/achievements')}>发布成果</Button>
+                <Button icon={<DeploymentUnitOutlined />} onClick={() => navigate('/admin/services')}>技术服务</Button>
+                <Button icon={<StarOutlined />} onClick={() => navigate('/admin/talent')}>推荐学生</Button>
+                <Button icon={<BookOutlined />} onClick={() => navigate('/admin/teaching')}>教学文件</Button>
+              </div>
             </Card>
           </Col>
         </Row>
