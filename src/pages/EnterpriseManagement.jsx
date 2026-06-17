@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Descriptions } from 'antd'
-import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockParks } from '../mock/parks'
 import { useAuth } from '../context/AuthContext'
@@ -18,6 +18,8 @@ export default function EnterpriseManagement() {
   const [form] = Form.useForm()
   const [auditOpen, setAuditOpen] = useState(false)
   const [auditItem, setAuditItem] = useState(null)
+  const [viewOpen, setViewOpen] = useState(false)
+  const [viewItem, setViewItem] = useState(null)
 
   const parkMap = Object.fromEntries(mockParks.map(p => [p.id, p.name]))
   const role = user?.role || 'admin'
@@ -59,10 +61,12 @@ export default function EnterpriseManagement() {
       <Tag color={statusMap[s]?.color}>{statusMap[s]?.text || s}</Tag>
     )},
     { title: '操作', key: 'action', render: (_, r) => {
+      const acts = []
       if (role === 'park' && r.status === 'pending') {
-        return <Button size="small" type="primary" onClick={() => { setAuditItem(r); setAuditOpen(true) }}>审核</Button>
+        acts.push(<Button key="audit" size="small" type="primary" onClick={() => { setAuditItem(r); setAuditOpen(true) }}>审核</Button>)
       }
-      return <span style={{ color: '#999' }}>-</span>
+      acts.push(<Button key="view" size="small" icon={<EyeOutlined />} onClick={() => { setViewItem(r); setViewOpen(true) }}>查看</Button>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -98,6 +102,23 @@ export default function EnterpriseManagement() {
                 onClick={() => handleAudit('reject')}>拒绝</Button>
             </div>
           </div>
+        )}
+      </Modal>
+
+      {/* View Modal */}
+      <Modal title="企业详情" open={viewOpen} onCancel={() => { setViewOpen(false); setViewItem(null) }} footer={null} width={520}>
+        {viewItem && (
+          <Descriptions column={2} bordered size="small">
+            <Descriptions.Item label="企业名称">{viewItem.name}</Descriptions.Item>
+            <Descriptions.Item label="行业"><Tag color="blue">{viewItem.industry}</Tag></Descriptions.Item>
+            <Descriptions.Item label="规模"><Tag color={viewItem.scale === '大型' ? 'red' : viewItem.scale === '中型' ? 'orange' : 'green'}>{viewItem.scale}</Tag></Descriptions.Item>
+            <Descriptions.Item label="所属园区">{parkMap[viewItem.parkId] || '-'}</Descriptions.Item>
+            <Descriptions.Item label="联系人">{viewItem.contact}</Descriptions.Item>
+            <Descriptions.Item label="联系电话">{viewItem.phone}</Descriptions.Item>
+            <Descriptions.Item label="状态" span={2}>
+              <Tag color={statusMap[viewItem.status]?.color}>{statusMap[viewItem.status]?.text || viewItem.status}</Tag>
+            </Descriptions.Item>
+          </Descriptions>
         )}
       </Modal>
 
