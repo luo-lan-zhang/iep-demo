@@ -5,6 +5,7 @@ import { mockEnterprises } from '../mock/enterprises'
 import { mockTeachers } from '../mock/teachers'
 import { mockSchools } from '../mock/schools'
 import { mockStudents } from '../mock/students'
+import { mockMentors } from '../mock/mentors'
 import { useAuth } from '../context/AuthContext'
 
 // ─── Five-Dimension Evaluation Config ───────────────────────────────────────
@@ -113,16 +114,50 @@ export default function ProjectCooperation() {
   const [ganttProject, setGanttProject] = useState(null)
   const [teamOpen, setTeamOpen] = useState(false)
   const [teamProject, setTeamProject] = useState(null)
-  const [teamMembers, setTeamMembers] = useState([])
+  const [teamStudents, setTeamStudents] = useState([])
+  const [teamMentors, setTeamMentors] = useState([])
+  const [teamTeachers, setTeamTeachers] = useState([])
+  const [reviewOpen, setReviewOpen] = useState(false)
+  const [reviewProject, setReviewProject] = useState(null)
+  const [reviewType, setReviewType] = useState('mid') // 'mid' | 'final'
+  const [reviewForm] = Form.useForm()
+  const [reviews, setReviews] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('project_reviews') || '{}') } catch { return {} }
+  })
 
-  const handleAddTeamMember = (studentIds) => {
+  const saveReviews = (r) => { setReviews(r); localStorage.setItem('project_reviews', JSON.stringify(r)) }
+
+  const handleAddTeamMember = () => {
     if (!teamProject) return
+    const projectTeam = { students: teamStudents, mentors: teamMentors, teachers: teamTeachers }
     setProjects(projects.map(p =>
-      p.id === teamProject.id ? { ...p, assignedStudents: [...new Set([...(p.assignedStudents||[]), ...studentIds])] } : p
+      p.id === teamProject.id ? { ...p, assignedStudents: teamStudents, teamData: projectTeam } : p
     ))
-    message.success(`已将 ${studentIds.length} 名学生加入项目团队`)
-    setTeamOpen(false); setTeamProject(null)
+    const allNames = [
+      ...teamStudents.map(sid => mockStudents.find(s => s.id === sid)?.name).filter(Boolean),
+      ...teamMentors.map(mid => mockMentors.find(m => m.id === mid)?.name).filter(Boolean),
+      ...teamTeachers.map(tid => mockTeachers.find(t => t.id === tid)?.name).filter(Boolean),
+    ]
+    message.success(`团队已更新：${allNames.length} 名成员`)
+    setTeamOpen(false); setTeamProject(null); setTeamStudents([]); setTeamMentors([]); setTeamTeachers([])
   }
+
+  const handleSubmitReview = () => {
+    reviewForm.validateFields().then(v => {
+      const key = `${reviewProject.id}_${reviewType}`
+      const record = { ...v, date: new Date().toISOString().split('T')[0], reviewer: user?.name }
+      const updated = { ...reviews, [key]: record }
+      saveReviews(updated)
+      if (reviewType === 'final') {
+        setProjects(projects.map(p => p.id === reviewProject.id ? { ...p, status: 'pending_complete', progress: 100 } : p))
+        message.success('结项评审已提交，等待企业确认结项！')
+      } else {
+        message.success('中期评审已保存！')
+      }
+      setReviewOpen(false); setReviewProject(null); reviewForm.resetFields()
+    })
+  }
+
 
   // Gantt chart: compute task positions
   const getGanttData = (projectId) => {
@@ -262,8 +297,12 @@ export default function ProjectCooperation() {
         if (r.status === 'pending_complete' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="cc" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseCompleteConfirm(r.id)}>确认结项</Button>)
         if (r.status === 'in_progress' && r.teacherId === teacherId) {
           acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
-          acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
+          acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>团队</Button>)
           acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
+          acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
+            onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>中期评审</Button>)
+          if (r.progress >= 80) acts.push(<Button key="fr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a', color: '#fff' }}
+            onClick={() => { setReviewProject(r); setReviewType('final'); reviewForm.resetFields(); setReviewOpen(true) }}>结项评审</Button>)
         }
         if (role === 'enterprise' || role === 'mentor' || role === 'park') {
           acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
@@ -683,29 +722,82 @@ export default function ProjectCooperation() {
 
       {/* 团队管理 */}
       <Modal title={<span><TeamOutlined /> 项目团队 — {teamProject?.name}</span>}
-        open={teamOpen} onOk={() => handleAddTeamMember(teamMembers)} onCancel={() => { setTeamOpen(false); setTeamProject(null); setTeamMembers([]) }}
-        okText="确认添加" width={520}>
+        open={teamOpen} onOk={handleAddTeamMember} onCancel={() => { setTeamOpen(false); setTeamProject(null); setTeamStudents([]); setTeamMentors([]); setTeamTeachers([]) }}
+        okText="保存团队" width={600}>
         {teamProject && (
           <div>
-            <p style={{ color: '#666', marginBottom: 16 }}>选择需要加入此项目的学生：</p>
-            <Select
-              mode="multiple"
-              style={{ width: '100%' }}
-              placeholder="选择学生加入团队"
-              value={teamMembers}
-              onChange={setTeamMembers}
+            <h4 style={{ marginBottom: 8 }}>学生成员</h4>
+            <Select mode="multiple" style={{ width: '100%' }} placeholder="选择学生"
+              value={teamStudents} onChange={setTeamStudents}
               options={mockStudents.map(s => ({ value: s.id, label: `${s.name} (${s.major})` }))}
+            />
+            <h4 style={{ margin: '12px 0 8px' }}>企业导师</h4>
+            <Select mode="multiple" style={{ width: '100%' }} placeholder="选择企业导师"
+              value={teamMentors} onChange={setTeamMentors}
+              options={mockMentors.map(m => ({ value: m.id, label: `${m.name} — ${m.position}` }))}
+            />
+            <h4 style={{ margin: '12px 0 8px' }}>协作教师</h4>
+            <Select mode="multiple" style={{ width: '100%' }} placeholder="选择院校教师"
+              value={teamTeachers} onChange={setTeamTeachers}
+              options={mockTeachers.filter(t => t.id !== teacherId).map(t => ({ value: t.id, label: `${t.name} (${t.title})` }))}
             />
             <div style={{ marginTop: 16, padding: 12, background: '#fafafa', borderRadius: 6 }}>
               <div style={{ fontWeight: 500, marginBottom: 8 }}>当前团队成员：</div>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {(teamProject.assignedStudents || []).map(sid => {
-                  const stu = mockStudents.find(s => s.id === sid)
-                  return stu ? <Tag key={sid} color="blue">{stu.name}</Tag> : null
-                })}
-                <Tag><TeamOutlined /> 共{(teamProject.assignedStudents || []).length}人</Tag>
-              </div>
+              {(teamProject.assignedStudents || []).length === 0 && !teamProject.teamData?.mentors?.length && !teamProject.teamData?.teachers?.length
+                ? <span style={{ color: '#ccc' }}>暂未添加成员</span>
+                : <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {teamProject.teamData?.teachers?.map(tid => {
+                    const t = mockTeachers.find(t => t.id === tid)
+                    return t ? <Tag key={`t${tid}`} color="purple">{t.name}</Tag> : null
+                  })}
+                  {(teamProject.assignedStudents || []).map(sid => {
+                    const stu = mockStudents.find(s => s.id === sid)
+                    return stu ? <Tag key={sid} color="blue">{stu.name}</Tag> : null
+                  })}
+                  {teamProject.teamData?.mentors?.map(mid => {
+                    const m = mockMentors.find(m => m.id === mid)
+                    return m ? <Tag key={`m${mid}`} color="orange">{m.name}</Tag> : null
+                  })}
+                  <Tag><TeamOutlined /> 共{((teamProject.assignedStudents || []).length + (teamProject.teamData?.mentors?.length || 0) + (teamProject.teamData?.teachers?.length || 0))}人</Tag>
+                </div>
+              }
             </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* 评审 */}
+      <Modal title={<span><CheckCircleOutlined /> {reviewType === 'mid' ? '中期' : '结项'}评审 — {reviewProject?.name}</span>}
+        open={reviewOpen} onOk={handleSubmitReview}
+        onCancel={() => { setReviewOpen(false); setReviewProject(null); reviewForm.resetFields() }}
+        okText="提交评审" width={560}>
+        {reviewProject && (
+          <div>
+            <Descriptions column={2} size="small" style={{ marginBottom: 16 }}>
+              <Descriptions.Item label="项目名称">{reviewProject.name}</Descriptions.Item>
+              <Descriptions.Item label="当前进度"><Progress percent={reviewProject.progress} size="small" /></Descriptions.Item>
+            </Descriptions>
+            {reviews[`${reviewProject.id}_mid`] && (
+              <div style={{ background: '#e6f4ff', padding: 12, borderRadius: 6, marginBottom: 16 }}>
+                <div style={{ fontWeight: 500 }}>中期评审记录</div>
+                <div style={{ fontSize: 13, color: '#666', marginTop: 4 }}>
+                  评审人：{reviews[`${reviewProject.id}_mid`].reviewer} | 日期：{reviews[`${reviewProject.id}_mid`].date}
+                </div>
+                <div style={{ fontSize: 13, color: '#666' }}>进度：{reviews[`${reviewProject.id}_mid`].progress}% | 评分：{reviews[`${reviewProject.id}_mid`].score}分</div>
+                <div style={{ fontSize: 13, color: '#666' }}>评语：{reviews[`${reviewProject.id}_mid`].comment}</div>
+              </div>
+            )}
+            <Form form={reviewForm} layout="vertical">
+              <Form.Item name="progress" label="当前进度(%)" rules={[{ required: true }]}>
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item name="score" label="综合评分(0-100)" rules={[{ required: true }]}>
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item name="comment" label="评审意见" rules={[{ required: true }]}>
+                <Input.TextArea rows={3} placeholder={reviewType === 'mid' ? '评估中期进展质量和存在的问题' : '对项目整体完成质量进行综合评价'} />
+              </Form.Item>
+            </Form>
           </div>
         )}
       </Modal>
@@ -723,6 +815,37 @@ export default function ProjectCooperation() {
             <Descriptions.Item label="进度"><Progress percent={detailProject.progress} /></Descriptions.Item>
             <Descriptions.Item label="状态"><Tag color={statusMap[detailProject.status]?.color}>{statusMap[detailProject.status]?.text}</Tag></Descriptions.Item>
             <Descriptions.Item label="标签">{detailProject.tags?.map(t => <Tag key={t}>{t}</Tag>) || '-'}</Descriptions.Item>
+            <Descriptions.Item label="团队成员">
+              {(detailProject.assignedStudents || []).length === 0 && !detailProject.teamData?.mentors?.length && !detailProject.teamData?.teachers?.length
+                ? <span style={{ color: '#ccc' }}>暂无</span>
+                : <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {detailProject.teamData?.teachers?.map(tid => {
+                    const t = mockTeachers.find(t => t.id === tid)
+                    return t ? <Tag key={`t${tid}`} color="purple">教师: {t.name}</Tag> : null
+                  })}
+                  {(detailProject.assignedStudents || []).map(sid => {
+                    const stu = mockStudents.find(s => s.id === sid)
+                    return stu ? <Tag key={sid} color="blue">学生: {stu.name}</Tag> : null
+                  })}
+                  {detailProject.teamData?.mentors?.map(mid => {
+                    const m = mockMentors.find(m => m.id === mid)
+                    return m ? <Tag key={`m${mid}`} color="orange">导师: {m.name}</Tag> : null
+                  })}
+                </div>
+              }
+            </Descriptions.Item>
+            {reviews[`${detailProject.id}_mid`] && (
+              <Descriptions.Item label="中期评审">
+                {reviews[`${detailProject.id}_mid`].reviewer} | {reviews[`${detailProject.id}_mid`].date} | 进度 {reviews[`${detailProject.id}_mid`].progress}% | 评分 {reviews[`${detailProject.id}_mid`].score}分
+                <br />{reviews[`${detailProject.id}_mid`].comment}
+              </Descriptions.Item>
+            )}
+            {reviews[`${detailProject.id}_final`] && (
+              <Descriptions.Item label="结项评审">
+                {reviews[`${detailProject.id}_final`].reviewer} | {reviews[`${detailProject.id}_final`].date} | 评分 {reviews[`${detailProject.id}_final`].score}分
+                <br />{reviews[`${detailProject.id}_final`].comment}
+              </Descriptions.Item>
+            )}
           </Descriptions>
         )}
       </Modal>

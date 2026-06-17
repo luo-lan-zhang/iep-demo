@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, Select, message } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Descriptions } from 'antd'
+import { PlusOutlined, EyeOutlined } from '@ant-design/icons'
 
 const initialPlatforms = [
   { id: 1, name: '具身智能实验室', type: '实验室', location: '深圳大学知行楼A栋3层', capacity: 60, equipment: '人形机器人、力反馈手套、3D视觉系统、激光雷达', status: 'active', schoolId: 1, schoolName: '深圳大学' },
@@ -17,6 +17,8 @@ export default function PlatformManagement() {
   const [platforms, setPlatforms] = useState(initialPlatforms)
   const [modalOpen, setModalOpen] = useState(false)
   const [form] = Form.useForm()
+  const [viewOpen, setViewOpen] = useState(false)
+  const [viewItem, setViewItem] = useState(null)
 
   const columns = [
     { title: '平台名称', dataIndex: 'name', key: 'name' },
@@ -27,6 +29,9 @@ export default function PlatformManagement() {
     { title: '主要设备', dataIndex: 'equipment', key: 'equipment', ellipsis: true },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => (
       <Tag color={s === 'active' ? 'green' : 'red'}>{s === 'active' ? '运行中' : '维护中'}</Tag>
+    )},
+    { title: '操作', key: 'action', render: (_, r) => (
+      <Button size="small" icon={<EyeOutlined />} onClick={() => { setViewItem(r); setViewOpen(true) }}>查看</Button>
     )},
   ]
 
@@ -53,6 +58,21 @@ export default function PlatformManagement() {
           <Form.Item name="capacity" label="容量(人)"><Input placeholder="例如: 60" /></Form.Item>
           <Form.Item name="equipment" label="主要设备"><Input.TextArea rows={2} /></Form.Item>
         </Form>
+      </Modal>
+      <Modal title="平台详情" open={viewOpen} onCancel={() => { setViewOpen(false); setViewItem(null) }} footer={null} width={520}>
+        {viewItem && (
+          <Descriptions column={2} bordered size="small">
+            <Descriptions.Item label="平台名称" span={2}>{viewItem.name}</Descriptions.Item>
+            <Descriptions.Item label="类型"><Tag color={typeMap[viewItem.type] || 'default'}>{viewItem.type}</Tag></Descriptions.Item>
+            <Descriptions.Item label="所属院校">{viewItem.schoolName}</Descriptions.Item>
+            <Descriptions.Item label="地址" span={2}>{viewItem.location}</Descriptions.Item>
+            <Descriptions.Item label="容量(人)">{viewItem.capacity}</Descriptions.Item>
+            <Descriptions.Item label="状态">
+              <Tag color={viewItem.status === 'active' ? 'green' : 'red'}>{viewItem.status === 'active' ? '运行中' : '维护中'}</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="主要设备" span={2}>{viewItem.equipment}</Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
     </Card>
   )
