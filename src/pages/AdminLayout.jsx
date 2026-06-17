@@ -84,7 +84,7 @@ export default function AdminLayout() {
 
   const handleLogout = () => {
     logout()
-    window.location.hash = '#/login'
+    window.location.replace('/iep-demo/#/')
   }
 
   const userMenuItems = [
