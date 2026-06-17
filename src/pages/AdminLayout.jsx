@@ -83,8 +83,10 @@ export default function AdminLayout() {
   const menuItems = useMemo(() => ROLE_MENUS[user?.role] || ROLE_MENUS.council, [user?.role])
 
   const handleLogout = () => {
-    logout()
-    window.location.replace('/iep-demo/#/')
+    localStorage.removeItem('auth_user')
+    localStorage.removeItem('token')
+    window.location.hash = '#/'
+    window.location.reload()
   }
 
   const userMenuItems = [
