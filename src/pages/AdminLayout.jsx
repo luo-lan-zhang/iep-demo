@@ -82,7 +82,10 @@ export default function AdminLayout() {
 
   const menuItems = useMemo(() => ROLE_MENUS[user?.role] || ROLE_MENUS.council, [user?.role])
 
-  const handleLogout = () => { navigate('/login', { replace: true }); logout() }
+  const handleLogout = () => {
+    logout()
+    window.location.hash = '#/login'
+  }
 
   const userMenuItems = [
     { key: 'role', label: <Text type="secondary">{user?.label || ''}</Text>, disabled: true },
