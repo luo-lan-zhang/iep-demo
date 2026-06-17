@@ -162,7 +162,7 @@ export default function ProjectCooperation() {
     setProjects(projects.map(p =>
       p.id === projectId ? { ...p, status: 'in_progress' } : p
     ))
-    message.success('已确认教师承接，项目进入执行阶段！')
+    message.success('已确认项目，项目进入执行阶段！')
   }
 
   const handleEnterpriseCompleteConfirm = (projectId) => {
@@ -258,7 +258,7 @@ export default function ProjectCooperation() {
       title: '操作', key: 'action', width: 250, render: (_, r) => {
         const acts = []
         if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
-        if (r.status === 'teacher_accepted' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认承接</Button>)
+        if (r.status === 'teacher_accepted' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认项目</Button>)
         if (r.status === 'pending_complete' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="cc" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseCompleteConfirm(r.id)}>确认结项</Button>)
         if (r.status === 'in_progress' && r.teacherId === teacherId) {
           acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
