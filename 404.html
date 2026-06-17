@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/iep-demo/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>产教融合云平台</title>
+    <script>
+      // Redirect: /iep-demo/path → /iep-demo/#/path (for HashRouter on GitHub Pages)
+      (function(){
+        var base = '/iep-demo'
+        var path = location.pathname.replace(base, '')
+        if (path && !location.hash) {
+          location.replace(base + '/#' + path + location.search)
+        }
+      })()
+    </script>
     <script type="module"  src="/iep-demo/assets/index-B6qgiOW0.js"></script>
     <link rel="stylesheet"  href="/iep-demo/assets/index-CucaGotV.css">
   </head>
