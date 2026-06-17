@@ -16,7 +16,7 @@ const initialPositions = [
 ]
 
 const initialApplications = [
-  { id: 1, positionId: 1, studentId: 1, studentName: '张三', major: '计算机科学与技术', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'pending', applyDate: '2024-07-01', matchScore: 92 },
+  { id: 1, positionId: 1, studentId: 1, studentName: '张三', major: '计算机科学与技术', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-07-01', matchScore: 92 },
   { id: 2, positionId: 2, studentId: 2, studentName: '李四', major: '软件工程', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-05', matchScore: 88 },
   { id: 3, positionId: 1, studentId: 3, studentName: '王五', major: '人工智能', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-06-28', matchScore: 95 },
   { id: 4, positionId: 3, studentId: 4, studentName: '赵六', major: '电子信息工程', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'rejected', applyDate: '2024-06-20', matchScore: 75 },
@@ -28,6 +28,7 @@ const initialApplications = [
   { id: 10, positionId: 3, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', applyDate: '2024-07-18', matchScore: 83 },
   { id: 11, positionId: 4, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'approved', applyDate: '2024-07-12', matchScore: 90 },
   { id: 12, positionId: 5, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: '产品经理', status: 'rejected', applyDate: '2024-06-25', matchScore: 72 },
+  { id: 13, positionId: 1, studentId: 4, studentName: '赵六', major: '电子信息工程', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-07-16', matchScore: 88 },
 ]
 
 const initialInterviews = [
@@ -316,9 +317,12 @@ export default function TalentMatching() {
     { title: '匹配度', dataIndex: 'matchScore', key: 'matchScore', render: (v) => <Progress percent={v} size="small" format={() => `${v}%`} strokeColor={v >= 90 ? '#52c41a' : v >= 80 ? '#1677ff' : '#faad14'} /> },
     { title: '投递日期', dataIndex: 'applyDate', key: 'applyDate' },
     { title: '状态', key: 'status', render: (_, r) => {
+      if (r.status === 'rejected' || r.status === 'pending') {
+        return <Tag color={statusMap[r.status]?.color}>{statusMap[r.status]?.text}</Tag>
+      }
       const inv = interviews.find(i => i.studentId === r.studentId && i.positionId === r.positionId)
       if (inv) {
-        const ist = { pending: { text: '等待确认', color: 'orange' }, accepted: { text: '已接受面试', color: 'green' }, confirmed: { text: '已确认面试', color: 'purple' }, rejected: { text: '已拒绝面试', color: 'red' } }
+        const ist = { pending: { text: '等待学生确认', color: 'orange' }, accepted: { text: '已接受面试', color: 'green' }, confirmed: { text: '已确认面试', color: 'purple' }, rejected: { text: '已拒绝面试', color: 'red' } }
         return <Tag color={ist[inv.status]?.color}>{ist[inv.status]?.text}</Tag>
       }
       return <Tag color={statusMap[r.status]?.color}>{statusMap[r.status]?.text}</Tag>
