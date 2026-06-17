@@ -167,18 +167,21 @@ export default function LandingPage() {
   }, [])
 
   // Load china map geojson
+  const [mapError, setMapError] = useState(false)
   useEffect(() => {
     let cancelled = false
     fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then(geo => {
         if (cancelled) return
         echarts.registerMap('china', geo)
         setMapRegistered(true)
       })
       .catch(() => {
-        // Fallback: register a minimal version so the map section shows a placeholder
-        if (!cancelled) setMapRegistered(true)
+        if (!cancelled) setMapError(true)
       })
     return () => { cancelled = true }
   }, [])
@@ -340,11 +343,25 @@ export default function LandingPage() {
               <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 250 }} ref={pieRef} />
             </div>
 
-            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', minHeight: 520, position: 'relative', overflow: 'hidden' }}>
-              <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-              {!mapRegistered && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a7aaa', fontSize: 13 }}>加载地图数据中...</div>
-              )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', minHeight: 260, position: 'relative', overflow: 'hidden' }}>
+                {mapRegistered ? (
+                  <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+                ) : mapError ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 260, color: '#8ba9cc' }}>
+                    <div style={{ fontSize: 48, marginBottom: 12 }}>🗺️</div>
+                    <div style={{ fontSize: 13, marginBottom: 8 }}>中国产教融合地图数据暂不可用</div>
+                    <div style={{ fontSize: 11, color: '#4a7aaa' }}>请使用兼容浏览器或稍后再试</div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 260, color: '#4a7aaa', fontSize: 13 }}>加载地图数据中...</div>
+                )}
+              </div>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 20, textAlign: 'center' }}>
+                <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>覆盖省市</div>
+                <div style={{ fontSize: 36, fontWeight: 700, color: '#00e5ff', fontFamily: 'DIN, monospace' }}>31</div>
+                <div style={{ fontSize: 11, color: '#8ba9cc', marginTop: 4 }}>个省级行政区</div>
+              </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
