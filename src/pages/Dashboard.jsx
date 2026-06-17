@@ -496,6 +496,14 @@ export default function Dashboard() {
   }
 
   // ═══ General Dashboard ═══════════════════════════════
+  const projData = [
+    { id: 1, name: '智能仓储管理系统开发', enterprise: '华为技术有限公司', budget: 500000, leader: '张教授', status: 'in_progress', progress: 65 },
+    { id: 2, name: 'AI质检模型训练', enterprise: '腾讯科技（深圳）有限公司', budget: 300000, leader: '李教授', status: 'recruiting', progress: 0 },
+    { id: 3, name: '5G基站天线优化设计', enterprise: '华为技术有限公司', budget: 800000, leader: '', status: 'pending', progress: 0 },
+    { id: 4, name: '工业机器人控制算法', enterprise: '大疆创新科技有限公司', budget: 600000, leader: '陈教授', status: 'in_progress', progress: 40 },
+    { id: 5, name: '学生成绩分析平台', enterprise: '腾讯科技（深圳）有限公司', budget: 200000, leader: '', status: 'completed', progress: 100 },
+  ]
+
   const statsCards = isPark ? [
     { title: '园区企业', value: parkEnterprises.length, icon: <GlobalOutlined />, color: '#1677ff', bg: '#e6f4ff' },
     { title: '合作院校', value: mockSchools.length, icon: <BankOutlined />, color: '#52c41a', bg: '#f6ffed' },
@@ -515,14 +523,6 @@ export default function Dashboard() {
     { title: '教师总数', value: mockTeachers.length, icon: <UserOutlined />, color: '#722ed1', bg: '#f9f0ff' },
     { title: '学生总数', value: mockStudents.length, icon: <TeamOutlined />, color: '#13c2c2', bg: '#e6fffb' },
     { title: '共享资源', value: mockResources.length, icon: <ExperimentOutlined />, color: '#eb2f96', bg: '#fff0f6' },
-  ]
-
-  const projData = [
-    { id: 1, name: '智能仓储管理系统开发', enterprise: '华为技术有限公司', budget: 500000, leader: '张教授', status: 'in_progress', progress: 65 },
-    { id: 2, name: 'AI质检模型训练', enterprise: '腾讯科技（深圳）有限公司', budget: 300000, leader: '李教授', status: 'recruiting', progress: 0 },
-    { id: 3, name: '5G基站天线优化设计', enterprise: '华为技术有限公司', budget: 800000, leader: '', status: 'pending', progress: 0 },
-    { id: 4, name: '工业机器人控制算法', enterprise: '大疆创新科技有限公司', budget: 600000, leader: '陈教授', status: 'in_progress', progress: 40 },
-    { id: 5, name: '学生成绩分析平台', enterprise: '腾讯科技（深圳）有限公司', budget: 200000, leader: '', status: 'completed', progress: 100 },
   ]
 
   const sm = { pending: { text: '待审核', color: 'orange' }, recruiting: { text: '招募中', color: 'blue' }, in_progress: { text: '进行中', color: 'processing' }, completed: { text: '已结项', color: 'green' } }
