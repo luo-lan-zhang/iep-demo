@@ -317,43 +317,82 @@ export default function Dashboard() {
     const schoolTeachers = mockTeachers.filter(t => t.schoolId === schoolId)
     const schoolStudents = mockStudents.filter(s => s.schoolId === schoolId)
     const schoolProjects = schoolProjectsData.filter(p => p.schoolId === schoolId || !p.schoolId)
+    const schoolName = mockSchools.find(s => s.id === schoolId)?.name || '本校'
+    const completedProjects = schoolProjects.filter(p => p.status === 'completed').length
+    const inProgressProjects = schoolProjects.filter(p => p.status === 'in_progress').length
+    const totalBudget = schoolProjects.reduce((sum, p) => sum + (p.budget || 0), 0)
+    const studentMajors = [...new Set(schoolStudents.map(s => s.major))]
+    const studentGrades = schoolStudents.reduce((acc, s) => { acc[s.grade] = (acc[s.grade] || 0) + 1; return acc }, {})
+    const teacherTitles = schoolTeachers.reduce((acc, t) => { acc[t.title] = (acc[t.title] || 0) + 1; return acc }, {})
     return (
       <div>
-        <div style={{ marginBottom: 16 }}>
-          <h2 style={{ margin: 0 }}>{mockSchools.find(s => s.id === schoolId)?.name || '本校'}</h2>
+        <div style={{ marginBottom: 20 }}>
+          <h2 style={{ margin: 0 }}>{schoolName}</h2>
           <span style={{ color: '#999', fontSize: 13 }}>学校数据概览</span>
         </div>
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
           {[
             { title: '教师总数', value: schoolTeachers.length, icon: <UserOutlined />, color: '#1677ff', bg: '#e6f4ff' },
             { title: '学生总数', value: schoolStudents.length, icon: <TeamOutlined />, color: '#52c41a', bg: '#f6ffed' },
-            { title: '关联项目', value: schoolProjects.length, icon: <ProjectOutlined />, color: '#722ed1', bg: '#f9f0ff' },
+            { title: '合作项目', value: schoolProjects.length, icon: <ProjectOutlined />, color: '#722ed1', bg: '#f9f0ff' },
             { title: '共享资源', value: mockResources.length, icon: <ExperimentOutlined />, color: '#eb2f96', bg: '#fff0f6' },
+            { title: '项目预算总额', value: `¥${(totalBudget / 10000).toFixed(0)}万`, icon: <FundOutlined />, color: '#fa8c16', bg: '#fff7e6', statStyle: { fontSize: 20 } },
+            { title: '进行中项目', value: inProgressProjects, icon: <PieChartOutlined />, color: '#13c2c2', bg: '#e6fffb' },
+            { title: '已完成项目', value: completedProjects, icon: <TrophyOutlined />, color: '#389e0d', bg: '#f6ffed' },
+            { title: '专业方向', value: studentMajors.length, icon: <BookOutlined />, color: '#cf1322', bg: '#fff1f0' },
           ].map((s, i) => (
             <Col xs={24} sm={12} lg={6} key={i}>
-              <Card size="small" style={{ background: s.bg, border: 'none' }}>
-                <Statistic title={s.title} value={s.value} prefix={s.icon} valueStyle={{ color: s.color }} />
+              <Card size="small" style={{ background: s.bg, border: 'none', borderRadius: 8 }}>
+                <Statistic title={s.title} value={s.value} prefix={s.icon} valueStyle={s.statStyle || { color: s.color }} />
               </Card>
             </Col>
           ))}
         </Row>
+        <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
+          <Col xs={24} lg={8}>
+            <Card title="学生年级分布" size="small">
+              <Table dataSource={Object.entries(studentGrades).map(([grade, count]) => ({ grade, count }))} columns={[
+                { title: '年级', dataIndex: 'grade', key: 'grade', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '人数', dataIndex: 'count', key: 'count' },
+              ]} pagination={false} size="small" rowKey="grade" />
+            </Card>
+          </Col>
+          <Col xs={24} lg={8}>
+            <Card title="教师职称分布" size="small">
+              <Table dataSource={Object.entries(teacherTitles).map(([title, count]) => ({ title, count }))} columns={[
+                { title: '职称', dataIndex: 'title', key: 'title', render: (t) => <Tag color="purple">{t}</Tag> },
+                { title: '人数', dataIndex: 'count', key: 'count' },
+              ]} pagination={false} size="small" rowKey="title" />
+            </Card>
+          </Col>
+          <Col xs={24} lg={8}>
+            <Card title="专业方向" size="small">
+              <Table dataSource={studentMajors.map((m, i) => ({ key: i, major: m, count: schoolStudents.filter(s => s.major === m).length }))} columns={[
+                { title: '专业', dataIndex: 'major', key: 'major' },
+                { title: '人数', dataIndex: 'count', key: 'count' },
+              ]} pagination={false} size="small" rowKey="key" />
+            </Card>
+          </Col>
+        </Row>
         <Row gutter={[16, 16]}>
-          <Col xs={24} lg={12}>
-            <Card title="最新合作项目" size="small">
-              <Table dataSource={schoolProjects.slice(0, 5)} columns={[
+          <Col xs={24} lg={14}>
+            <Card title="合作项目一览" size="small">
+              <Table dataSource={schoolProjects} columns={[
                 { title: '项目名称', dataIndex: 'name', key: 'name' },
-                { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
-                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
+                { title: '合作企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '预算', key: 'budget', render: (_, r) => `¥${(r.budget / 10000).toFixed(0)}万` },
+                { title: '进度', key: 'progress', width: 120, render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
                 { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={projectStatusMap[s]?.color}>{projectStatusMap[s]?.text}</Tag> },
               ]} pagination={false} size="small" rowKey="id" />
             </Card>
           </Col>
-          <Col xs={24} lg={12}>
-            <Card title="本校教师" size="small">
-              <Table dataSource={schoolTeachers.slice(0, 5)} columns={[
+          <Col xs={24} lg={10}>
+            <Card title="本校教师团队" size="small">
+              <Table dataSource={schoolTeachers} columns={[
                 { title: '姓名', dataIndex: 'name', key: 'name' },
                 { title: '职称', dataIndex: 'title', key: 'title', render: (t) => <Tag color="blue">{t}</Tag> },
                 { title: '院系', dataIndex: 'department', key: 'department' },
+                { title: '邮箱', dataIndex: 'email', key: 'email', ellipsis: true },
               ]} pagination={false} size="small" rowKey="id" />
             </Card>
           </Col>
