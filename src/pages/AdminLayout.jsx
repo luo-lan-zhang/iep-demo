@@ -109,3 +109,5 @@ export default function AdminLayout() {
     </Layout>
   )
 }
+/* park permissions include industry-report */
+// v1781663820158
