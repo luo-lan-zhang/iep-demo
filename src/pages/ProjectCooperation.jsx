@@ -124,9 +124,6 @@ export default function ProjectCooperation() {
   const [reviews, setReviews] = useState(() => {
     try { return JSON.parse(localStorage.getItem('project_reviews') || '{}') } catch { return {} }
   })
-  // Teacher create own project
-  const [teacherCreateOpen, setTeacherCreateOpen] = useState(false)
-  const [teacherCreateForm] = Form.useForm()
   // Member review
   const [memberReviewOpen, setMemberReviewOpen] = useState(false)
   const [memberReviewTarget, setMemberReviewTarget] = useState(null)
@@ -162,29 +159,6 @@ export default function ProjectCooperation() {
         message.success('中期评审已保存！')
       }
       setReviewOpen(false); setReviewProject(null); reviewForm.resetFields()
-    })
-  }
-
-  const handleTeacherCreate = () => {
-    teacherCreateForm.validateFields().then(v => {
-      const newProject = {
-        id: projects.length + 1,
-        name: v.name,
-        enterpriseId: null, enterpriseName: '教师自建',
-        budget: v.budget || 0,
-        teacherId, teacherName: user?.name, schoolId: schoolId || 1,
-        status: 'in_progress', progress: 5,
-        description: v.description || '',
-        deliverables: v.deliverables || '',
-        requirements: v.requirements || '',
-        tags: v.tags ? v.tags.split(',').map(t => t.trim()) : [],
-        assignedStudents: [],
-        teamData: { students: [], mentors: [], teachers: [] },
-      }
-      setProjects([newProject, ...projects])
-      message.success('项目已创建，请添加团队成员！')
-      setTeacherCreateOpen(false)
-      teacherCreateForm.resetFields()
     })
   }
 
@@ -337,12 +311,14 @@ export default function ProjectCooperation() {
         if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
         if (r.status === 'teacher_accepted' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认项目</Button>)
         if (r.status === 'pending_complete' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="cc" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseCompleteConfirm(r.id)}>确认结项</Button>)
-        if (r.status === 'in_progress' && r.teacherId === teacherId) {
-          acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
-          acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>团队</Button>)
-          acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
-          acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
-            onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
+        if (r.teacherId === teacherId) {
+          if (r.status === 'in_progress') {
+            acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
+            acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
+            acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
+              onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
+          }
+          acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>组建团队</Button>)
         }
         if (role === 'enterprise' || role === 'mentor' || role === 'park') {
           acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
@@ -510,9 +486,6 @@ export default function ProjectCooperation() {
             {role === 'enterprise' && (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布新项目</Button>
             )}
-            {role === 'teacher' && (
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => { teacherCreateForm.resetFields(); setTeacherCreateOpen(true) }}>创建项目</Button>
-            )}
           </div>
           {filteredProjects.length === 0 ? (
             <Empty description="暂无项目" />
@@ -678,18 +651,6 @@ export default function ProjectCooperation() {
         </Form>
       </Modal>
 
-      {/* 教师创建项目 */}
-      <Modal title="创建新项目" open={teacherCreateOpen} onOk={handleTeacherCreate} onCancel={() => { setTeacherCreateOpen(false); teacherCreateForm.resetFields() }} width={640}>
-        <Form form={teacherCreateForm} layout="vertical">
-          <Form.Item name="name" label="项目名称" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="description" label="项目描述"><Input.TextArea rows={4} /></Form.Item>
-          <Form.Item name="budget" label="拟投入金额(元)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
-          <Form.Item name="deliverables" label="交付物要求"><Input.TextArea rows={3} /></Form.Item>
-          <Form.Item name="requirements" label="技术要求"><Input.TextArea rows={3} /></Form.Item>
-          <Form.Item name="tags" label="标签"><Input placeholder="用逗号分隔" /></Form.Item>
-        </Form>
-      </Modal>
-
       {/* 分配任务 */}
       <Modal title="分配任务给学生" open={taskOpen} onOk={handleCreateTask} onCancel={() => { setTaskOpen(false); taskForm.resetFields(); setTaskProjectId(null) }}>
         <Form form={taskForm} layout="vertical">
@@ -825,9 +786,10 @@ export default function ProjectCooperation() {
       </Modal>
 
       {/* 团队管理 */}
-      <Modal title={<span><TeamOutlined /> 项目团队 — {teamProject?.name}</span>}
+      <Modal title={<span><TeamOutlined /> 组建项目团队 — {teamProject?.name}</span>}
         open={teamOpen} onOk={handleAddTeamMember} onCancel={() => { setTeamOpen(false); setTeamProject(null); setTeamStudents([]); setTeamMentors([]); setTeamTeachers([]) }}
         okText="保存团队" width={600}>
+        <p style={{ color: '#999', fontSize: 13, marginBottom: 12 }}>可随时更换人选，保存后立即生效。</p>
         {teamProject && (
           <div>
             <h4 style={{ marginBottom: 8 }}>学生成员</h4>
