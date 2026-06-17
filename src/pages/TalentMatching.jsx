@@ -439,14 +439,32 @@ export default function TalentMatching() {
       <div>
         {role === 'student' && (
           <div>
-            <h4 style={{ marginBottom: 16 }}>推荐岗位（基于您的专业方向）</h4>
+            <h4 style={{ marginBottom: 16 }}>推荐岗位（基于您的专业方向 — 计算机科学与技术）</h4>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+              {[
+                { title: '匹配岗位数', value: positions.filter(p => p.status === 'active').length, icon: <NodeIndexOutlined />, color: '#1677ff' },
+                { title: '已投递', value: applications.filter(a => a.studentId === (user?.id || 7)).length, icon: <SendOutlined />, color: '#52c41a' },
+                { title: '面试邀约', value: interviews.filter(i => i.studentId === (user?.id || 7)).length, icon: <StarOutlined />, color: '#fa8c16' },
+                { title: 'AI匹配度', value: '92%', icon: <TrophyOutlined />, color: '#722ed1' },
+              ].map((s, i) =>
+                <Col xs={24} sm={12} lg={6} key={i}>
+                  <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
+                    <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
+                    <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
+                  </Card>
+                </Col>
+              )}
+            </Row>
             <Table dataSource={positions.filter(p => p.status === 'active').slice(0, 5)} columns={[
               { title: '岗位名称', dataIndex: 'title', key: 'title' },
               { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
               { title: '薪资', dataIndex: 'salary', key: 'salary' },
-              { title: '匹配度', key: 'match', render: () => <Progress percent={Math.round(70 + Math.random() * 25)} size="small" /> },
+              { title: '匹配度', key: 'match', render: () => <Progress percent={Math.round(70 + Math.random() * 25)} size="small" format={v => `${v}%`} /> },
               { title: '操作', key: 'action', render: (_, r) => <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button> },
             ]} rowKey="id" />
+            <div style={{ marginTop: 16, padding: 12, background: '#f0f5ff', borderRadius: 8, fontSize: 13, color: '#1677ff' }}>
+              <strong>AI 职业建议：</strong>您的专业技能与嵌入式/IoT方向高度匹配，建议在投递简历时突出您的项目经验和竞赛获奖经历。人工智能方向岗位需求增长迅速，建议同步关注。
+            </div>
           </div>
         )}
         {role === 'enterprise' && (
