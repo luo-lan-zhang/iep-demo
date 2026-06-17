@@ -37,9 +37,7 @@ const initialTasks = [
 ]
 
 const statusMap = {
-  pending:          { text: '待教师审核',   color: 'orange' },
-  teacher_approved: { text: '待学校审核',   color: 'purple' },
-  pending_publish:  { text: '待发布',       color: 'geekblue' },
+  pending:          { text: '待教师承接',   color: 'orange' },
   in_progress:      { text: '进行中',       color: 'processing' },
   completed:        { text: '已结项',       color: 'green' },
 }
@@ -60,12 +58,6 @@ export default function ProjectCooperation() {
   // Modals
   const [publishOpen, setPublishOpen] = useState(false)
   const [publishForm] = Form.useForm()
-  const [auditOpen, setAuditOpen] = useState(false)
-  const [auditProject, setAuditProject] = useState(null)
-  const [auditStep, setAuditStep] = useState('teacher')
-  const [publishConfirmOpen, setPublishConfirmOpen] = useState(false)
-  const [publishConfirmProject, setPublishConfirmProject] = useState(null)
-  const [selectedStudents, setSelectedStudents] = useState([])
   const [taskOpen, setTaskOpen] = useState(false)
   const [taskForm] = Form.useForm()
   const [taskProjectId, setTaskProjectId] = useState(null)
@@ -93,7 +85,7 @@ export default function ProjectCooperation() {
   const filteredProjects = useMemo(() => {
     let list = projects
     if (role === 'enterprise' || role === 'mentor') list = list.filter(p => p.enterpriseId === enterpriseId)
-    if (role === 'teacher') list = list.filter(p => p.teacherId === teacherId || p.status === 'pending' || p.status === 'pending_publish')
+    if (role === 'teacher') list = list.filter(p => p.teacherId === teacherId || p.status === 'pending')
     if (role === 'school') list = list.filter(p => p.schoolId === schoolId || !p.schoolId)
     if (role === 'student') return []  // 学生不能查看项目列表
     if (filterStatus !== 'all') list = list.filter(p => p.status === filterStatus)
@@ -144,52 +136,23 @@ export default function ProjectCooperation() {
   }
   const handlePublish = () => {
     publishForm.validateFields().then(v => {
-      const ent = mockEnterprises.find(e => e.id === v.enterpriseId)
+      const ent = mockEnterprises.find(e => e.id === enterpriseId)
       setProjects([{
-        id: projects.length + 1, ...v, enterpriseName: ent?.name || '未知',
+        id: projects.length + 1, ...v, enterpriseId, enterpriseName: ent?.name || '未知',
         teacherId: null, teacherName: null, schoolId: null,
         status: 'pending', progress: 0,
         tags: v.tags ? v.tags.split(',').map(t => t.trim()) : [],
       }, ...projects])
-      message.success('项目已发布，等待教师审核！')
+      message.success('项目已发布，等待教师承接！')
       setPublishOpen(false); publishForm.resetFields()
     })
   }
 
-  const handleTeacherAudit = (action) => {
-    if (action === 'approve') {
-      setProjects(projects.map(p =>
-        p.id === auditProject.id ? { ...p, status: 'teacher_approved', teacherId, teacherName: user?.name, schoolId: schoolId || 1 } : p
-      ))
-      setAuditStep('school')
-    } else {
-      setProjects(projects.map(p => p.id === auditProject.id ? { ...p, status: 'completed' } : p))
-      message.success('已拒绝该项目')
-      setAuditOpen(false); setAuditProject(null); setAuditStep('teacher')
-    }
-  }
-
-  const handleSchoolAudit = (action) => {
-    if (action === 'approve') {
-      setProjects(projects.map(p => p.id === auditProject.id ? { ...p, status: 'pending_publish' } : p))
-      message.success('学校审核通过，教师可发布给学生')
-    } else {
-      setProjects(projects.map(p => p.id === auditProject.id ? { ...p, status: 'pending' } : p))
-      message.success('学校驳回，退回')
-    }
-    setAuditOpen(false); setAuditProject(null); setAuditStep('teacher')
-  }
-
-  const handlePublishToStudents = () => {
-    if (selectedStudents.length === 0) {
-      message.warning('请至少选择一个学生')
-      return
-    }
+  const handleTeacherAccept = (projectId) => {
     setProjects(projects.map(p =>
-      p.id === publishConfirmProject.id ? { ...p, status: 'in_progress', progress: 5, assignedStudents: selectedStudents } : p
+      p.id === projectId ? { ...p, status: 'in_progress', teacherId, teacherName: user?.name, schoolId: schoolId || 1, progress: 5 } : p
     ))
-    message.success(`项目已下发给 ${selectedStudents.length} 名学生，可在任务分配中分发具体模块`)
-    setPublishConfirmOpen(false); setPublishConfirmProject(null); setSelectedStudents([])
+    message.success('已承接该项目，可分配任务给学生')
   }
 
   const handleStudentAccept = (projectId) => {
@@ -273,9 +236,7 @@ export default function ProjectCooperation() {
     {
       title: '操作', key: 'action', width: 250, render: (_, r) => {
         const acts = []
-        if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => { setAuditProject(r); setAuditStep('teacher'); setAuditOpen(true) }}>教师审核</Button>)
-        if (r.status === 'teacher_approved' && role === 'school') acts.push(<Button key="sa" size="small" type="primary" onClick={() => { setAuditProject(r); setAuditStep('school'); setAuditOpen(true) }}>学校审核</Button>)
-        if (r.status === 'pending_publish' && r.teacherId === teacherId) acts.push(<Button key="pp" size="small" type="primary" onClick={() => { setPublishConfirmProject(r); setPublishConfirmOpen(true) }}>下发项目</Button>)
+        if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
         if (r.status === 'in_progress' && r.teacherId === teacherId) {
           acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
           acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
@@ -437,9 +398,7 @@ export default function ProjectCooperation() {
             <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
               options={[
                 { value: 'all', label: '全部状态' },
-                { value: 'pending', label: '待教师审核' },
-                { value: 'teacher_approved', label: '待学校审核' },
-                { value: 'pending_publish', label: '待发布' },
+                { value: 'pending', label: '待教师承接' },
                 { value: 'in_progress', label: '进行中' },
                 { value: 'completed', label: '已结项' },
               ]}
@@ -462,7 +421,7 @@ export default function ProjectCooperation() {
         key: 'publish', label: '发布项目', children: (
           <div style={{ maxWidth: 500 }}>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布新项目</Button>
-            <div style={{ marginTop: 16, color: '#666' }}>企业发布 → 教师审核 → 学校复审 → 教师下发 → 分配任务 → 学生执行 → 五维评价</div>
+            <div style={{ marginTop: 16, color: '#666' }}>企业发布 → 教师承接 → 分配任务 → 学生执行 → 五维评价</div>
           </div>
         )
       })
@@ -554,9 +513,6 @@ export default function ProjectCooperation() {
       {/* 发布项目 */}
       <Modal title="发布新项目" open={publishOpen} onOk={handlePublish} onCancel={() => { setPublishOpen(false); publishForm.resetFields() }} width={640}>
         <Form form={publishForm} layout="vertical">
-          <Form.Item name="enterpriseId" label="企业" rules={[{ required: true }]}>
-            <Select options={mockEnterprises.map(e => ({ value: e.id, label: e.name }))} />
-          </Form.Item>
           <Form.Item name="name" label="项目名称" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="description" label="项目描述"><Input.TextArea rows={4} /></Form.Item>
           <Form.Item name="budget" label="拟投入金额(元)" rules={[{ required: true }]}><InputNumber min={1} style={{ width: '100%' }} /></Form.Item>
@@ -564,49 +520,6 @@ export default function ProjectCooperation() {
           <Form.Item name="requirements" label="技术要求"><Input.TextArea rows={3} /></Form.Item>
           <Form.Item name="tags" label="标签"><Input placeholder="用逗号分隔" /></Form.Item>
         </Form>
-      </Modal>
-
-      {/* 审核 */}
-      <Modal title={auditStep === 'teacher' ? '教师初审' : '学校复审'} open={auditOpen} onCancel={() => { setAuditOpen(false); setAuditProject(null); setAuditStep('teacher') }} footer={null} width={520}>
-        {auditProject && (
-          <div>
-            <div style={{ marginBottom: 16 }}>
-              <Tag color="blue">{auditProject.enterpriseName}</Tag>
-              <span style={{ fontSize: 16, fontWeight: 500, marginLeft: 8 }}>{auditProject.name}</span>
-            </div>
-            {auditStep === 'teacher' && <div style={{ background: '#f0f5ff', padding: 12, borderRadius: 6, marginBottom: 16 }}><strong>教师初审：</strong>确认学校有能力承接，项目内容合理。</div>}
-            {auditStep === 'school' && <div style={{ background: '#f6ffed', padding: 12, borderRadius: 6, marginBottom: 16 }}><strong>学校复审：</strong>确认符合教学规划，可下发给学生执行。</div>}
-            <Descriptions column={1} bordered size="small" style={{ marginBottom: 16 }}>
-              <Descriptions.Item label="项目描述">{auditProject.description}</Descriptions.Item>
-              <Descriptions.Item label="预算">¥{auditProject.budget.toLocaleString()}</Descriptions.Item>
-              <Descriptions.Item label="交付物">{auditProject.deliverables || '无'}</Descriptions.Item>
-            </Descriptions>
-            <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-              <Button type="primary" icon={<CheckCircleOutlined />} onClick={() => auditStep === 'teacher' ? handleTeacherAudit('approve') : handleSchoolAudit('approve')} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}>
-                {auditStep === 'teacher' ? '通过（待学校审核）' : '通过'}
-              </Button>
-              <Button danger icon={<CloseCircleOutlined />} onClick={() => auditStep === 'teacher' ? handleTeacherAudit('reject') : handleSchoolAudit('reject')}>驳回</Button>
-            </div>
-          </div>
-        )}
-      </Modal>
-
-      {/* 下发项目确认 - 选择学生 */}
-      <Modal title="下发项目给学生" open={publishConfirmOpen} onOk={handlePublishToStudents} onCancel={() => { setPublishConfirmOpen(false); setPublishConfirmProject(null); setSelectedStudents([]) }} width={520}>
-        {publishConfirmProject && (
-          <div>
-            <p>项目：<strong>{publishConfirmProject.name}</strong></p>
-            <p style={{ color: '#666', marginBottom: 16 }}>选择要下发此项目的学生（选中的学生可在首页看到此项目）</p>
-            <Select
-              mode="multiple"
-              style={{ width: '100%' }}
-              placeholder="请选择学生"
-              value={selectedStudents}
-              onChange={setSelectedStudents}
-              options={mockStudents.map(s => ({ value: s.id, label: `${s.name} (${s.major})` }))}
-            />
-          </div>
-        )}
       </Modal>
 
       {/* 分配任务 */}

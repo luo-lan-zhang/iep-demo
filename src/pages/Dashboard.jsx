@@ -308,11 +308,14 @@ export default function Dashboard() {
 
   const parkId = user?.parkId
   const isPark = role === 'park'
+  const enterpriseId = user?.enterpriseId
+  const isEnterprise = role === 'enterprise'
   const schoolId = user?.schoolId
   const isSchool = role === 'school'
 
   const parkEnterprises = isPark ? mockEnterprises.filter(e => e.parkId === parkId) : mockEnterprises
   const parkName = isPark ? mockParks.find(p => p.id === parkId)?.name || '本园区' : ''
+  const enterpriseName = isEnterprise ? mockEnterprises.find(e => e.id === enterpriseId)?.name || '本公司' : ''
 
   // ═══ School Dashboard ═════════════════════════════════
   if (isSchool) {
@@ -498,6 +501,13 @@ export default function Dashboard() {
     { title: '合作院校', value: mockSchools.length, icon: <BankOutlined />, color: '#52c41a', bg: '#f6ffed' },
     { title: '教师资源', value: mockTeachers.length, icon: <UserOutlined />, color: '#722ed1', bg: '#f9f0ff' },
     { title: '共享资源', value: mockResources.length, icon: <ExperimentOutlined />, color: '#eb2f96', bg: '#fff0f6' },
+  ] : isEnterprise ? [
+    { title: '发布项目', value: projData.filter(p => p.enterprise === enterpriseName).length, icon: <ProjectOutlined />, color: '#1677ff', bg: '#e6f4ff' },
+    { title: '进行中', value: projData.filter(p => p.enterprise === enterpriseName && p.status === 'in_progress').length, icon: <PieChartOutlined />, color: '#13c2c2', bg: '#e6fffb' },
+    { title: '合作院校', value: mockSchools.length, icon: <BankOutlined />, color: '#52c41a', bg: '#f6ffed' },
+    { title: '在招岗位', value: 3, icon: <NodeIndexOutlined />, color: '#faad14', bg: '#fffbe6' },
+    { title: '已匹配学生', value: 8, icon: <TeamOutlined />, color: '#722ed1', bg: '#f9f0ff' },
+    { title: '已结项', value: projData.filter(p => p.enterprise === enterpriseName && p.status === 'completed').length, icon: <TrophyOutlined />, color: '#389e0d', bg: '#f6ffed' },
   ] : [
     { title: '园区数量', value: mockParks.length, icon: <ApartmentOutlined />, color: '#1677ff', bg: '#e6f4ff' },
     { title: '院校数量', value: mockSchools.length, icon: <BankOutlined />, color: '#52c41a', bg: '#f6ffed' },
@@ -527,8 +537,8 @@ export default function Dashboard() {
     statusText: q.status === 'completed' ? '已完成' : q.status === 'in_progress' ? '进行中' : '待承接',
   }))
 
-  const displayProj = isPark ? projData.filter(p => parkEnterprises.some(e => e.name === p.enterprise)) : projData
-  const displayTraining = isPark ? latestTraining.filter(t => parkEnterprises.some(e => e.name === t.enterprise)) : latestTraining
+  const displayProj = isPark ? projData.filter(p => parkEnterprises.some(e => e.name === p.enterprise)) : isEnterprise ? projData.filter(p => p.enterprise === enterpriseName) : projData
+  const displayTraining = isPark ? latestTraining.filter(t => parkEnterprises.some(e => e.name === t.enterprise)) : isEnterprise ? latestTraining.filter(t => t.enterprise === enterpriseName) : latestTraining
 
   return (
     <div>
@@ -541,6 +551,18 @@ export default function Dashboard() {
           <div style={{ display: 'flex', gap: 24 }}>
             <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: '#1677ff' }}>{parkEnterprises.length}</div><div style={{ color: '#666', fontSize: 12 }}>园区企业</div></div>
             <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: '#52c41a' }}>{displayProj.length}</div><div style={{ color: '#666', fontSize: 12 }}>关联项目</div></div>
+          </div>
+        </div>
+      )}
+      {isEnterprise && (
+        <div style={{ background: 'linear-gradient(135deg, #e6f4ff, #f0f5ff)', borderRadius: 14, padding: '20px 28px', marginBottom: 20, border: '1px solid #d6e4ff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ color: '#1677ff', fontSize: 13, fontWeight: 500, marginBottom: 2 }}>企业工作台</div>
+            <div style={{ color: '#1a1a1a', fontSize: 22, fontWeight: 700 }}>{enterpriseName} <span style={{ fontSize: 14, fontWeight: 400, color: '#666' }}>— 企业数据概览</span></div>
+          </div>
+          <div style={{ display: 'flex', gap: 24 }}>
+            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: '#1677ff' }}>{displayProj.filter(p => p.status === 'in_progress').length}</div><div style={{ color: '#666', fontSize: 12 }}>进行中</div></div>
+            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: '#52c41a' }}>{displayProj.length}</div><div style={{ color: '#666', fontSize: 12 }}>总项目</div></div>
           </div>
         </div>
       )}
