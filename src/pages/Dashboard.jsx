@@ -103,6 +103,20 @@ export default function Dashboard() {
       return s ? JSON.parse(s) : []
     })
 
+    const [submitModal, setSubmitModal] = useState(null)
+    const [submitNote, setSubmitNote] = useState('')
+    const getSubmissions = () => JSON.parse(localStorage.getItem('project_submissions') || '[]')
+    const hasSubmitted = (pid) => getSubmissions().some(s => s.projectId === pid && s.studentId === sid)
+
+    const handleSubmit = () => {
+      const subs = getSubmissions()
+      subs.push({ projectId: submitModal.id, studentId: sid, note: submitNote, date: new Date().toISOString().split('T')[0] })
+      localStorage.setItem('project_submissions', JSON.stringify(subs))
+      message.success(`成果已提交！项目：${submitModal.name}`)
+      setSubmitModal(null)
+      setSubmitNote('')
+    }
+
     const handleAccept = (pid) => {
       const key = `${sid}_${pid}`
       const up = [...accepted, key]
@@ -205,8 +219,9 @@ export default function Dashboard() {
                     <div style={{ display: 'flex', gap: 12, overflow: 'auto', paddingBottom: 16 }}>
                       {[
                         { title: '待接收', key: 'pending', color: '#1677ff', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && !accepted.includes(`${sid}_${p.id}`)) },
-                        { title: '进行中', key: 'active', color: '#52c41a', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && accepted.includes(`${sid}_${p.id}`) && p.status !== 'completed') },
-                        { title: '已结项', key: 'done', color: '#999', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && p.status === 'completed') },
+                        { title: '进行中', key: 'active', color: '#52c41a', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && accepted.includes(`${sid}_${p.id}`) && p.status !== 'completed' && !hasSubmitted(p.id)) },
+                        { title: '已提交', key: 'submitted', color: '#faad14', items: mockStudentProjects.filter(p => hasSubmitted(p.id)) },
+                        { title: '已结项', key: 'done', color: '#999', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && p.status === 'completed' && !hasSubmitted(p.id)) },
                       ].map(col => (
                         <div key={col.key} style={{ minWidth: 260, background: `${col.color}08`, borderRadius: 12, padding: 12, border: `1px solid ${col.color}22` }}>
                           <div style={{ fontWeight: 600, fontSize: 14, color: col.color, marginBottom: 12, paddingBottom: 8, borderBottom: `2px solid ${col.color}33` }}>
@@ -223,6 +238,9 @@ export default function Dashboard() {
                               <div style={{ marginTop: 8, display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
                                 {col.key === 'pending' && (
                                   <Button size="small" type="primary" onClick={(e) => { e.stopPropagation(); handleAccept(p.id) }}>接收</Button>
+                                )}
+                                {col.key === 'active' && (
+                                  <Button size="small" type="primary" onClick={(e) => { e.stopPropagation(); setSubmitModal(p); setSubmitNote('') }}>提交成果</Button>
                                 )}
                               </div>
                             </div>
@@ -249,9 +267,10 @@ export default function Dashboard() {
                       {
                         title: '操作', key: 'action', render: (_, r) => {
                           const k = `${sid}_${r.id}`
-                          return accepted.includes(k)
-                            ? <Button size="small" onClick={() => handleShowDetail(r)}>查看详情</Button>
-                            : <Button size="small" type="primary" onClick={() => handleAccept(r.id)}>接收项目</Button>
+                          if (!accepted.includes(k)) return <Button size="small" type="primary" onClick={() => handleAccept(r.id)}>接收项目</Button>
+                          if (hasSubmitted(r.id)) return <Tag color="green">已提交</Tag>
+                          if (r.status !== 'completed') return <Button size="small" type="primary" onClick={() => { setSubmitModal(r); setSubmitNote('') }}>提交成果</Button>
+                          return <Tag color="green">已结项</Tag>
                         }
                       },
                     ]} rowKey="id" pagination={false} size="small" />
@@ -261,6 +280,12 @@ export default function Dashboard() {
             </Card>
           </Col>
         </Row>
+
+        {/* Submit Modal */}
+        <Modal title={`提交成果 — ${submitModal?.name}`} open={!!submitModal} onOk={handleSubmit} onCancel={() => { setSubmitModal(null); setSubmitNote('') }} okText="提交">
+          <p style={{ color: '#666', marginBottom: 16 }}>请描述您完成的成果内容和关键产出：</p>
+          <Input.TextArea rows={4} value={submitNote} onChange={e => setSubmitNote(e.target.value)} placeholder="描述完成的内容、技术方案和关键成果..." />
+        </Modal>
       </div>
     )
   }
