@@ -25,7 +25,7 @@ const features = [
   { icon: <NodeIndexOutlined />, title: '人才对接', desc: '岗位发布→智能匹配→简历投递\n→面试邀约→教师推荐→AI推荐', color: '#36cfc9' },
   { icon: <ExperimentOutlined />, title: '共享资源池', desc: '院校发布闲置硬件设备\n企业申请使用，学校获取积分收益', color: '#1677ff' },
   { icon: <TrophyOutlined />, title: '成果广场', desc: '教师发布科研成果/技术方案/专利软著\n企业浏览对接', color: '#36cfc9' },
-  { icon: <DeploymentUnitOutlined />, title: '技术服务池', desc: '社会培训指标发布与承接\n技术服务需求对接', color: '#1677ff' },
+  { icon: <DeploymentUnitOutlined />, title: '技术服务情况', desc: '社会培训指标发布与承接\n技术服务需求对接', color: '#1677ff' },
   { icon: <BookOutlined />, title: '教学资源转化', desc: '企业项目→教学文件转化\n入库评审→积分激励', color: '#36cfc9' },
   { icon: <FundOutlined />, title: '智慧驾驶舱', desc: '数字大屏实时展示产业全景\n各端口数据可视化分析', color: '#1677ff', isBig: true },
 ]

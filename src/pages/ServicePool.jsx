@@ -364,7 +364,7 @@ export default function ServicePool() {
   }, [quotas, techServices, filteredAcceptances, capabilities, role, hasPermission])
 
   return (
-    <Card title="技术服务池">
+    <Card title="技术服务情况">
       <Tabs items={tabItems} />
 
       {/* Publish Quota Modal */}
