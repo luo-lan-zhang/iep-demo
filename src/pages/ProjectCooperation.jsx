@@ -277,6 +277,9 @@ export default function ProjectCooperation() {
           acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
           acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
         }
+        if (role === 'enterprise') {
+          acts.push(<Button key="vd" size="small" onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
+        }
         if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
         return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
       }
