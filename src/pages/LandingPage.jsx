@@ -1,887 +1,407 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Typography, Row, Col, Card, Space, Tag, Divider } from 'antd'
-import {
-  ExperimentOutlined, ProjectOutlined, NodeIndexOutlined,
-  TrophyOutlined, BankOutlined, GlobalOutlined, UserOutlined,
-  TeamOutlined, SafetyCertificateOutlined, ApartmentOutlined,
-  ArrowRightOutlined, ThunderboltOutlined,
-  DeploymentUnitOutlined, BookOutlined,
-  FundOutlined, GiftOutlined, RiseOutlined,
-  StarOutlined, CheckCircleOutlined, RocketOutlined,
-  AimOutlined, HeartOutlined, BulbOutlined,
-  RadarChartOutlined, CodeOutlined, DotChartOutlined,
-  GatewayOutlined, RobotOutlined, BranchesOutlined,
-  ScanOutlined, EyeOutlined, AudioOutlined,
-  CloudOutlined, ShakeOutlined, KeyOutlined,
-  DashboardOutlined
-} from '@ant-design/icons'
+import { useAuth } from '../context/AuthContext'
+import * as echarts from 'echarts'
 
-const { Title, Text, Paragraph } = Typography
-
-// ─── Data ───────────────────────────────────────────────────────────────────
-const features = [
-  { icon: <ProjectOutlined />, title: '项目合作', desc: '企业发布需求→教师审核→学校复审\n→教师下发→学生执行→五维评价', color: '#1677ff' },
-  { icon: <NodeIndexOutlined />, title: '人才对接', desc: '岗位发布→智能匹配→简历投递\n→面试邀约→教师推荐→AI推荐', color: '#36cfc9' },
-  { icon: <ExperimentOutlined />, title: '共享资源池', desc: '院校发布闲置硬件设备\n企业申请使用，学校获取积分收益', color: '#1677ff' },
-  { icon: <TrophyOutlined />, title: '成果广场', desc: '教师发布科研成果/技术方案/专利软著\n企业浏览对接', color: '#36cfc9' },
-  { icon: <DeploymentUnitOutlined />, title: '技术服务情况', desc: '社会培训指标发布与承接\n技术服务需求对接', color: '#1677ff' },
-  { icon: <BookOutlined />, title: '教学资源转化', desc: '企业项目→教学文件转化\n入库评审→积分激励', color: '#36cfc9' },
-  { icon: <FundOutlined />, title: '智慧驾驶舱', desc: '数字大屏实时展示产业全景\n各端口数据可视化分析', color: '#1677ff', isBig: true },
+// ─── Mock data ──────────────────────────────────────────────────────────────
+const NEWS_ITEMS = [
+  { id: 1, title: '2024年产教融合共同体年度工作会议在京召开', summary: '会议总结了本年度产教融合工作成果，部署了下一阶段重点任务，来自全国各地的200余位代表参会。', date: '2024-07-15', img: '' },
+  { id: 2, title: '教育部发布新版职业教育专业目录', summary: '新版目录对接产业数字化转型需求，新增人工智能、大数据等新兴专业方向，优化传统专业设置。', date: '2024-07-12', img: '' },
+  { id: 3, title: '深圳产教融合型企业认定数量突破50家', summary: '深圳持续推进产教融合型企业建设培育，新认定12家产教融合型企业，涵盖信息技术、智能制造等领域。', date: '2024-07-08', img: '' },
+  { id: 4, title: '全国职业院校技能大赛总决赛圆满落幕', summary: '本届大赛共设102个赛项，参赛院校超过3000所，在产教融合实训基地中完成全部比赛环节。', date: '2024-07-03', img: '' },
 ]
 
-const roles = [
-  { role: 'council', label: '产教融合理事会', icon: <ApartmentOutlined />, desc: '用户管理·项目审核·积分仲裁' },
-  { role: 'park', label: '园区', icon: <GatewayOutlined />, desc: '区域数据·园区企业管理' },
-  { role: 'enterprise', label: '企业', icon: <GlobalOutlined />, desc: '发布需求·对接人才·管理导师' },
-  { role: 'mentor', label: '企业导师', icon: <SafetyCertificateOutlined />, desc: '项目指导·评审成果' },
-  { role: 'school', label: '院校', icon: <BankOutlined />, desc: '管理教师·审核资源·激励政策' },
-  { role: 'teacher', label: '教师', icon: <UserOutlined />, desc: '承接项目·发布成果·五维评价' },
-  { role: 'student', label: '学生', icon: <TeamOutlined />, desc: '接受任务·提交成果·投递岗位' },
+const NOTICES = [
+  { id: 1, title: '关于组织开展2024年度产教融合型企业申报工作的通知', summary: '各有关单位：根据《国家产教融合建设试点实施方案》要求，现组织开展2024年度产教融合型企业申报工作。', date: '2024-07-10' },
+  { id: 2, title: '关于开展产教融合实训基地考核评估的通知', summary: '为进一步规范产教融合实训基地建设与管理，决定对已认定的实训基地开展年度考核评估工作。', date: '2024-07-05' },
+  { id: 3, title: '关于公布第三批产教融合型专业建设名单的公告', summary: '经学校申报、专家评审、公示等程序，确定第三批产教融合型专业建设点58个，现予以公布。', date: '2024-06-28' },
+  { id: 4, title: '关于举办产教融合数字化能力提升研修班的通知', summary: '为提升教师数字化教学能力和企业导师实践指导能力，决定举办产教融合数字化能力提升专题研修班。', date: '2024-06-20' },
 ]
 
-const flowSteps = [
-  { icon: <ScanOutlined />, title: 'AI需求感知', desc: 'AI实时分析汇聚企业技术难题与岗位需求变化', color: '#1677ff' },
-  { icon: <RobotOutlined />, title: '智能匹配', desc: 'AI算法精准匹配教师团队，自动推送任务', color: '#36cfc9' },
-  { icon: <BranchesOutlined />, title: '协同执行', desc: '项目看板全程透明，任务进度实时跟踪', color: '#1677ff' },
-  { icon: <StarOutlined />, title: '价值闭环', desc: '贡献→积分→收益，AI驱动价值量化', color: '#36cfc9' },
+const NAV_ITEMS = [
+  '网站首页', '共同体概况', '成员矩阵', '行业研究', '资源中心',
+  '产业学院', '人才培养', '科研合作', '政策文件', '就业服务', '申请加入',
 ]
 
-const stats = [
-  { value: '7', suffix: '', label: '核心角色', desc: '覆盖产教融合全链路参与者' },
-  { value: '6', suffix: '+', label: '功能模块', desc: '从项目合作到积分管理全覆盖' },
-  { value: '5', suffix: '维', label: '评价体系', desc: 'AI辅助五维能力评估模型' },
-  { value: '7×24', suffix: '', label: 'AI驱动', desc: '智能匹配·自动推送·数据洞察' },
+// ─── Chart config generators ─────────────────────────────────────────────────
+const getBarOption = () => ({
+  title: { text: '协同育人数量对比', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: { trigger: 'axis' },
+  legend: { data: ['2023', '2024'], bottom: 0, textStyle: { color: '#8ba9cc', fontSize: 11 } },
+  grid: { left: '12%', right: '8%', top: '18%', bottom: '14%' },
+  xAxis: { type: 'category', data: ['订单培养', '现代学徒制', '共建产业学院', '1+X证书', '顶岗实习'], axisLabel: { color: '#8ba9cc', fontSize: 10, rotate: 15 } },
+  yAxis: { type: 'value', axisLabel: { color: '#8ba9cc' }, splitLine: { lineStyle: { color: '#1a3350' } } },
+  series: [
+    { name: '2023', type: 'bar', data: [320, 280, 45, 560, 410], itemStyle: { color: '#1e5fa8' }, barWidth: 14 },
+    { name: '2024', type: 'bar', data: [480, 360, 72, 780, 520], itemStyle: { color: '#00d4ff' }, barWidth: 14 },
+  ],
+})
+
+const getHorizontalBarOption = () => ({
+  title: { text: '建材行业领域占比', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: { trigger: 'axis' },
+  grid: { left: '22%', right: '12%', top: '18%', bottom: '10%' },
+  xAxis: { type: 'value', axisLabel: { color: '#8ba9cc', formatter: '{value}%' }, splitLine: { lineStyle: { color: '#1a3350' } } },
+  yAxis: { type: 'category', data: ['水泥', '玻璃', '陶瓷', '混凝土', '新型建材', '石材'], axisLabel: { color: '#8ba9cc', fontSize: 11 }, inverse: true },
+  series: [{
+    type: 'bar', data: [28, 22, 18, 15, 10, 7],
+    itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+      { offset: 0, color: '#0d47a1' }, { offset: 1, color: '#00e5ff' },
+    ]) },
+    barWidth: 12, label: { show: true, position: 'right', color: '#b8d4ff', formatter: '{c}%', fontSize: 11 },
+  }],
+})
+
+const getGroupedBarOption = () => ({
+  title: { text: '双师型教师占比', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: { trigger: 'axis' },
+  legend: { data: ['标杆院校', '双高计划', '高职院校', '职业院校'], bottom: 0, textStyle: { color: '#8ba9cc', fontSize: 11 } },
+  grid: { left: '10%', right: '6%', top: '18%', bottom: '14%' },
+  xAxis: { type: 'category', data: ['2020', '2021', '2022', '2023', '2024'], axisLabel: { color: '#8ba9cc', fontSize: 10 } },
+  yAxis: { type: 'value', axisLabel: { color: '#8ba9cc', formatter: '{value}%' }, splitLine: { lineStyle: { color: '#1a3350' } } },
+  series: [
+    { name: '标杆院校', type: 'bar', data: [45, 52, 58, 65, 72], itemStyle: { color: '#1677ff' }, barWidth: 6, barGap: '10%' },
+    { name: '双高计划', type: 'bar', data: [38, 44, 50, 56, 63], itemStyle: { color: '#00d4ff' }, barWidth: 6 },
+    { name: '高职院校', type: 'bar', data: [28, 33, 38, 42, 48], itemStyle: { color: '#7c4dff' }, barWidth: 6 },
+    { name: '职业院校', type: 'bar', data: [20, 25, 30, 35, 40], itemStyle: { color: '#b388ff' }, barWidth: 6 },
+  ],
+})
+
+const getPieOption = () => ({
+  title: { text: '行业类型比例', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}家 ({d}%)' },
+  series: [{
+    type: 'pie', radius: ['45%', '72%'], center: ['50%', '55%'],
+    label: { color: '#8ba9cc', fontSize: 10 },
+    emphasis: { label: { fontSize: 14, fontWeight: 'bold' } },
+    data: [
+      { value: 156, name: '玻璃', itemStyle: { color: '#1677ff' } },
+      { value: 98, name: '陶瓷', itemStyle: { color: '#00d4ff' } },
+      { value: 210, name: '水泥', itemStyle: { color: '#7c4dff' } },
+      { value: 67, name: '泥沙', itemStyle: { color: '#ff9800' } },
+    ],
+  }],
+})
+
+const getLineOption = () => ({
+  title: { text: '行业新增分析量', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: { trigger: 'axis' },
+  legend: { data: ['企业', '院校'], bottom: 0, textStyle: { color: '#8ba9cc', fontSize: 11 } },
+  grid: { left: '12%', right: '6%', top: '18%', bottom: '14%' },
+  xAxis: { type: 'category', data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'], axisLabel: { color: '#8ba9cc', fontSize: 9 } },
+  yAxis: { type: 'value', axisLabel: { color: '#8ba9cc' }, splitLine: { lineStyle: { color: '#1a3350' } } },
+  series: [
+    { name: '企业', type: 'line', data: [65, 59, 80, 81, 56, 55, 70, 90, 85, 78, 92, 88], smooth: true, lineStyle: { color: '#00d4ff', width: 2 }, itemStyle: { color: '#00d4ff' }, symbol: 'circle', symbolSize: 4 },
+    { name: '院校', type: 'line', data: [45, 48, 60, 65, 52, 48, 62, 75, 70, 68, 80, 76], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 4 },
+  ],
+})
+
+const getCityPieOption = () => ({
+  title: { text: '新增入会城市分布', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}家 ({d}%)' },
+  series: [{
+    type: 'pie', radius: '60%', center: ['50%', '55%'],
+    label: { color: '#8ba9cc', fontSize: 9, formatter: '{b}\n{d}%' },
+    data: [
+      { value: 45, name: '深圳', itemStyle: { color: '#1677ff' } },
+      { value: 38, name: '广州', itemStyle: { color: '#00d4ff' } },
+      { value: 28, name: '东莞', itemStyle: { color: '#7c4dff' } },
+      { value: 22, name: '佛山', itemStyle: { color: '#ff9800' } },
+      { value: 18, name: '惠州', itemStyle: { color: '#4caf50' } },
+      { value: 32, name: '其他', itemStyle: { color: '#607d8b' } },
+    ],
+  }],
+})
+
+// ─── Line colors for China map ───────────────────────────────────────────────
+const MAP_LINES = [
+  { from: '深圳', to: '北京', coords: [[114.07, 22.62], [116.40, 39.90]] },
+  { from: '深圳', to: '上海', coords: [[114.07, 22.62], [121.47, 31.23]] },
+  { from: '广州', to: '武汉', coords: [[113.26, 23.13], [114.30, 30.60]] },
+  { from: '深圳', to: '成都', coords: [[114.07, 22.62], [104.06, 30.67]] },
+  { from: '广州', to: '杭州', coords: [[113.26, 23.13], [120.15, 30.28]] },
+  { from: '深圳', to: '重庆', coords: [[114.07, 22.62], [106.55, 29.57]] },
 ]
 
-// ─── Animated Counter ──────────────────────────────────────────────────────
-function AnimatedStat({ value, suffix, label, desc, delay }) {
-  const [count, setCount] = useState(0)
-  const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
+const SCATTER_CITIES = [
+  { name: '深圳', value: [114.07, 22.62, 120] },
+  { name: '广州', value: [113.26, 23.13, 90] },
+  { name: '北京', value: [116.40, 39.90, 80] },
+  { name: '上海', value: [121.47, 31.23, 70] },
+  { name: '武汉', value: [114.30, 30.60, 50] },
+  { name: '成都', value: [104.06, 30.67, 45] },
+  { name: '杭州', value: [120.15, 30.28, 40] },
+  { name: '重庆', value: [106.55, 29.57, 55] },
+  { name: '东莞', value: [113.75, 23.05, 35] },
+  { name: '佛山', value: [113.12, 23.02, 30] },
+]
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) { setVisible(true); observer.disconnect() }
-    }, { threshold: 0.3 })
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
+const FLOW_POINTS = [
+  { coords: [[114.07, 22.62], [116.40, 39.90]] },
+  { coords: [[114.07, 22.62], [121.47, 31.23]] },
+  { coords: [[113.26, 23.13], [114.30, 30.60]] },
+  { coords: [[114.07, 22.62], [104.06, 30.67]] },
+  { coords: [[113.26, 23.13], [120.15, 30.28]] },
+]
 
-  useEffect(() => {
-    if (!visible) return
-    const num = parseInt(value) || 0
-    if (num === 0) { setCount(value); return }
-    let start = 0
-    const step = Math.ceil(num / 40)
-    const timer = setInterval(() => {
-      start += step
-      if (start >= num) { clearInterval(timer); setCount(num) }
-      else setCount(start)
-    }, delay || 40)
-    return () => clearInterval(timer)
-  }, [visible])
-
-  return (
-    <div ref={ref} style={{ textAlign: 'center', padding: '24px 12px', transition: 'all 0.6s', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(30px)' }}>
-      <div style={{ fontSize: 42, fontWeight: 700, background: 'linear-gradient(135deg, #1677ff, #36cfc9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.1 }}>
-        {count}{suffix}
-      </div>
-      <div style={{ fontSize: 16, fontWeight: 600, color: '#e8f4f8', marginTop: 8 }}>{label}</div>
-      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{desc}</div>
-    </div>
-  )
-}
-
-// ─── Reveal on Scroll ──────────────────────────────────────────────────────
-function Reveal({ children, delay = 0 }) {
-  const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) { setTimeout(() => setVisible(true), delay); observer.disconnect() }
-    }, { threshold: 0.15 })
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-  return (
-    <div ref={ref} style={{ transition: 'all 0.7s cubic-bezier(0.22, 1, 0.36, 1)', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(40px)' }}>
-      {children}
-    </div>
-  )
-}
-
-// ─── Particles / Neural Grid ───────────────────────────────────────────────
-function NeuralBg() {
-  return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-      {/* Grid pattern */}
-      <svg style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0.06 }}>
-        <defs>
-          <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#60a5fa" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid)" />
-      </svg>
-      {/* Floating particles */}
-      {[...Array(40)].map((_, i) => (
-        <div key={i} style={{
-          position: 'absolute',
-          width: i % 2 === 0 ? 4 : 8,
-          height: i % 2 === 0 ? 4 : 8,
-          borderRadius: '50%',
-          background: i % 3 === 0 ? 'rgba(54,207,201,0.5)' : i % 3 === 1 ? 'rgba(96,165,250,0.4)' : 'rgba(255,255,255,0.2)',
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animation: `float-${i % 4} ${Math.random() * 8 + 5}s ease-in-out infinite`,
-          animationDelay: `${Math.random() * 5}s`,
-          boxShadow: i % 2 === 0 ? `0 0 ${Math.random() * 10 + 5}px rgba(54,207,201,0.3)` : 'none',
-        }} />
-      ))}
-      {/* Connecting lines */}
-      <svg style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0.04 }}>
-        {[...Array(8)].map((_, i) => (
-          <line key={i} x1={`${Math.random() * 100}%`} y1={`${Math.random() * 100}%`} x2={`${Math.random() * 100}%`} y2={`${Math.random() * 100}%`} stroke="#60a5fa" strokeWidth="1" />
-        ))}
-      </svg>
-      {/* Glowing orbs */}
-      <div style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(22,119,255,0.12), transparent 70%)', top: '-15%', right: '-10%', animation: 'pulseGlow 6s ease-in-out infinite' }} />
-      <div style={{ position: 'absolute', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(54,207,201,0.08), transparent 70%)', bottom: '5%', left: '-8%', animation: 'pulseGlow 8s ease-in-out infinite 1s' }} />
-      <style>{`
-        @keyframes float-0 { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-25px) translateX(10px); } }
-        @keyframes float-1 { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(15px) translateX(-15px); } }
-        @keyframes float-2 { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-20px) translateX(-5px); } }
-        @keyframes float-3 { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(10px) translateX(20px); } }
-        @keyframes pulseGlow { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-      `}</style>
-    </div>
-  )
-}
-
-// ─── Component ─────────────────────────────────────────────────────────────
+// ─── Main Component ──────────────────────────────────────────────────────────
 export default function LandingPage() {
+  const { user } = useAuth()
   const navigate = useNavigate()
+  const [currentTime, setCurrentTime] = useState('')
+  const [mapRegistered, setMapRegistered] = useState(false)
+
+  // Refs for charts
+  const barRef = useRef(null)
+  const hBarRef = useRef(null)
+  const groupedBarRef = useRef(null)
+  const pieRef = useRef(null)
+  const lineRef = useRef(null)
+  const cityPieRef = useRef(null)
+  const mapRef = useRef(null)
+  const chartInstances = useRef([])
+
+  const disposeCharts = useCallback(() => {
+    chartInstances.current.forEach(c => { try { c.dispose() } catch {} })
+    chartInstances.current = []
+  }, [])
+
+  // Load china map geojson
+  useEffect(() => {
+    let cancelled = false
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+      .then(r => r.json())
+      .then(geo => {
+        if (cancelled) return
+        echarts.registerMap('china', geo)
+        setMapRegistered(true)
+      })
+      .catch(() => {
+        // Fallback: register a minimal version so the map section shows a placeholder
+        if (!cancelled) setMapRegistered(true)
+      })
+    return () => { cancelled = true }
+  }, [])
+
+  // Clock
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date()
+      setCurrentTime(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`)
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  // Create charts
+  useEffect(() => {
+    disposeCharts()
+    const create = (ref, getOption) => {
+      if (!ref.current) return null
+      const inst = echarts.init(ref.current)
+      inst.setOption(getOption())
+      chartInstances.current.push(inst)
+      return inst
+    }
+    create(barRef, getBarOption)
+    create(hBarRef, getHorizontalBarOption)
+    create(groupedBarRef, getGroupedBarOption)
+    create(pieRef, getPieOption)
+    create(lineRef, getLineOption)
+    create(cityPieRef, getCityPieOption)
+    return disposeCharts
+  }, [disposeCharts])
+
+  // Create map chart after geo is registered
+  useEffect(() => {
+    if (!mapRegistered || !mapRef.current) return
+    const inst = echarts.init(mapRef.current)
+    const FLOW_SERIES = FLOW_POINTS.map((fp, i) => ({
+      type: 'lines', coordinateSystem: 'geo', polyline: false,
+      data: [{ coords: fp.coords }],
+      lineStyle: { color: '#00e5ff', width: 1.5, opacity: 0.6, curveness: 0.2 },
+      effect: { show: true, period: 4 + i * 0.5, trailLength: 0.2, symbol: 'arrow', symbolSize: 6, color: '#fff' },
+      zlevel: i,
+    }))
+    inst.setOption({
+      tooltip: { trigger: 'item' },
+      geo: {
+        map: 'china', roam: false, zoom: 1.22, center: [108, 35],
+        itemStyle: { areaColor: '#0d2b52', borderColor: '#1a5080', borderWidth: 1 },
+        emphasis: { itemStyle: { areaColor: '#1a4478' }, label: { show: false } },
+      },
+      series: [
+        ...FLOW_SERIES,
+        {
+          type: 'effectScatter', coordinateSystem: 'geo',
+          data: SCATTER_CITIES.map(c => ({ name: c.name, value: c.value })),
+          symbolSize: v => Math.sqrt(v[2]) * 3,
+          showEffectOn: 'render', rippleEffect: { brushType: 'stroke', scale: 3, period: 4 },
+          itemStyle: { color: '#00e5ff' }, label: { show: true, position: 'right', formatter: '{b}', color: '#b8d4ff', fontSize: 10 },
+        },
+      ],
+    })
+    chartInstances.current.push(inst)
+    return () => { try { inst.dispose() } catch {} }
+  }, [mapRegistered])
+
+  // Resize handler
+  useEffect(() => {
+    const onResize = () => chartInstances.current.forEach(c => { try { c.resize() } catch {} })
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   return (
-    <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
-
-      {/* ═══════════════ HERO ═══════════════════════════════════════ */}
-      <section style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #020b1a 0%, #0a1f3d 25%, #0d2b52 50%, #061830 75%, #020b1a 100%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        position: 'relative', overflow: 'hidden', padding: '40px 24px',
-      }}>
-        <NeuralBg />
-
-        <div style={{ maxWidth: 1100, width: '100%', position: 'relative', zIndex: 1 }}>
-          <Row align="middle" gutter={[48, 48]}>
-            <Col xs={24} md={14}>
-              <div style={{ animation: 'fadeSlideUp 0.8s forwards' }}>
-                <Tag icon={<RobotOutlined />} color="#36cfc9" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 20, border: 'none' }}>
-                  AI驱动 · 产教融合数字化平台
-                </Tag>
-                <Title level={1} style={{
-                  color: '#fff', fontSize: 44, margin: '0 0 16px', lineHeight: 1.15, letterSpacing: -1, fontWeight: 700,
-                }}>
-                  产教融合云平台
-                </Title>
-                <Paragraph style={{ color: 'rgba(255,255,255,0.55)', fontSize: 16, lineHeight: 1.9, maxWidth: 560, marginBottom: 24 }}>
-                  以<b style={{ color: 'rgba(255,255,255,0.85)' }}>人工智能</b>为核心驱动，构建连接园区、企业、院校、师生七大角色的数字化生态。
-                  AI实时感知产业需求变化，通过<b style={{ color: 'rgba(255,255,255,0.85)' }}>"需求感知→智能匹配→任务触达"</b>
-                  的智能调度体系，实现教学资源与产业需求的动态契合。
-                </Paragraph>
-
-                {/* AI visual chips */}
-                <Row gutter={[8, 8]} style={{ marginBottom: 28 }}>
-                  {[
-                    { icon: <RobotOutlined />, label: 'AI智能匹配' },
-                    { icon: <RadarChartOutlined />, label: '五维评估' },
-                    { icon: <NodeIndexOutlined />, label: '数据分析' },
-                    { icon: <CloudOutlined />, label: '智慧决策' },
-                  ].map((item, i) => (
-                    <Col key={i}>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '5px 14px',
-                        background: 'rgba(54,207,201,0.1)',
-                        border: '1px solid rgba(54,207,201,0.2)',
-                        borderRadius: 20,
-                        color: '#36cfc9', fontSize: 12,
-                      }}>
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-
-                <Space size={16} wrap>
-                  <Button
-                    type="primary" size="large"
-                    icon={<RocketOutlined />}
-                    onClick={() => navigate('/login')}
-                    style={{
-                      height: 54, borderRadius: 27, paddingInline: 38, fontSize: 16,
-                      background: 'linear-gradient(90deg, #1677ff, #36cfc9)',
-                      border: 'none',
-                      boxShadow: '0 8px 32px rgba(22,119,255,0.35)',
-                      fontWeight: 500,
-                    }}
-                  >
-                    进入后台管理
-                    <ArrowRightOutlined style={{ marginLeft: 6 }} />
-                  </Button>
-                  <Button
-                    size="large" ghost
-                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                    style={{ height: 54, borderRadius: 27, paddingInline: 28, borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.7)', fontSize: 15 }}
-                  >
-                    了解更多
-                  </Button>
-                </Space>
-              </div>
-            </Col>
-
-            <Col xs={24} md={10}>
-              <div style={{
-                animation: 'fadeSlideUp 0.8s forwards 0.2s',
-              }}>
-                {/* AI Scene - Neural Network Visualization */}
-                <div style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  borderRadius: 20, padding: 28,
-                  backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(54,207,201,0.15)',
-                  position: 'relative', overflow: 'hidden',
-                }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #1677ff, #36cfc9)' }} />
-
-                  <Title level={4} style={{ color: '#e8f4f8', marginBottom: 20, textAlign: 'center', fontSize: 15, fontWeight: 600 }}>
-                    <RobotOutlined style={{ marginRight: 8, color: '#36cfc9' }} />
-                    AI 智能场景演示
-                  </Title>
-
-                  {/* Neural network nodes */}
-                  <svg viewBox="0 0 320 200" style={{ width: '100%', height: 180 }}>
-                    {/* Layer 1 - Input */}
-                    {[0, 1, 2].map(i => (
-                      <circle key={`l1-${i}`} cx={40} cy={40 + i * 55} r={8} fill="rgba(22,119,255,0.6)" stroke="#1677ff" strokeWidth="1.5">
-                        <animate attributeName="r" values="8;10;8" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
-                      </circle>
-                    ))}
-                    {/* Layer 2 - Hidden */}
-                    {[0, 1, 2, 3].map(i => (
-                      <circle key={`l2-${i}`} cx={120} cy={20 + i * 45} r={6} fill="rgba(54,207,201,0.5)" stroke="#36cfc9" strokeWidth="1">
-                        <animate attributeName="r" values="6;8;6" dur={`${2.5 + i * 0.2}s`} repeatCount="indefinite" />
-                      </circle>
-                    ))}
-                    {/* Layer 3 - Hidden */}
-                    {[0, 1, 2, 3].map(i => (
-                      <circle key={`l3-${i}`} cx={200} cy={20 + i * 45} r={6} fill="rgba(22,119,255,0.5)" stroke="#1677ff" strokeWidth="1">
-                        <animate attributeName="r" values="6;9;6" dur={`${3 + i * 0.15}s`} repeatCount="indefinite" />
-                      </circle>
-                    ))}
-                    {/* Layer 4 - Output */}
-                    {[0, 1, 2].map(i => (
-                      <circle key={`l4-${i}`} cx={280} cy={40 + i * 55} r={8} fill="rgba(54,207,201,0.6)" stroke="#36cfc9" strokeWidth="1.5">
-                        <animate attributeName="r" values="8;11;8" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
-                      </circle>
-                    ))}
-                    {/* Connections L1→L2 */}
-                    {[0, 1, 2].flatMap(i => [0, 1, 2, 3].map(j => (
-                      <line key={`c1-${i}-${j}`} x1={48} y1={40 + i * 55} x2={114} y2={20 + j * 45} stroke="rgba(22,119,255,0.12)" strokeWidth="0.8" />
-                    )))}
-                    {/* Connections L2→L3 */}
-                    {[0, 1, 2, 3].flatMap(i => [0, 1, 2, 3].map(j => (
-                      <line key={`c2-${i}-${j}`} x1={126} y1={20 + i * 45} x2={194} y2={20 + j * 45} stroke="rgba(54,207,201,0.12)" strokeWidth="0.8" />
-                    )))}
-                    {/* Connections L3→L4 */}
-                    {[0, 1, 2, 3].flatMap(i => [0, 1, 2].map(j => (
-                      <line key={`c3-${i}-${j}`} x1={206} y1={20 + i * 45} x2={272} y2={40 + j * 55} stroke="rgba(22,119,255,0.12)" strokeWidth="0.8" />
-                    )))}
-                    {/* Labels */}
-                    <text x={40} y={185} textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize={10}>产业需求</text>
-                    <text x={120} y={185} textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize={10}>AI分析</text>
-                    <text x={200} y={185} textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize={10}>智能匹配</text>
-                    <text x={280} y={185} textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize={10}>精准推送</text>
-                  </svg>
-
-                  {/* 7角色快速入口 */}
-                  <Row gutter={[8, 8]} style={{ marginTop: 12 }}>
-                    {roles.map((r, i) => (
-                      <Col span={12} key={r.role}>
-                        <div style={{
-                          display: 'flex', alignItems: 'center', gap: 8,
-                          padding: '7px 10px',
-                          background: `rgba(255,255,255,${0.03 + i * 0.01})`,
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,0.06)',
-                          transition: 'all 0.3s',
-                          cursor: 'default',
-                        }}
-                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(22,119,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(22,119,255,0.3)' }}
-                          onMouseLeave={e => { e.currentTarget.style.background = `rgba(255,255,255,${0.03 + i * 0.01})`; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}
-                        >
-                          <span style={{ color: '#36cfc9', fontSize: 16 }}>{r.icon}</span>
-                          <span style={{ color: '#e8f4f8', fontSize: 12 }}>{r.label}</span>
-                        </div>
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </section>
-
-      {/* ═══════════════ STATS ═══════════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(180deg, #061830 0%, #0a1f3d 100%)',
-        padding: '40px 24px 60px',
-      }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <Row gutter={[16, 16]}>
-            {stats.map((s, i) => (
-              <Col xs={12} md={6} key={i}>
-                <div style={{
-                  borderRadius: 16,
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  backdropFilter: 'blur(8px)',
-                }}>
-                  <AnimatedStat {...s} delay={i * 80} />
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </div>
-      </section>
-
-      {/* ═══════════════ FEATURES ════════════════════════════════════ */}
-      <section id="features" style={{
-        background: 'linear-gradient(180deg, #0a1f3d 0%, #0d2b52 50%, #0a1f3d 100%)',
-        padding: '80px 24px',
-      }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <Reveal>
-            <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <Tag icon={<BulbOutlined />} color="#36cfc9" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 12, border: 'none' }}>功能矩阵</Tag>
-              <Title level={2} style={{ fontSize: 32, marginBottom: 12, fontWeight: 700, color: '#e8f4f8' }}>
-                AI驱动的核心功能
-              </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15, display: 'block', margin: '0 auto', maxWidth: 500 }}>
-                六大功能模块，覆盖产教融合全业务流程
-              </Text>
+    <div style={{ minWidth: 1280, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif', background: '#f0f2f5' }}>
+      {/* ═══ Header ══════════════════════════════════════════════════════════ */}
+      <header style={{ background: '#fff', borderBottom: '2px solid #e8e8e8' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px' }}>
+          {/* Logo + title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 44, height: 44, background: 'linear-gradient(135deg, #0d47a1, #1565c0)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20, fontWeight: 700, letterSpacing: 1 }}>
+              产融
             </div>
-          </Reveal>
-
-          <Row gutter={[24, 24]}>
-            {features.map((f, i) => (
-              <Col xs={24} sm={12} md={8} key={i}>
-                <Reveal delay={i * 100}>
-                  <Card
-                    hoverable
-                    style={{
-                      borderRadius: 16,
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      height: '100%', overflow: 'hidden',
-                      transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-                    }}
-                    bodyStyle={{ padding: 28 }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.transform = 'translateY(-6px)'
-                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(22,119,255,0.15)'
-                      e.currentTarget.style.borderColor = 'rgba(54,207,201,0.3)'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = 'none'
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-                    }}
-                  >
-                    <div style={{
-                      width: 52, height: 52, borderRadius: 14,
-                      background: `${f.color}18`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 26, color: f.color, marginBottom: 18,
-                    }}>
-                      {f.icon}
-                    </div>
-                    <Title level={4} style={{ fontSize: 17, marginBottom: 8, fontWeight: 600, color: '#e8f4f8' }}>{f.title}</Title>
-                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.8, whiteSpace: 'pre-line' }}>{f.desc}</Text>
-                  </Card>
-                </Reveal>
-              </Col>
-            ))}
-          </Row>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#0d47a1', lineHeight: 1.2 }}>产教融合云平台</div>
+              <div style={{ fontSize: 11, color: '#999', letterSpacing: 1.5 }}>INDUSTRY-EDUCATION INTEGRATION PLATFORM</div>
+            </div>
+          </div>
+          {/* Search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+            <input type="text" placeholder="搜索..." style={{ width: 240, height: 38, border: '1px solid #d9d9d9', borderRight: 'none', borderRadius: '6px 0 0 6px', padding: '0 12px', fontSize: 13, outline: 'none', boxSizing: 'border-box' }} />
+            <button style={{ height: 38, padding: '0 20px', background: '#1677ff', color: '#fff', border: 'none', borderRadius: '0 6px 6px 0', cursor: 'pointer', fontSize: 13 }}>搜索</button>
+          </div>
+          {/* Login button */}
+          <button
+            onClick={() => navigate(user ? '/admin/dashboard' : '/login')}
+            style={{ padding: '8px 24px', background: '#0d47a1', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 14, fontWeight: 500 }}
+          >
+            {user ? '进入平台' : '登录'}
+          </button>
         </div>
-      </section>
-
-      {/* ═══════════════ AI FLOW ═════════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(180deg, #0a1f3d 0%, #061830 100%)',
-        padding: '80px 24px',
-      }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          <Reveal>
-            <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <Tag icon={<RobotOutlined />} color="#1677ff" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 12, border: 'none' }}>AI工作流</Tag>
-              <Title level={2} style={{ fontSize: 32, marginBottom: 12, fontWeight: 700, color: '#e8f4f8' }}>
-                AI驱动的智能调度闭环
-              </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15 }}>从需求感知到价值闭环的全链路AI赋能</Text>
-            </div>
-          </Reveal>
-
-          <Row gutter={[16, 16]} justify="center">
-            {flowSteps.map((step, i) => (
-              <Col xs={24} sm={12} md={6} key={i}>
-                <Reveal delay={i * 120}>
-                  <div style={{
-                    textAlign: 'center', padding: '32px 20px',
-                    background: 'rgba(255,255,255,0.04)',
-                    borderRadius: 16,
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    position: 'relative', height: '100%',
-                    transition: 'all 0.3s',
-                  }}
-                    onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 30px rgba(22,119,255,0.15)'}
-                    onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
-                  >
-                    <div style={{
-                      width: 64, height: 64, borderRadius: '50%',
-                      background: `linear-gradient(135deg, ${step.color}, rgba(54,207,201,0.6))`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 28, color: '#fff', margin: '0 auto 16px',
-                      boxShadow: `0 8px 24px ${step.color}33`,
-                    }}>
-                      {step.icon}
-                    </div>
-                    <div style={{
-                      position: 'absolute', top: 16, right: 16,
-                      width: 24, height: 24, borderRadius: '50%',
-                      background: step.color,
-                      color: '#fff',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 12, fontWeight: 'bold',
-                    }}>{i + 1}</div>
-                    <Title level={4} style={{ fontSize: 16, marginBottom: 8, color: step.color, fontWeight: 600 }}>{step.title}</Title>
-                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.6 }}>{step.desc}</Text>
-                  </div>
-                </Reveal>
-              </Col>
-            ))}
-          </Row>
-        </div>
-      </section>
-
-      {/* ═══════════════ VALUE CHAIN ═════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(180deg, #061830 0%, #0a1f3d 100%)',
-        padding: '80px 24px',
-      }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <Reveal>
-            <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <Tag icon={<StarOutlined />} color="#1677ff" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 12, border: 'none' }}>价值体系</Tag>
-              <Title level={2} style={{ fontSize: 32, marginBottom: 12, fontWeight: 700, color: '#e8f4f8' }}>
-                价值共生 · AI量化体系
-              </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15, display: 'block', margin: '0 auto', maxWidth: 500 }}>
-                AI驱动"贡献→积分→收益"的量化路径，所有参与方的贡献可被精确计量
-              </Text>
-            </div>
-          </Reveal>
-
-          <Row gutter={[24, 24]} justify="center">
-            {[
-              { step: '1', title: '贡 献', desc: '企业发布项目、导师指导、学生交付成果等所有参与行为由AI全程记录', color: '#1677ff', icon: <HeartOutlined /> },
-              { step: '2', title: '积 分', desc: 'AI智能算法根据贡献度、完成质量自动计算并分配"贡献积分"', color: '#36cfc9', icon: <NodeIndexOutlined /> },
-              { step: '3', title: '收 益', desc: '积分与园区租金减免、职称晋升、学分置换等核心利益直接挂钩', color: '#1677ff', icon: <GiftOutlined /> },
-            ].map((item, i) => (
-              <Col xs={24} md={8} key={i}>
-                <Reveal delay={i * 150}>
-                  <Card
-                    style={{
-                      borderRadius: 16,
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      height: '100%', textAlign: 'center',
-                      transition: 'all 0.4s',
-                    }}
-                    hoverable
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = item.color; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 8px 30px ${item.color}22` }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
-                  >
-                    <div style={{
-                      width: 60, height: 60, borderRadius: '50%',
-                      background: `linear-gradient(135deg, ${item.color}, rgba(54,207,201,0.6))`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 26, color: '#fff', margin: '0 auto 16px',
-                      boxShadow: `0 8px 20px ${item.color}33`,
-                    }}>
-                      {item.icon}
-                    </div>
-                    <Title level={4} style={{ fontSize: 18, color: item.color, marginBottom: 12, fontWeight: 600 }}>{item.title}</Title>
-                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.8 }}>{item.desc}</Text>
-                  </Card>
-                </Reveal>
-              </Col>
-            ))}
-          </Row>
-        </div>
-      </section>
-
-      {/* ═══════════════ COCKPIT PREVIEW ═════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(180deg, #061830 0%, #020b1a 50%, #061830 100%)',
-        padding: '60px 24px 80px',
-        position: 'relative', overflow: 'hidden',
-      }}>
-        {/* Scanline overlay */}
-        <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(54,207,201,0.02) 2px, rgba(54,207,201,0.02) 4px)', pointerEvents: 'none', zIndex: 1 }} />
-
-        <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          <Reveal>
-            <div style={{ textAlign: 'center', marginBottom: 36 }}>
-              <Tag icon={<DashboardOutlined />} color="#36cfc9" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 12, border: 'none' }}>数字大屏</Tag>
-              <Title level={2} style={{ fontSize: 32, fontWeight: 700, color: '#e8f4f8', marginBottom: 8 }}>
-                智慧驾驶舱
-              </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 15 }}>全端口数据实时可视化 · 产业全景一屏掌控</Text>
-            </div>
-          </Reveal>
-
-          <Reveal>
-            {/* Big Screen Frame */}
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(22,119,255,0.08), rgba(54,207,201,0.05))',
-              borderRadius: 20,
-              border: '1px solid rgba(54,207,201,0.15)',
-              padding: '4px',
-              boxShadow: '0 0 60px rgba(22,119,255,0.08), inset 0 0 60px rgba(22,119,255,0.03)',
-            }}>
-              <div style={{
-                background: 'linear-gradient(180deg, #061830 0%, #0a1f3d 100%)',
-                borderRadius: 18,
-                padding: 32,
-                position: 'relative',
-                overflow: 'hidden',
-                border: '1px solid rgba(54,207,201,0.08)',
-              }}>
-                {/* Top scanning line */}
-                <div style={{
-                  position: 'absolute', left: '5%', right: '5%', height: 1,
-                  background: 'linear-gradient(90deg, transparent, #36cfc9, transparent)',
-                  animation: 'scanLine 4s ease-in-out infinite',
-                  opacity: 0.6,
-                }} />
-
-                {/* Header bar */}
-                <div style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  marginBottom: 24, paddingBottom: 16,
-                  borderBottom: '1px solid rgba(54,207,201,0.1)',
-                }}>
-                  <Space>
-                    <DashboardOutlined style={{ color: '#36cfc9', fontSize: 20 }} />
-                    <span style={{ color: '#e8f4f8', fontSize: 16, fontWeight: 600, letterSpacing: 2 }}>智慧驾驶舱 · 实时数据大屏</span>
-                  </Space>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {['产业全景', '资源整合', '人才供需', '服务成果'].map(label => (
-                      <span key={label} style={{
-                        padding: '3px 12px', borderRadius: 12,
-                        background: 'rgba(54,207,201,0.1)',
-                        color: '#36cfc9', fontSize: 11, border: '1px solid rgba(54,207,201,0.15)',
-                      }}>{label}</span>
-                    ))}
-                  </div>
-                  <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, fontFamily: 'monospace' }}>
-                    {new Date().toLocaleTimeString()}
-                  </span>
-                </div>
-
-                {/* KPI Row */}
-                <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
-                  {[
-                    { label: '平台注册用户', value: '2,847', unit: '人', change: '+12.5%' },
-                    { label: '合作企业', value: '86', unit: '家', change: '+5.2%' },
-                    { label: '院校数量', value: '12', unit: '所', change: '+8.3%' },
-                    { label: '累计项目', value: '45', unit: '个', change: '+23.1%' },
-                    { label: '成果转化', value: '¥1.2', unit: '亿', change: '+15.7%' },
-                    { label: '培训人次', value: '3,560', unit: '人', change: '+18.9%' },
-                  ].map((kpi, i) => (
-                    <Col xs={12} sm={8} md={4} key={i}>
-                      <div style={{
-                        background: 'rgba(22,119,255,0.06)',
-                        borderRadius: 10, padding: '12px 10px',
-                        border: '1px solid rgba(54,207,201,0.08)',
-                        textAlign: 'center',
-                      }}>
-                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginBottom: 4 }}>{kpi.label}</div>
-                        <div style={{ color: '#36cfc9', fontSize: 22, fontWeight: 700, fontFamily: 'monospace' }}>
-                          {kpi.value}<span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{kpi.unit}</span>
-                        </div>
-                        <div style={{ color: '#52c41a', fontSize: 10 }}>{kpi.change}</div>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-
-                {/* Port Data Section */}
-                <div style={{
-                  background: 'rgba(22,119,255,0.04)',
-                  borderRadius: 12, padding: 20,
-                  border: '1px solid rgba(54,207,201,0.06)',
-                  marginBottom: 20,
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                    <DotChartOutlined style={{ color: '#36cfc9' }} />
-                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 500 }}>各端口数据概览</span>
-                  </div>
-                  <Row gutter={[12, 12]}>
-                    {[
-                      { port: '理事会', data: '审核项目 12 项·积分仲裁 5 起·政策发布 3 条', icon: <ApartmentOutlined />, color: '#ff4d4f' },
-                      { port: '园区', data: '入驻企业 28 家·产教数据报告 4 份', icon: <GatewayOutlined />, color: '#722ed1' },
-                      { port: '企业', data: '发布项目 8 个·岗位 15 个·对接成果 6 次', icon: <GlobalOutlined />, color: '#fa8c16' },
-                      { port: '企业导师', data: '指导项目 6 个·评审成果 23 项', icon: <SafetyCertificateOutlined />, color: '#2f54eb' },
-                      { port: '院校', data: '管理教师 45 人·审核资源 18 份·激励政策 5 条', icon: <BankOutlined />, color: '#1677ff' },
-                      { port: '教师', data: '承接项目 10 个·发布成果 15 项·评价学生 32 次', icon: <UserOutlined />, color: '#13c2c2' },
-                      { port: '学生', data: '参与项目 28 人·提交成果 46 次·投递岗位 22 次', icon: <TeamOutlined />, color: '#52c41a' },
-                    ].map((item, i) => (
-                      <Col xs={24} sm={12} md={8} key={i}>
-                        <div style={{
-                          display: 'flex', alignItems: 'flex-start', gap: 10,
-                          padding: '10px 12px',
-                          background: 'rgba(255,255,255,0.03)',
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,0.05)',
-                        }}>
-                          <span style={{ color: item.color, fontSize: 18, flexShrink: 0, marginTop: 2 }}>{item.icon}</span>
-                          <div>
-                            <div style={{ color: '#e8f4f8', fontSize: 13, fontWeight: 500, marginBottom: 2 }}>{item.port}</div>
-                            <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, lineHeight: 1.5 }}>{item.data}</div>
-                          </div>
-                        </div>
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
-
-                {/* Bottom Chart Bars */}
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12}>
-                    <div style={{
-                      background: 'rgba(22,119,255,0.04)',
-                      borderRadius: 10, padding: 16,
-                      border: '1px solid rgba(54,207,201,0.06)',
-                    }}>
-                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 12 }}>各端口项目参与热度</div>
-                      {[
-                        { label: '企业', value: 92, color: '#1677ff' },
-                        { label: '院校', value: 85, color: '#36cfc9' },
-                        { label: '教师', value: 78, color: '#722ed1' },
-                        { label: '学生', value: 95, color: '#52c41a' },
-                      ].map((bar, i) => (
-                        <div key={i} style={{ marginBottom: 8 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-                            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>{bar.label}</span>
-                            <span style={{ color: bar.color, fontSize: 11, fontWeight: 600 }}>{bar.value}%</span>
-                          </div>
-                          <div style={{ height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
-                            <div style={{ width: `${bar.value}%`, height: '100%', background: `linear-gradient(90deg, ${bar.color}, rgba(54,207,201,0.5))`, borderRadius: 3, transition: 'width 1.5s' }} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <div style={{
-                      background: 'rgba(22,119,255,0.04)',
-                      borderRadius: 10, padding: 16,
-                      border: '1px solid rgba(54,207,201,0.06)',
-                    }}>
-                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 12 }}>积分分布 TOP 5</div>
-                      {[
-                        { label: '华为技术', value: 45000, color: '#1677ff' },
-                        { label: '深圳大学', value: 38000, color: '#36cfc9' },
-                        { label: '腾讯科技', value: 32000, color: '#722ed1' },
-                        { label: '大疆创新', value: 28000, color: '#fa8c16' },
-                        { label: '深职院', value: 22000, color: '#52c41a' },
-                      ].map((bar, i) => {
-                        const pct = Math.round((bar.value / 45000) * 100)
-                        return (
-                          <div key={i} style={{ marginBottom: 6 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-                              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>{bar.label}</span>
-                              <span style={{ color: bar.color, fontSize: 11, fontWeight: 600 }}>{bar.value.toLocaleString()}</span>
-                            </div>
-                            <div style={{ height: 5, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
-                              <div style={{ width: `${pct}%`, height: '100%', background: bar.color, borderRadius: 3, opacity: 0.7 }} />
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </Col>
-                </Row>
-
-                {/* Bottom border glow */}
-                <div style={{
-                  position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1,
-                  background: 'linear-gradient(90deg, transparent, rgba(54,207,201,0.3), transparent)',
-                }} />
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={200}>
-            <div style={{ textAlign: 'center', marginTop: 24 }}>
-              <Button
-                type="primary" ghost
-                icon={<DashboardOutlined />}
-                onClick={() => navigate('/admin/cockpit')}
-                style={{
-                  height: 44, borderRadius: 22, paddingInline: 28,
-                  borderColor: 'rgba(54,207,201,0.3)', color: '#36cfc9',
-                  fontSize: 14,
-                }}
+        {/* Nav menu */}
+        <nav style={{ background: '#0d47a1', padding: '0 24px' }}>
+          <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', height: 44 }}>
+            {NAV_ITEMS.map((item, i) => (
+              <span key={i} style={{ color: i === 0 ? '#ffd54f' : '#c5d9f0', fontSize: 13, padding: '0 16px', cursor: 'pointer', whiteSpace: 'nowrap', borderRight: i < NAV_ITEMS.length - 1 ? '1px solid rgba(255,255,255,0.12)' : 'none', lineHeight: '44px', height: 44, transition: 'color 0.2s' }}
+                onMouseEnter={e => e.target.style.color = '#fff'}
+                onMouseLeave={e => e.target.style.color = i === 0 ? '#ffd54f' : '#c5d9f0'}
               >
-                进入智慧驾驶舱
-                <ArrowRightOutlined style={{ marginLeft: 6 }} />
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-
-        <style>{`
-          @keyframes scanLine {
-            0%, 100% { top: 5%; }
-            50% { top: 90%; }
-          }
-        `}</style>
-      </section>
-
-      {/* ═══════════════ ROLES ═══════════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(180deg, #0a1f3d 0%, #0d2b52 100%)',
-        padding: '80px 24px',
-      }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          <Reveal>
-            <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <Tag icon={<TeamOutlined />} color="#36cfc9" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 12, border: 'none' }}>角色矩阵</Tag>
-              <Title level={2} style={{ fontSize: 32, marginBottom: 12, fontWeight: 700, color: '#e8f4f8' }}>
-                七大角色 · AI赋能各司其职
-              </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15 }}>不同角色在平台中拥有对应的AI辅助权限与功能</Text>
-            </div>
-          </Reveal>
-
-          <Row gutter={[16, 16]}>
-            {roles.map((r, i) => (
-              <Col xs={12} md={8} key={i}>
-                <Reveal delay={i * 80}>
-                  <div style={{
-                    display: 'flex', alignItems: 'flex-start', gap: 14,
-                    padding: '16px 18px',
-                    background: 'rgba(255,255,255,0.04)',
-                    borderRadius: 12,
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    transition: 'all 0.3s',
-                    height: '100%',
-                    cursor: 'default',
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(22,119,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(54,207,201,0.3)'; e.currentTarget.style.background = 'rgba(22,119,255,0.08)' }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
-                  >
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 12,
-                      background: 'rgba(54,207,201,0.1)',
-                      color: '#36cfc9',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 22, flexShrink: 0,
-                    }}>{r.icon}</div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 14, color: '#e8f4f8', marginBottom: 2 }}>{r.label}</div>
-                      <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, lineHeight: 1.5 }}>{r.desc}</div>
-                    </div>
-                  </div>
-                </Reveal>
-              </Col>
+                {item}
+              </span>
             ))}
-          </Row>
+          </div>
+        </nav>
+      </header>
+
+      {/* ═══ Data Dashboard ══════════════════════════════════════════════════ */}
+      <section style={{ background: 'linear-gradient(180deg, #0a1628 0%, #0d2137 40%, #102a45 100%)', padding: '28px 24px 36px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+          {/* Dashboard header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div>
+              <h2 style={{ margin: 0, color: '#fff', fontSize: 22, fontWeight: 600, letterSpacing: 2 }}>
+                <span style={{ display: 'inline-block', width: 4, height: 22, background: '#00e5ff', marginRight: 10, verticalAlign: 'middle' }} />
+                产教融合指数 · 大数据可视化
+              </h2>
+              <p style={{ margin: '4px 0 0 14px', color: '#5a7da8', fontSize: 12 }}>Industry-Education Integration Index · Big Data Visualization</p>
+            </div>
+            <div style={{ color: '#4a7aaa', fontSize: 12, background: 'rgba(0,212,255,0.08)', padding: '6px 16px', borderRadius: 4, border: '1px solid rgba(0,212,255,0.15)' }}>
+              数据更新时间：{currentTime}
+            </div>
+          </div>
+
+          {/* Dashboard grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px 1fr', gridTemplateRows: 'auto auto auto', gap: 14 }}>
+            {/* Row 1: Bar chart | Stat cards | Horizontal bar */}
+            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 260 }} ref={barRef} />
+
+            {/* Stat cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ background: 'linear-gradient(135deg, rgba(13,71,161,0.6), rgba(21,101,192,0.4))', borderRadius: 10, border: '1px solid rgba(0,212,255,0.2)', padding: 20, textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>协同育人数量</div>
+                <div style={{ fontSize: 40, fontWeight: 700, color: '#00e5ff', fontFamily: 'DIN, monospace' }}>2,612</div>
+                <div style={{ fontSize: 11, color: '#4caf50', marginTop: 4 }}>↑ 28.5% 同比增长</div>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, rgba(13,71,161,0.6), rgba(21,101,192,0.4))', borderRadius: 10, border: '1px solid rgba(0,212,255,0.2)', padding: 20, textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ fontSize: 12, color: '#8ba9cc', marginBottom: 8 }}>标准制定数量</div>
+                <div style={{ fontSize: 40, fontWeight: 700, color: '#ff9800', fontFamily: 'DIN, monospace' }}>158</div>
+                <div style={{ fontSize: 11, color: '#4caf50', marginTop: 4 }}>↑ 15.3% 同比增长</div>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 260 }} ref={hBarRef} />
+
+            {/* Row 2: Grouped bar + pie | China map | Line chart + city pie */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 250 }} ref={groupedBarRef} />
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 250 }} ref={pieRef} />
+            </div>
+
+            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', minHeight: 520, position: 'relative', overflow: 'hidden' }}>
+              <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+              {!mapRegistered && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a7aaa', fontSize: 13 }}>加载地图数据中...</div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 250 }} ref={lineRef} />
+              <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 250 }} ref={cityPieRef} />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ═══════════════ CTA ════════════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(135deg, #020b1a 0%, #0a1f3d 40%, #0d2b52 70%, #061830 100%)',
-        padding: '80px 24px',
-        textAlign: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        <NeuralBg />
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 600, margin: '0 auto' }}>
-          <Reveal>
-            <Tag icon={<RobotOutlined />} color="#36cfc9" style={{ fontSize: 13, padding: '4px 14px', borderRadius: 20, marginBottom: 20, border: 'none' }}>
-              AI驱动 · 即刻体验
-            </Tag>
-            <Title level={2} style={{ color: '#e8f4f8', fontSize: 32, marginBottom: 16, fontWeight: 700 }}>
-              开启AI赋能产教融合之旅
-            </Title>
-            <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, display: 'block', marginBottom: 36, lineHeight: 1.8 }}>
-              连接产业与教育，AI驱动人才培养与产业需求动态契合
-              <br />构建"空间→人才→资源"全面融合的敏捷育人生态
-            </Text>
-            <Button
-              type="primary" size="large"
-              icon={<RocketOutlined />}
-              onClick={() => navigate('/login')}
-              style={{
-                height: 56, borderRadius: 28, paddingInline: 44,
-                fontSize: 17, fontWeight: 500,
-                background: 'linear-gradient(90deg, #1677ff, #36cfc9)',
-                border: 'none',
-                boxShadow: '0 8px 32px rgba(22,119,255,0.35)',
-              }}
-            >
-              进入后台管理
-              <ArrowRightOutlined style={{ marginLeft: 8, fontSize: 18 }} />
-            </Button>
-          </Reveal>
+      {/* ═══ News Section ════════════════════════════════════════════════════ */}
+      <section style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
+        {/* News */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '2px solid #1677ff', paddingBottom: 10 }}>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#1a1a1a' }}>新闻速递</h3>
+            <a style={{ color: '#1677ff', fontSize: 13, cursor: 'pointer' }}>更多 &gt;&gt;</a>
+          </div>
+          {NEWS_ITEMS.map((n, i) => (
+            <div key={n.id} style={{ display: 'flex', gap: 14, padding: '14px 0', borderBottom: i < NEWS_ITEMS.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+              <div style={{ width: 120, height: 80, background: 'linear-gradient(135deg, #e3f0ff, #f0f5ff)', borderRadius: 6, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1677ff', fontSize: 28 }}>
+                📰
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <a style={{ fontSize: 14, fontWeight: 500, color: '#1677ff', lineHeight: 1.5, display: 'block', cursor: 'pointer', marginBottom: 4 }}>{n.title}</a>
+                <p style={{ fontSize: 12, color: '#999', lineHeight: 1.6, margin: '0 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{n.summary}</p>
+                <span style={{ fontSize: 11, color: '#bbb' }}>{n.date}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Notices */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '2px solid #1677ff', paddingBottom: 10 }}>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#1a1a1a' }}>通知公告</h3>
+            <a style={{ color: '#1677ff', fontSize: 13, cursor: 'pointer' }}>更多 &gt;&gt;</a>
+          </div>
+          {NOTICES.map((n, i) => (
+            <div key={n.id} style={{ display: 'flex', gap: 14, padding: '14px 0', borderBottom: i < NOTICES.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+              <div style={{ width: 48, height: 48, background: '#0d47a1', borderRadius: 6, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ color: '#fff', fontSize: 10, fontWeight: 700, lineHeight: 1.2, textAlign: 'center' }}>通知<br/>公告</div>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <a style={{ fontSize: 14, fontWeight: 500, color: '#1a1a1a', lineHeight: 1.5, display: 'block', cursor: 'pointer', marginBottom: 4 }}>{n.title}</a>
+                <p style={{ fontSize: 12, color: '#999', lineHeight: 1.6, margin: '0 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{n.summary}</p>
+                <span style={{ fontSize: 11, color: '#bbb' }}>{n.date}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ═══════════════ FOOTER ═════════════════════════════════════ */}
-      <footer style={{
-        background: '#020b1a',
-        padding: '32px 24px',
-        textAlign: 'center',
-        borderTop: '1px solid rgba(54,207,201,0.1)',
-      }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <Space>
-            <RobotOutlined style={{ color: '#36cfc9', fontSize: 18 }} />
-            <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 500 }}>产教融合云平台</Text>
-            <Text style={{ color: 'rgba(255,255,255,0.2)', fontSize: 13 }}>·</Text>
-            <Text style={{ color: 'rgba(255,255,255,0.2)', fontSize: 13 }}>© 2024 · 纯前端Demo演示版本</Text>
-          </Space>
-        </div>
+      {/* ═══ Footer ══════════════════════════════════════════════════════════ */}
+      <footer style={{ background: '#0d47a1', color: '#8ba9cc', textAlign: 'center', padding: '16px 24px', fontSize: 12 }}>
+        Copyright &copy; 2024 产教融合云平台 · Industry-Education Integration Cloud Platform · All Rights Reserved.
       </footer>
-
-      <style>{`
-        @keyframes fadeSlideUp {
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .ant-card-body { padding: 24px !important; }
-      `}</style>
     </div>
   )
 }
