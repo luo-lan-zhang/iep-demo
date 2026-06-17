@@ -52,7 +52,7 @@ const initialRecommendations = [
 ]
 
 const statusMap = {
-  pending: { text: '待处理', color: 'orange' },
+  pending: { text: '待审核', color: 'orange' },
   approved: { text: '已通过', color: 'green' },
   rejected: { text: '已拒绝', color: 'red' },
   accepted: { text: '已接受', color: 'green' },
