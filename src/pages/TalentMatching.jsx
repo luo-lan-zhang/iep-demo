@@ -20,18 +20,28 @@ const initialApplications = [
   { id: 2, positionId: 2, studentId: 2, studentName: '李四', major: '软件工程', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-05', matchScore: 88 },
   { id: 3, positionId: 1, studentId: 3, studentName: '王五', major: '人工智能', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-06-28', matchScore: 95 },
   { id: 4, positionId: 3, studentId: 4, studentName: '赵六', major: '电子信息工程', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'rejected', applyDate: '2024-06-20', matchScore: 75 },
+  { id: 5, positionId: 2, studentId: 1, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-08', matchScore: 85 },
+  { id: 6, positionId: 4, studentId: 2, studentName: '李四', major: '软件工程', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'approved', applyDate: '2024-07-03', matchScore: 82 },
+  { id: 7, positionId: 3, studentId: 5, studentName: '孙七', major: '物联网工程', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', applyDate: '2024-07-10', matchScore: 91 },
+  { id: 8, positionId: 1, studentId: 7, studentName: '吴九', major: '自动化', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'rejected', applyDate: '2024-07-06', matchScore: 68 },
 ]
 
 const initialInterviews = [
   { id: 1, positionId: 1, studentId: 1, studentName: '张三', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'pending', interviewDate: '2024-08-01 14:00', inviteDate: '2024-07-20', source: 'enterprise' },
   { id: 2, positionId: 2, studentId: 5, studentName: '孙七', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'accepted', interviewDate: '2024-08-05 10:00', inviteDate: '2024-07-22', source: 'enterprise' },
   { id: 3, positionId: 4, studentId: 3, studentName: '王五', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'rejected', interviewDate: '2024-08-10 15:00', inviteDate: '2024-07-25', source: 'enterprise' },
+  { id: 4, positionId: 1, studentId: 3, studentName: '王五', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'accepted', interviewDate: '2024-08-08 09:30', inviteDate: '2024-07-24', source: 'enterprise' },
+  { id: 5, positionId: 3, studentId: 1, studentName: '张三', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', interviewDate: '2024-08-12 15:00', inviteDate: '2024-07-26', source: 'teacher' },
+  { id: 6, positionId: 2, studentId: 7, studentName: '吴九', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'confirmed', interviewDate: '2024-08-15 10:00', inviteDate: '2024-07-28', source: 'enterprise' },
 ]
 
 const initialRecommendations = [
   { id: 1, positionId: 1, studentId: 5, studentName: '孙七', major: '物联网工程', teacherId: 1, teacherName: '张教授', reason: '该生HarmonyOS开发能力突出，获得过省级竞赛奖项', status: 'pending', recommendDate: '2024-07-10' },
   { id: 2, positionId: 2, studentId: 1, studentName: '张三', major: '计算机科学与技术', teacherId: 1, teacherName: '张教授', reason: 'AI方向成绩优异，有丰富的项目实战经验', status: 'pending', recommendDate: '2024-07-12' },
   { id: 3, positionId: 4, studentId: 6, studentName: '周八', major: '机械工程', teacherId: 4, teacherName: '陈教授', reason: '自动驾驶项目经验丰富，团队协作能力强', status: 'interviewed', recommendDate: '2024-07-08' },
+  { id: 4, positionId: 3, studentId: 2, studentName: '李四', major: '软件工程', teacherId: 1, teacherName: '张教授', reason: '嵌入式系统课程成绩优异，参加过全国电子设计大赛', status: 'pending', recommendDate: '2024-07-15' },
+  { id: 5, positionId: 1, studentId: 1, studentName: '张三', major: '计算机科学与技术', teacherId: 2, teacherName: '李教授', reason: '全栈开发能力突出，有华为HCIA认证', status: 'interviewed', recommendDate: '2024-07-08' },
+  { id: 6, positionId: 2, studentId: 5, studentName: '孙七', major: '物联网工程', teacherId: 2, teacherName: '李教授', reason: '精通Python和TensorFlow，参加过Kaggle竞赛', status: 'pending', recommendDate: '2024-07-18' },
 ]
 
 const statusMap = {
@@ -39,6 +49,7 @@ const statusMap = {
   approved: { text: '已通过', color: 'green' },
   rejected: { text: '已拒绝', color: 'red' },
   accepted: { text: '已接受', color: 'green' },
+  confirmed: { text: '已确认', color: 'purple' },
   interviewed: { text: '已邀约', color: 'blue' },
 }
 const posStatusMap = { active: { text: '招聘中', color: 'green' }, closed: { text: '已关闭', color: 'default' } }
