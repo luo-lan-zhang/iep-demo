@@ -292,9 +292,61 @@ export default function Dashboard() {
 
   const parkId = user?.parkId
   const isPark = role === 'park'
+  const schoolId = user?.schoolId
+  const isSchool = role === 'school'
 
   const parkEnterprises = isPark ? mockEnterprises.filter(e => e.parkId === parkId) : mockEnterprises
   const parkName = isPark ? mockParks.find(p => p.id === parkId)?.name || '本园区' : ''
+
+  // ═══ School Dashboard ═════════════════════════════════
+  if (isSchool) {
+    const schoolTeachers = mockTeachers.filter(t => t.schoolId === schoolId)
+    const schoolStudents = mockStudents.filter(s => s.schoolId === schoolId)
+    const schoolProjects = initialProjects.filter(p => p.schoolId === schoolId || !p.schoolId)
+    return (
+      <div>
+        <div style={{ marginBottom: 16 }}>
+          <h2 style={{ margin: 0 }}>{mockSchools.find(s => s.id === schoolId)?.name || '本校'}</h2>
+          <span style={{ color: '#999', fontSize: 13 }}>学校数据概览</span>
+        </div>
+        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+          {[
+            { title: '教师总数', value: schoolTeachers.length, icon: <UserOutlined />, color: '#1677ff', bg: '#e6f4ff' },
+            { title: '学生总数', value: schoolStudents.length, icon: <TeamOutlined />, color: '#52c41a', bg: '#f6ffed' },
+            { title: '关联项目', value: schoolProjects.length, icon: <ProjectOutlined />, color: '#722ed1', bg: '#f9f0ff' },
+            { title: '共享资源', value: mockResources.length, icon: <ExperimentOutlined />, color: '#eb2f96', bg: '#fff0f6' },
+          ].map((s, i) => (
+            <Col xs={24} sm={12} lg={6} key={i}>
+              <Card size="small" style={{ background: s.bg, border: 'none' }}>
+                <Statistic title={s.title} value={s.value} prefix={s.icon} valueStyle={{ color: s.color }} />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
+            <Card title="最新合作项目" size="small">
+              <Table dataSource={schoolProjects.slice(0, 5)} columns={[
+                { title: '项目名称', dataIndex: 'name', key: 'name' },
+                { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
+              ]} pagination={false} size="small" rowKey="id" />
+            </Card>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card title="本校教师" size="small">
+              <Table dataSource={schoolTeachers.slice(0, 5)} columns={[
+                { title: '姓名', dataIndex: 'name', key: 'name' },
+                { title: '职称', dataIndex: 'title', key: 'title', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '院系', dataIndex: 'department', key: 'department' },
+              ]} pagination={false} size="small" rowKey="id" />
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    )
+  }
 
   // ═══ General Dashboard ═══════════════════════════════
   const statsCards = isPark ? [
