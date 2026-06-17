@@ -92,7 +92,7 @@ export default function ProjectCooperation() {
   // ─── Filtered ─────────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
     let list = projects
-    if (role === 'enterprise') list = list.filter(p => p.enterpriseId === enterpriseId)
+    if (role === 'enterprise' || role === 'mentor') list = list.filter(p => p.enterpriseId === enterpriseId)
     if (role === 'teacher') list = list.filter(p => p.teacherId === teacherId || p.status === 'pending' || p.status === 'pending_publish')
     if (role === 'school') list = list.filter(p => p.schoolId === schoolId || !p.schoolId)
     if (role === 'student') return []  // 学生不能查看项目列表
@@ -106,8 +106,12 @@ export default function ProjectCooperation() {
       const tIds = projects.filter(p => p.teacherId === teacherId).map(p => p.id)
       return tasks.filter(t => tIds.includes(t.projectId))
     }
+    if (role === 'mentor') {
+      const tIds = projects.filter(p => p.enterpriseId === enterpriseId).map(p => p.id)
+      return tasks.filter(t => tIds.includes(t.projectId))
+    }
     return tasks
-  }, [role, tasks, user, teacherId, projects])
+  }, [role, tasks, user, teacherId, enterpriseId, projects])
 
   // Gantt Chart
   const [ganttOpen, setGanttOpen] = useState(false)
@@ -277,7 +281,7 @@ export default function ProjectCooperation() {
           acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
           acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
         }
-        if (role === 'enterprise') {
+        if (role === 'enterprise' || role === 'mentor') {
           acts.push(<a key="vd" onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</a>)
         }
         if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
@@ -321,8 +325,8 @@ export default function ProjectCooperation() {
           if (role === 'student') return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setSubmitTask(r); submitForm.resetFields(); setSubmitOpen(true) }}>提交成果</Button>
           if (role === 'teacher') return <Button size="small" onClick={() => { setTaskProjectId(r.projectId); taskForm.resetFields(); setTaskOpen(true) }}>编辑</Button>
         }
-        if (r.status === 'submitted' && role === 'teacher') {
-          return <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>五维评价</Button>
+        if (r.status === 'submitted' && (role === 'teacher' || role === 'mentor')) {
+          return <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>
         }
         return <span style={{ color: '#999' }}>-</span>
       }
@@ -464,8 +468,65 @@ export default function ProjectCooperation() {
       })
     }
 
+    if (role === 'mentor') {
+      // 项目看板
+      const mentorProjects = projects.filter(p => p.enterpriseId === enterpriseId && p.status === 'in_progress')
+      items.push({
+        key: 'board', label: '项目看板', children: (
+          <div>
+            {mentorProjects.length === 0 ? (
+              <Empty description="暂无进行中的项目" />
+            ) : (
+              mentorProjects.map(p => (
+                <Card key={p.id} size="small" style={{ marginBottom: 12 }} title={
+                  <span>
+                    <a onClick={() => { setDetailProject(p); setDetailOpen(true) }}>{p.name}</a>
+                    <Tag color="blue" style={{ marginLeft: 8 }}>{p.enterpriseName}</Tag>
+                  </span>
+                } extra={<Button size="small" onClick={() => { setDetailProject(p); setDetailOpen(true) }}>查看详情</Button>}>
+                  <Descriptions column={4} size="small">
+                    <Descriptions.Item label="负责教师">{p.teacherName || '未指定'}</Descriptions.Item>
+                    <Descriptions.Item label="进度">
+                      <Progress percent={p.progress} size="small" style={{ width: 120 }} />
+                    </Descriptions.Item>
+                    <Descriptions.Item label="状态"><Tag color={statusMap[p.status]?.color}>{statusMap[p.status]?.text}</Tag></Descriptions.Item>
+                    <Descriptions.Item label="学生数">{p.assignedStudents?.length || 0}人</Descriptions.Item>
+                  </Descriptions>
+                </Card>
+              ))
+            )}
+          </div>
+        )
+      })
+      // 评审学生
+      const submittedTasks = tasks.filter(t => t.status === 'submitted')
+      const mentorProjectIds = projects.filter(p => p.enterpriseId === enterpriseId).map(p => p.id)
+      const mentorSubmittedTasks = submittedTasks.filter(t => mentorProjectIds.includes(t.projectId))
+      items.push({
+        key: 'evaluate', label: '评审学生', children: (
+          <div>
+            {mentorSubmittedTasks.length === 0 ? (
+              <Empty description="暂无待评审的学生成果" />
+            ) : (
+              <Table dataSource={mentorSubmittedTasks} columns={[
+                { title: '学生', dataIndex: 'assignee', key: 'assignee' },
+                { title: '任务名称', dataIndex: 'name', key: 'name' },
+                { title: '所属项目', key: 'pn', render: (_, r) => projects.find(p => p.id === r.projectId)?.name || '-' },
+                { title: '截止日期', dataIndex: 'deadline', key: 'deadline' },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={taskStatusMap[s]?.color}>{taskStatusMap[s]?.text}</Tag> },
+                { title: '操作', key: 'action', render: (_, r) => (
+                  <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>
+                )},
+              ]} rowKey="id" />
+            )}
+          </div>
+        )
+      })
+      return items
+    }
+
     // 任务分配/管理
-    items.push({
+    if (role !== 'mentor') items.push({
       key: 'tasks', label: '任务分配', children: (
         <div>
           {role === 'teacher' && (
