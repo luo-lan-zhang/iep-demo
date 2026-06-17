@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Progress, Descriptions, Rate, Slider, Row, Col, Divider, Empty, Tooltip } from 'antd'
-import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, SendOutlined, StarOutlined, BarChartOutlined, TeamOutlined, ScheduleOutlined } from '@ant-design/icons'
+import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, SendOutlined, StarOutlined, BarChartOutlined, TeamOutlined, ScheduleOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockTeachers } from '../mock/teachers'
 import { mockSchools } from '../mock/schools'
@@ -281,8 +281,8 @@ export default function ProjectCooperation() {
           acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamMembers(r.assignedStudents || []); setTeamOpen(true) }}>团队</Button>)
           acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
         }
-        if (role === 'enterprise' || role === 'mentor') {
-          acts.push(<a key="vd" onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</a>)
+        if (role === 'enterprise' || role === 'mentor' || role === 'park') {
+          acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
         }
         if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
         return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
