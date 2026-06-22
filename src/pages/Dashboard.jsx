@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Row, Col, Card, Statistic, Table, Tag, Progress, Descriptions, Divider, Empty, Button, Input, message, Tooltip, Modal, Tabs } from 'antd'
+import { Row, Col, Card, Statistic, Table, Tag, Progress, Divider, Empty, Button, Tooltip, Tabs } from 'antd'
 import {
   ApartmentOutlined, BankOutlined, GlobalOutlined, UserOutlined,
   TeamOutlined, ExperimentOutlined, ProjectOutlined,
   NodeIndexOutlined, SafetyCertificateOutlined, BarChartOutlined,
-  ArrowUpOutlined, ArrowDownOutlined, ShopOutlined, FundOutlined,
+  ArrowUpOutlined, ShopOutlined, FundOutlined,
   TrophyOutlined, BookOutlined, PieChartOutlined,
-  StarOutlined, DeploymentUnitOutlined
+  StarOutlined, DeploymentUnitOutlined, FileTextOutlined
 } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -34,14 +34,15 @@ const projectStatusMap = {
 
 // ─── Five-dimension config ──────────────────────────────────────────────────
 const FIVE_DIMS = [
-  { key: 'profession',  label: '职业胜任力', color: '#1677ff' },
-  { key: 'innovation',  label: '技术创新力', color: '#722ed1' },
-  { key: 'teamwork',    label: '团队协作力', color: '#13c2c2' },
-  { key: 'learning',    label: '终身学习力', color: '#52c41a' },
-  { key: 'adaptability',label: '职业适应力', color: '#faad14' },
+  { key: 'knowledge',       label: '知识建构', color: '#1677ff' },
+  { key: 'engineering',     label: '工程实践', color: '#722ed1' },
+  { key: 'innovation',      label: '迭代创新', color: '#13c2c2' },
+  { key: 'teamwork',        label: '团队协同', color: '#52c41a' },
+  { key: 'competency',      label: '职业胜任', color: '#faad14' },
 ]
 
-const defaultDims = { profession: 70, innovation: 70, teamwork: 70, learning: 70, adaptability: 70 }
+const classAvgDims = { knowledge: 81, engineering: 75, innovation: 78, teamwork: 80, competency: 76 }
+const defaultDims = { knowledge: 81, engineering: 75, innovation: 78, teamwork: 80, competency: 76 }
 
 const getStudentDims = (sid) => {
   const saved = localStorage.getItem(`student_eval_${sid}`)
@@ -53,54 +54,26 @@ const getEvalHistory = (sid) => {
   return saved ? JSON.parse(saved) : []
 }
 
-const mockStudentResume = {
-  name: '张三', major: '计算机科学与技术', grade: '2022级', school: '深圳大学', studentId: '20220101',
-  skills: ['Java', 'Python', 'Spring Boot', 'MySQL', 'Linux', 'Docker', 'Vue.js', 'Git'],
-  projects: [
-    { name: '校园二手交易平台', role: '后端开发', tech: 'Spring Boot + MySQL' },
-    { name: '智能考勤系统', role: '全栈', tech: 'Vue + Spring Boot' },
-  ],
-  certifications: ['软件设计师（中级）', '英语CET-6'],
+const getLastEvalDims = (sid) => {
+  const history = getEvalHistory(sid)
+  if (history.length > 0) {
+    const last = history[history.length - 1]
+    return last.dims || { knowledge: 85, engineering: 90, innovation: 90, teamwork: 84, competency: 93 }
+  }
+  return { knowledge: 85, engineering: 90, innovation: 90, teamwork: 84, competency: 93 }
 }
 
-const mockStudentProjects = [
-  { id: 1, name: '智能仓储管理系统开发', teacher: '张教授', enterprise: '华为', status: 'in_progress', progress: 65, tags: ['仓储', 'RFID'], assignedStudents: [1, 2, 3, 7], description: '开发一套基于RFID和AGV的智能仓储管理系统，包含Web端和移动端' },
-  { id: 2, name: 'AI质检模型训练', teacher: '李教授', enterprise: '腾讯', status: 'in_progress', progress: 40, tags: ['AI', 'CV'], assignedStudents: [1, 5, 7], description: '基于深度学习的工业质检模型训练和部署，目标检测准确率99%以上' },
-  { id: 5, name: '学生成绩分析平台', teacher: '张教授', enterprise: '腾讯', status: 'completed', progress: 100, tags: ['大数据'], assignedStudents: [1, 2, 7], description: '在校学生学业成绩分析平台，支持多维度数据可视化和成绩预警' },
-  { id: 6, name: '5G基站天线优化设计', teacher: '陈教授', enterprise: '大疆', status: 'in_progress', progress: 25, tags: ['5G', '天线', '通信'], assignedStudents: [1, 6, 7], description: '5G基站天线阵列的优化设计，提升信号覆盖范围和抗干扰能力' },
-  { id: 7, name: '自动驾驶感知算法优化', teacher: '黄老师', enterprise: '广州小鹏汽车', status: 'in_progress', progress: 50, tags: ['自动驾驶', 'AI', '传感器'], assignedStudents: [1, 3, 4], description: '基于多传感器融合的自动驾驶环境感知算法优化，提升雨天和夜间检测精度' },
-]
-
-// ─── Simple SVG Radar Chart ────────────────────────────────────────────────
-function RadarChart({ dims, size = 260 }) {
-  const cx = size / 2, cy = size / 2, radius = size * 0.38
-  const angles = FIVE_DIMS.map((_, i) => (Math.PI * 2 * i) / 5 - Math.PI / 2)
-  const getPoint = (value, idx) => {
-    const angle = angles[idx]; const r = (value / 100) * radius
-    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }
-  }
-  const polygonPoints = FIVE_DIMS.map((d, i) => { const p = getPoint(dims?.[d.key] || 50, i); return `${p.x},${p.y}` }).join(' ')
-  return (
-    <svg width={size} height={size} style={{ display: 'block', margin: '0 auto' }}>
-      {[20, 40, 60, 80, 100].map(level => {
-        const pts = FIVE_DIMS.map((_, i) => { const a = angles[i]; const r = (level / 100) * radius; return `${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}` }).join(' ')
-        return <polygon key={level} points={pts} fill="none" stroke="#f0f0f0" strokeWidth={1} />
-      })}
-      {FIVE_DIMS.map((_, i) => { const p = getPoint(100, i); return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#f0f0f0" strokeWidth={1} /> })}
-      <polygon points={polygonPoints} fill="rgba(22, 119, 255, 0.15)" stroke="#1677ff" strokeWidth={2} />
-      {FIVE_DIMS.map((d, i) => { const p = getPoint(dims?.[d.key] || 50, i); return <circle key={i} cx={p.x} cy={p.y} r={4} fill="#1677ff" stroke="#fff" strokeWidth={2} /> })}
-      {FIVE_DIMS.map((d, i) => {
-        const a = angles[i]; const lr = radius + 28; const lx = cx + lr * Math.cos(a); const ly = cy + lr * Math.sin(a)
-        const anchor = Math.abs(a) < 0.1 ? 'middle' : a > 0 && a < Math.PI - 0.1 ? 'start' : 'end'
-        return (
-          <g key={i}>
-            <text x={lx} y={ly} textAnchor={anchor} fontSize={11} fill={d.color} dominantBaseline="middle" fontWeight={500}>{d.label}</text>
-            <text x={lx} y={ly + 14} textAnchor={anchor} fontSize={10} fill="#999" dominantBaseline="middle">{dims?.[d.key] || 0}分</text>
-          </g>
-        )
-      })}
-    </svg>
-  )
+const mockStudentResumeA = {
+  name: '贾梦圆', studentId: '32419160313', major: '软件技术', grade: '2024级', school: '深圳大学',
+  projects: [
+    { name: '智慧校园餐饮系统', role: '前端开发' },
+  ],
+}
+const mockStudentResumeB = {
+  name: '陈芝树', studentId: '32319160306', major: '软件技术', grade: '2023级', school: '深圳大学',
+  projects: [
+    { name: '信息安全课程开发服务', role: '后端开发' },
+  ],
 }
 
 // ─── Main Component ────────────────────────────────────────────────────────
@@ -108,200 +81,76 @@ export default function Dashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const role = user?.role
-  const [accepted, setAccepted] = useState(() => {
-    const s = localStorage.getItem('student_accepted')
-    return s ? JSON.parse(s) : []
-  })
-  const [submitModal, setSubmitModal] = useState(null)
-  const [submitNote, setSubmitNote] = useState('')
-
   // ═══ Student Dashboard ═══════════════════════════════
   if (role === 'student') {
     const sid = user?.id || 7
     const liveDims = getStudentDims(sid)
+    const lastDims = getLastEvalDims(sid)
     const evalHistory = getEvalHistory(sid)
     const avgScore = Math.round(Object.values(liveDims).reduce((a, b) => a + b, 0) / 5)
-    const getSubmissions = () => JSON.parse(localStorage.getItem('project_submissions') || '[]')
-    const hasSubmitted = (pid) => getSubmissions().some(s => s.projectId === pid && s.studentId === sid)
 
-    const handleSubmit = () => {
-      const subs = getSubmissions()
-      subs.push({ projectId: submitModal.id, studentId: sid, note: submitNote, date: new Date().toISOString().split('T')[0] })
-      localStorage.setItem('project_submissions', JSON.stringify(subs))
-      message.success(`成果已提交！项目：${submitModal.name}`)
-      setSubmitModal(null)
-      setSubmitNote('')
-    }
-
-    const handleAccept = (pid) => {
-      const key = `${sid}_${pid}`
-      const up = [...accepted, key]
-      setAccepted(up)
-      localStorage.setItem('student_accepted', JSON.stringify(up))
-      message.success('已确认接收该项目')
-    }
-
-    const handleShowDetail = (p) => {
-      Modal.info({
-        title: p.name,
-        width: 600,
-        content: (
-          <Descriptions column={1} bordered size="small" style={{ marginTop: 16 }}>
-            <Descriptions.Item label="项目名称">{p.name}</Descriptions.Item>
-            <Descriptions.Item label="负责教师">{p.teacher}</Descriptions.Item>
-            <Descriptions.Item label="企业">{p.enterprise}</Descriptions.Item>
-            <Descriptions.Item label="进度"><Progress percent={p.progress} /></Descriptions.Item>
-            <Descriptions.Item label="状态"><Tag color={p.status === 'in_progress' ? 'processing' : 'green'}>{p.status === 'in_progress' ? '进行中' : '已结项'}</Tag></Descriptions.Item>
-            <Descriptions.Item label="标签">{p.tags.map(t => <Tag key={t}>{t}</Tag>)}</Descriptions.Item>
-          </Descriptions>
-        ),
-        okText: '关闭',
-      })
-    }
+    // Pick which resume to show based on student id
+    const resume = sid === 7 ? mockStudentResumeA : mockStudentResumeB
 
     return (
       <div>
+        {/* Row 1: 个人简历 + 五维能力评估 */}
         <Row gutter={[16, 16]}>
-          <Col xs={24} lg={14}>
+          <Col xs={24} lg={12}>
             <Card title={<span><UserOutlined /> 个人简历</span>}>
-              <Descriptions column={2} size="small" style={{ marginBottom: 12 }}>
-                <Descriptions.Item label="姓名">{mockStudentResume.name}</Descriptions.Item>
-                <Descriptions.Item label="学号">{mockStudentResume.studentId}</Descriptions.Item>
-                <Descriptions.Item label="院校">{mockStudentResume.school}</Descriptions.Item>
-                <Descriptions.Item label="专业">{mockStudentResume.major}</Descriptions.Item>
-                <Descriptions.Item label="年级">{mockStudentResume.grade}</Descriptions.Item>
-              </Descriptions>
-              <Divider orientation="left" style={{ fontSize: 13, margin: '12px 0' }}>技能标签</Divider>
-              <div style={{ marginBottom: 12 }}>{mockStudentResume.skills.map(s => <Tag key={s} color="blue" style={{ marginBottom: 4 }}>{s}</Tag>)}</div>
-              <Divider orientation="left" style={{ fontSize: 13, margin: '12px 0' }}>项目经历</Divider>
-              {mockStudentResume.projects.map((p, i) => (
-                <div key={i} style={{ marginBottom: 8, padding: '8px 12px', background: '#fafafa', borderRadius: 6 }}>
-                  <div style={{ fontWeight: 500 }}>{p.name}</div>
-                  <div style={{ color: '#666', fontSize: 13 }}>角色：{p.role} | 技术栈：{p.tech}</div>
-                </div>
-              ))}
-              {evalHistory.length > 0 && (
-                <>
-                  <Divider orientation="left" style={{ fontSize: 13, margin: '12px 0' }}>教师评价记录</Divider>
-                  {evalHistory.map((e, i) => (
-                    <div key={i} style={{ marginBottom: 8, padding: '8px 12px', background: '#fff7e6', borderRadius: 6, border: '1px solid #ffd591' }}>
-                      <div style={{ fontWeight: 500 }}>{e.projectName} — {e.taskName}</div>
-                      <div style={{ color: '#666', fontSize: 13 }}>
-                        五维均分：<span style={{ color: '#faad14', fontWeight: 'bold' }}>{e.avgScore}分</span>
-                        <span style={{ margin: '0 8px' }}>|</span>
-                        评语：{e.comment}
-                        <span style={{ margin: '0 8px' }}>|</span>
-                        {e.date}
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-              <Divider orientation="left" style={{ fontSize: 13, margin: '12px 0' }}>证书</Divider>
-              <div>{mockStudentResume.certifications.map(c => <Tag key={c} color="green" style={{ marginBottom: 4 }}><SafetyCertificateOutlined /> {c}</Tag>)}</div>
+              <Table dataSource={[resume, mockStudentResumeB]} columns={[
+                { title: '学生姓名', dataIndex: 'name', key: 'name', width: 100 },
+                { title: '学号', dataIndex: 'studentId', key: 'studentId', width: 130 },
+                { title: '专业', dataIndex: 'major', key: 'major', width: 100 },
+                { title: '年级', dataIndex: 'grade', key: 'grade', width: 90 },
+                { title: '项目经历', key: 'projects', render: (_, r) => r.projects.map((p, i) => (
+                  <div key={i} style={{ fontSize: 12, lineHeight: 1.6 }}>{p.name}</div>
+                )) },
+                { title: '角色', key: 'role', render: (_, r) => r.projects.map((p, i) => (
+                  <Tag key={i} color="blue" style={{ fontSize: 11 }}>{p.role}</Tag>
+                )) },
+              ]} rowKey="studentId" pagination={false} size="small" />
             </Card>
           </Col>
 
-          <Col xs={24} lg={10}>
+          <Col xs={24} lg={12}>
             <Card title={<span><BarChartOutlined /> 五维能力评估</span>}>
-              <div style={{ textAlign: 'center', position: 'relative' }}>
-                <RadarChart dims={liveDims} size={250} />
-                <div style={{ position: 'absolute', top: '38%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, fontWeight: 'bold', color: '#1677ff' }}>{avgScore}</div>
-                  <div style={{ fontSize: 12, color: '#999' }}>综合评分</div>
-                </div>
-              </div>
-              <div style={{ marginTop: 8 }}>
-                {FIVE_DIMS.map(d => (
-                  <div key={d.key} style={{ marginBottom: 6 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 2 }}>
-                      <span style={{ color: d.color }}>{d.label}</span>
-                      <span>{liveDims[d.key]}分</span>
-                    </div>
-                    <Progress percent={liveDims[d.key]} size="small" strokeColor={d.color} showInfo={false} />
-                  </div>
-                ))}
-              </div>
+              <Table dataSource={FIVE_DIMS.map(d => {
+                const lastVal = lastDims[d.key] || defaultDims[d.key]
+                return {
+                  dim: d.label,
+                  classAvg: classAvgDims[d.key],
+                  personalAvg: liveDims[d.key],
+                  last: lastVal,
+                  color: d.color,
+                }
+              })} columns={[
+                { title: '维度', dataIndex: 'dim', key: 'dim', render: (t, r) => <span style={{ color: r.color, fontWeight: 500 }}>{t}</span> },
+                { title: '班级平均', dataIndex: 'classAvg', key: 'classAvg', render: (v) => <span style={{ color: '#666' }}>{v}</span> },
+                { title: '个人平均', dataIndex: 'personalAvg', key: 'personalAvg', render: (v, r) => <span style={{ color: v > r.classAvg ? '#52c41a' : '#ff4d4f', fontWeight: 500 }}>{v}</span> },
+                { title: '最后一次', dataIndex: 'last', key: 'last', render: (v, r) => <Progress percent={v} size="small" strokeColor={r.color} format={() => v} /> },
+              ]} rowKey="dim" pagination={false} size="small" />
             </Card>
           </Col>
         </Row>
 
+        {/* Row 2: 综评报告 + 项目诊断 */}
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          <Col span={24}>
-            <Card title={<span><ProjectOutlined /> 项目看板</span>} style={{ marginBottom: 16 }}>
-              <Tabs items={[
-                {
-                  key: 'kanban', label: '看板视图', children: (
-                    <div style={{ display: 'flex', gap: 12, overflow: 'auto', paddingBottom: 16 }}>
-                      {[
-                        { title: '待接收', key: 'pending', color: '#1677ff', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && !accepted.includes(`${sid}_${p.id}`)) },
-                        { title: '进行中', key: 'active', color: '#52c41a', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && accepted.includes(`${sid}_${p.id}`) && p.status !== 'completed' && !hasSubmitted(p.id)) },
-                        { title: '已提交', key: 'submitted', color: '#faad14', items: mockStudentProjects.filter(p => hasSubmitted(p.id)) },
-                        { title: '已结项', key: 'done', color: '#999', items: mockStudentProjects.filter(p => p.assignedStudents?.includes(sid) && p.status === 'completed' && !hasSubmitted(p.id)) },
-                      ].map(col => (
-                        <div key={col.key} style={{ minWidth: 260, background: `${col.color}08`, borderRadius: 12, padding: 12, border: `1px solid ${col.color}22` }}>
-                          <div style={{ fontWeight: 600, fontSize: 14, color: col.color, marginBottom: 12, paddingBottom: 8, borderBottom: `2px solid ${col.color}33` }}>
-                            {col.title} <span style={{ fontSize: 12, opacity: 0.7 }}>({col.items.length})</span>
-                          </div>
-                          {col.items.length === 0 ? (
-                            <div style={{ color: '#ccc', textAlign: 'center', padding: 20 }}>暂无项目</div>
-                          ) : col.items.map(p => (
-                            <div key={p.id} style={{ background: '#fff', borderRadius: 8, padding: 12, marginBottom: 8, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-                              onClick={() => handleShowDetail(p)}>
-                              <div style={{ fontWeight: 500, fontSize: 13, marginBottom: 4 }}>{p.name}</div>
-                              <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>{p.teacher} · {p.enterprise}</div>
-                              <Progress percent={p.progress} size="small" />
-                              <div style={{ marginTop: 8, display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
-                                {col.key === 'pending' && (
-                                  <Button size="small" type="primary" onClick={(e) => { e.stopPropagation(); handleAccept(p.id) }}>接收</Button>
-                                )}
-                                {col.key === 'active' && (
-                                  <Button size="small" type="primary" onClick={(e) => { e.stopPropagation(); setSubmitModal(p); setSubmitNote('') }}>提交成果</Button>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  key: 'list', label: '列表视图', children: (
-                    <Table dataSource={mockStudentProjects.filter(p => p.assignedStudents?.includes(sid))} columns={[
-                      { title: '项目名称', dataIndex: 'name', key: 'name' },
-                      { title: '负责教师', dataIndex: 'teacher', key: 'teacher', render: (t) => <Tag color="cyan">{t}</Tag> },
-                      { title: '企业', dataIndex: 'enterprise', key: 'enterprise', render: (t) => <Tag color="blue">{t}</Tag> },
-                      { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" /> },
-                      { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={s === 'in_progress' ? 'processing' : 'green'}>{s === 'in_progress' ? '进行中' : '已结项'}</Tag> },
-                      {
-                        title: '接收', key: 'accept', render: (_, r) => {
-                          const k = `${sid}_${r.id}`
-                          return accepted.includes(k) ? <Tag color="green">已接收</Tag> : <Tag color="orange">待接收</Tag>
-                        }
-                      },
-                      {
-                        title: '操作', key: 'action', render: (_, r) => {
-                          const k = `${sid}_${r.id}`
-                          if (!accepted.includes(k)) return <Button size="small" type="primary" onClick={() => handleAccept(r.id)}>接收项目</Button>
-                          if (hasSubmitted(r.id)) return <Tag color="green">已提交</Tag>
-                          if (r.status !== 'completed') return <Button size="small" type="primary" onClick={() => { setSubmitModal(r); setSubmitNote('') }}>提交成果</Button>
-                          return <Tag color="green">已结项</Tag>
-                        }
-                      },
-                    ]} rowKey="id" pagination={false} size="small" />
-                  )
-                },
-              ]} />
+          <Col xs={24} lg={12}>
+            <Card title={<span><FileTextOutlined /> 综评报告</span>} style={{ height: '100%' }}>
+              <p style={{ fontSize: 13, color: '#555', lineHeight: 1.9, textIndent: '2em' }}>
+                学业成绩优异，逻辑思维灵活敏锐，深耕编程开发、算法应用等专业内容，主动关注人工智能、前端架构等行业前沿技术，自主学习意愿极强。具备出色的创新思辨能力，能够结合项目场景优化算法模型、改良开发方案，擅长联动计算机、新媒体、工业交互等跨领域知识解决开发难题，项目创新度突出。短板方面，工程规范化素养有待提升，编写项目开发手册、技术说明文档意识薄弱，代码编写规范性、模块化整洁度不足；项目前期用户需求拆解研判能力不足，代码实验、项目运行结果标准化可复现能力需要专项强化。
+              </p>
+            </Card>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card title={<span><FundOutlined /> 本项目个性化智能诊断报告</span>} style={{ height: '100%' }}>
+              <p style={{ fontSize: 13, color: '#555', lineHeight: 1.9, textIndent: '2em' }}>
+                创新优势凸显，能够跳出传统开发范式，针对项目原有业务逻辑、算法模型、交互架构提出轻量化改良方案，主动调研行业同类项目前沿解法，结合跨领域思路优化项目功能，适配多元化使用场景，项目创意维度评分位居小组前列。但项目落地短板直观显现：项目全流程文档缺失完整架构，需求调研记录、版本迭代日志、接口调试文档撰写零散潦草；项目部署调试步骤无标准化记录，不同运行环境下项目成果复现难度较高，项目工程化、标准化落地能力有待补齐。
+              </p>
             </Card>
           </Col>
         </Row>
-
-        {/* Submit Modal */}
-        <Modal title={`提交成果 — ${submitModal?.name}`} open={!!submitModal} onOk={handleSubmit} onCancel={() => { setSubmitModal(null); setSubmitNote('') }} okText="提交">
-          <p style={{ color: '#666', marginBottom: 16 }}>请描述您完成的成果内容和关键产出：</p>
-          <Input.TextArea rows={4} value={submitNote} onChange={e => setSubmitNote(e.target.value)} placeholder="描述完成的内容、技术方案和关键成果..." />
-        </Modal>
       </div>
     )
   }
