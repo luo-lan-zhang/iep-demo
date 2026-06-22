@@ -43,13 +43,13 @@ const enterpriseProjects = [
 
 // Tasks with 五维 evaluation data
 const initialTasks = [
-  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '张三', deadline: '2024-08-15', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 85, teamwork: 95, learning: 88, adaptability: 92 } },
-  { id: 2, projectId: 1, name: '后端API开发', assigneeId: 2, assignee: '李四', deadline: '2024-09-30', status: 'submitted', score: null, comment: '', dims: null },
-  { id: 3, projectId: 1, name: '前端界面开发', assigneeId: 3, assignee: '王五', deadline: '2024-10-15', status: 'pending', score: null, comment: '', dims: null },
-  { id: 4, projectId: 1, name: 'AGV调度算法', assigneeId: 4, assignee: '赵六', deadline: '2024-09-01', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 5, projectId: 2, name: '数据集标注', assigneeId: 5, assignee: '孙七', deadline: '2024-08-30', status: 'completed', score: 88, comment: '数据质量很高', dims: { profession: 85, innovation: 75, teamwork: 90, learning: 80, adaptability: 85 } },
-  { id: 6, projectId: 2, name: '模型训练调优', assigneeId: 6, assignee: '周八', deadline: '2024-10-01', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 7, projectId: 5, name: '数据采集模块', assigneeId: 1, assignee: '张三', deadline: '2024-06-01', status: 'completed', score: 95, comment: '主动完成，质量优秀', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
+  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
+  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'completed', score: 90, comment: '数据质量高，按时交付', dims: { profession: 88, innovation: 85, teamwork: 92, learning: 90, adaptability: 88 } },
+  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'completed', score: 89, comment: '模型效果优秀', dims: { profession: 90, innovation: 92, teamwork: 85, learning: 88, adaptability: 86 } },
+  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
+  { id: 5, projectId: 1, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
+  { id: 6, projectId: 1, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'completed', score: 92, comment: '架构设计清晰，可扩展性强', dims: { profession: 90, innovation: 88, teamwork: 94, learning: 91, adaptability: 89 } },
+  { id: 7, projectId: 1, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'completed', score: 90, comment: '性能提升显著', dims: { profession: 88, innovation: 86, teamwork: 92, learning: 90, adaptability: 91 } },
 ]
 
 const statusMap = {
