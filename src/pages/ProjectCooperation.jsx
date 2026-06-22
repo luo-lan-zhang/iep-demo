@@ -19,28 +19,37 @@ const FIVE_DIMS = [
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialProjects = [
-  { id: 1,  name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 11, enterpriseName: '河北圣诺',  budget: 350600, teacherId: 1,  teacherName: '陈新',   status: 'in_progress', progress: 80,  description: '物联网固件AI污点检测与POC智能协同验证系统', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'] },
-  { id: 2,  name: '矿用无线张力油压监测系统',                 enterpriseId: 12, enterpriseName: '恒华信息',  budget: 286000, teacherId: 2,  teacherName: '张晓蕾', status: 'in_progress', progress: 90,  description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'] },
-  { id: 3,  name: '信息安全课程开发服务',                 enterpriseId: 13, enterpriseName: '卓升电子',  budget: 200000, teacherId: 3,  teacherName: '马晓丽', status: 'completed',   progress: 100, description: '信息安全课程开发服务', deliverables: '信息安全课程内容', requirements: '信息安全、教学', tags: ['信息安全', '课程'] },
-  { id: 4,  name: '系统及网络安全维护',                   enterpriseId: 14, enterpriseName: '仁谦信息',  budget: 396000, teacherId: 4,  teacherName: '贺宏',   status: 'completed',   progress: 100, description: '系统及网络安全维护服务', deliverables: '安全维护方案', requirements: '网络安全、系统维护', tags: ['网络安全', '系统'] },
-  { id: 5,  name: '自定位机器人网络安全虚拟仿真测试平台',  enterpriseId: 15, enterpriseName: '顶天科技',  budget: 300500, teacherId: 5,  teacherName: '武雪芳', status: 'completed',   progress: 100, description: '机器人网络安全虚拟仿真测试平台', deliverables: '仿真测试平台', requirements: '机器人、网络安全', tags: ['机器人', '仿真'] },
-  { id: 6,  name: '企业生产数据分析与可视化解决方案',      enterpriseId: 16, enterpriseName: '国龙制药',  budget: 300000, teacherId: 6,  teacherName: '陈建伟', status: 'in_progress', progress: 90,  description: '企业生产数据分析与可视化', deliverables: '数据分析可视化平台', requirements: '数据分析、可视化', tags: ['数据分析', '可视化'] },
-  { id: 7,  name: '数实合一智慧古建信息系统',              enterpriseId: 17, enterpriseName: '棣烨',      budget: 204700, teacherId: 7,  teacherName: '底雪峰', status: 'completed',   progress: 100, description: '数实合一智慧古建信息系统', deliverables: '智慧古建信息系统', requirements: '古建、数字化', tags: ['古建', '智慧'] },
-  { id: 8,  name: '微晶玻璃晶化炉自动控制系统',            enterpriseId: 18, enterpriseName: '美科',      budget: 450000, teacherId: 8,  teacherName: '陶玉梅', status: 'completed',   progress: 100, description: '微晶玻璃晶化炉自动控制系统', deliverables: '自动控制系统', requirements: '自动化、微晶玻璃', tags: ['微晶玻璃', '自动化'] },
-  { id: 9,  name: '虚拟实验教学资源软件',                  enterpriseId: 19, enterpriseName: '惠美',      budget: 401000, teacherId: 9,  teacherName: '刘娇',   status: 'completed',   progress: 100, description: '虚拟实验教学资源软件开发', deliverables: '虚拟实验软件', requirements: '虚拟实验、教学', tags: ['虚拟实验', '教学'] },
-  { id: 10, name: '分级数据存储系统',                      enterpriseId: 20, enterpriseName: '高誉',      budget: 200000, teacherId: 10, teacherName: '李擎',   status: 'completed',   progress: 100, description: '分级数据存储系统开发', deliverables: '数据存储系统', requirements: '数据存储、分级', tags: ['存储', '数据'] },
-  { id: 11, name: '数字矿山主流岩体识别系统',              enterpriseId: 21, enterpriseName: '诺桦',      budget: 200000, teacherId: 11, teacherName: '罗文',   status: 'completed',   progress: 100, description: '数字矿山主流岩体识别系统开发', deliverables: '岩体识别系统', requirements: '矿山、岩体识别', tags: ['矿山', '数字'] },
+  { id: 1, name: '智能仓储管理系统开发', enterpriseId: 1, enterpriseName: '华为', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '开发一套基于RFID和AGV的智能仓储管理系统', deliverables: '完整的仓储管理系统，包含Web端和移动端', requirements: '有Java/Spring Boot开发经验', tags: ['仓储', 'RFID', 'AGV'], assignedStudents: [1, 2, 3, 7] },
+  { id: 2, name: 'AI质检模型训练', enterpriseId: 2, enterpriseName: '腾讯', budget: 300000, teacherId: 2, teacherName: '李教授', schoolId: 1, status: 'in_progress', progress: 40, description: '基于深度学习的工业质检模型训练和部署', deliverables: '质检模型、训练数据集', requirements: '熟悉CV、PyTorch', tags: ['AI', 'CV'], assignedStudents: [1, 5, 7] },
+  { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '华为', budget: 800000, teacherId: null, teacherName: null, schoolId: null, status: 'pending', progress: 0, description: '5G基站天线阵列的优化设计', deliverables: '设计方案', requirements: '', tags: ['5G', '天线'], assignedStudents: [] },
+  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '华为', budget: 600000, teacherId: 6, teacherName: '陈教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
+  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '腾讯', budget: 200000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
+  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '华为', budget: 400000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
+]
+
+const enterpriseProjects = [
+  { id: 101, name: '区块链电子档案',                       publisher: '河北圣诺联合科技有限公司', enterpriseName: '河北圣诺',  budget: 350600, teacherName: '陈新',   status: 'in_progress', progress: 80,  description: '区块链电子档案管理系统开发', deliverables: '电子档案管理系统', requirements: '区块链、档案管理' },
+  { id: 102, name: '燃气管线绘制辅助工具开发项目',          publisher: '河北恒华信息技术有限公司', enterpriseName: '恒华信息',  budget: 286000, teacherName: '张晓蕾', status: 'in_progress', progress: 90,  description: '燃气管线绘制辅助工具开发', deliverables: '管线绘制工具', requirements: 'GIS、管线设计' },
+  { id: 103, name: '信息安全课程开发服务',                 publisher: '易县卓升电子科技有限公司', enterpriseName: '卓升电子',  budget: 200000, teacherName: '马晓丽', status: 'completed',   progress: 100, description: '信息安全课程开发服务', deliverables: '信息安全课程内容', requirements: '信息安全、教学' },
+  { id: 104, name: '系统及网络安全维护',                   publisher: '河北仁谦信息科技有限公司北京分公司', enterpriseName: '仁谦信息',  budget: 396000, teacherName: '贺宏',   status: 'completed',   progress: 100, description: '系统及网络安全维护服务', deliverables: '安全维护方案', requirements: '网络安全、系统维护' },
+  { id: 105, name: '自定位机器人网络安全虚拟仿真测试平台',  publisher: '石家庄市顶天科技开发有限公司', enterpriseName: '顶天科技',  budget: 300500, teacherName: '武雪芳', status: 'completed',   progress: 100, description: '机器人网络安全虚拟仿真测试平台', deliverables: '仿真测试平台', requirements: '机器人、网络安全' },
+  { id: 106, name: '企业生产数据分析与可视化解决方案',      publisher: '河北国龙制药有限公司', enterpriseName: '国龙制药',  budget: 300000, teacherName: '陈建伟', status: 'in_progress', progress: 90,  description: '企业生产数据分析与可视化', deliverables: '数据分析可视化平台', requirements: '数据分析、可视化' },
+  { id: 107, name: '数实合一智慧古建信息系统',              publisher: '河北棣烨信息技术有限公司', enterpriseName: '棣烨',      budget: 204700, teacherName: '底雪峰', status: 'completed',   progress: 100, description: '数实合一智慧古建信息系统', deliverables: '智慧古建信息系统', requirements: '古建、数字化' },
+  { id: 108, name: '微晶玻璃晶化炉自动控制系统',            publisher: '河北美科微晶材料有限公司', enterpriseName: '美科',      budget: 450000, teacherName: '陶玉梅', status: 'completed',   progress: 100, description: '微晶玻璃晶化炉自动控制系统', deliverables: '自动控制系统', requirements: '自动化、微晶玻璃' },
+  { id: 109, name: '虚拟实验教学资源软件',                  publisher: '河北惠美电子科技有限公司', enterpriseName: '惠美',      budget: 401000, teacherName: '刘娇',   status: 'completed',   progress: 100, description: '虚拟实验教学资源软件开发', deliverables: '虚拟实验软件', requirements: '虚拟实验、教学' },
+  { id: 110, name: '分级数据存储系统',                      publisher: '河北高誉教育科技有限公司', enterpriseName: '高誉',      budget: 200000, teacherName: '李擎',   status: 'completed',   progress: 100, description: '分级数据存储系统开发', deliverables: '数据存储系统', requirements: '数据存储、分级' },
+  { id: 111, name: '数字矿山主流岩体识别系统',              publisher: '河北诺桦网络科技有限公司', enterpriseName: '诺桦',      budget: 200000, teacherName: '罗文',   status: 'completed',   progress: 100, description: '数字矿山主流岩体识别系统开发', deliverables: '岩体识别系统', requirements: '矿山、岩体识别' },
 ]
 
 // Tasks with 五维 evaluation data
 const initialTasks = [
-  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
-  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'completed', score: 90, comment: '数据质量高，按时交付', dims: { profession: 88, innovation: 85, teamwork: 92, learning: 90, adaptability: 88 } },
-  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'completed', score: 89, comment: '模型效果优秀', dims: { profession: 90, innovation: 92, teamwork: 85, learning: 88, adaptability: 86 } },
-  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 5, projectId: 2, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
-  { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'completed', score: 92, comment: '架构设计清晰，可扩展性强', dims: { profession: 90, innovation: 88, teamwork: 94, learning: 91, adaptability: 89 } },
-  { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'completed', score: 90, comment: '性能提升显著', dims: { profession: 88, innovation: 86, teamwork: 92, learning: 90, adaptability: 91 } },
+  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '张三', deadline: '2024-08-15', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 85, teamwork: 95, learning: 88, adaptability: 92 } },
+  { id: 2, projectId: 1, name: '后端API开发', assigneeId: 2, assignee: '李四', deadline: '2024-09-30', status: 'submitted', score: null, comment: '', dims: null },
+  { id: 3, projectId: 1, name: '前端界面开发', assigneeId: 3, assignee: '王五', deadline: '2024-10-15', status: 'pending', score: null, comment: '', dims: null },
+  { id: 4, projectId: 1, name: 'AGV调度算法', assigneeId: 4, assignee: '赵六', deadline: '2024-09-01', status: 'in_progress', score: null, comment: '', dims: null },
+  { id: 5, projectId: 2, name: '数据集标注', assigneeId: 5, assignee: '孙七', deadline: '2024-08-30', status: 'completed', score: 88, comment: '数据质量很高', dims: { profession: 85, innovation: 75, teamwork: 90, learning: 80, adaptability: 85 } },
+  { id: 6, projectId: 2, name: '模型训练调优', assigneeId: 6, assignee: '周八', deadline: '2024-10-01', status: 'in_progress', score: null, comment: '', dims: null },
+  { id: 7, projectId: 5, name: '数据采集模块', assigneeId: 1, assignee: '张三', deadline: '2024-06-01', status: 'completed', score: 95, comment: '主动完成，质量优秀', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
 ]
 
 const statusMap = {
@@ -60,7 +69,8 @@ const taskStatusMap = {
 
 export default function ProjectCooperation() {
   const { user, hasPermission } = useAuth()
-  const [projects, setProjects] = useState(initialProjects)
+  const isEnterpriseRole = role === 'enterprise' || role === 'mentor'
+  const [projects, setProjects] = useState(isEnterpriseRole ? enterpriseProjects : initialProjects)
   const [tasks, setTasks] = useState(initialTasks)
   const [filterStatus, setFilterStatus] = useState('all')
 
@@ -93,7 +103,7 @@ export default function ProjectCooperation() {
   // ─── Filtered ─────────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
     let list = projects
-    if (role === 'mentor') list = list.filter(p => p.enterpriseId === enterpriseId)
+    if (role === 'enterprise' || role === 'mentor') { /* 全部显示 */ }
     if (role === 'teacher') list = list.filter(p => p.teacherId === teacherId || p.status === 'pending')
     if (role === 'school') list = list.filter(p => p.schoolId === schoolId || !p.schoolId)
     if (role === 'student') return []  // 学生不能查看项目列表
@@ -303,37 +313,45 @@ export default function ProjectCooperation() {
   }
 
   // ─── Columns ────────────────────────────────────────────────────────────
-  const projectColumns = [
-    { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
-    { title: '发布方', key: 'publisher', render: (_, r) => <Tag color="cyan">{mockEnterprises.find(e => e.id === r.enterpriseId)?.name || r.enterpriseName}</Tag> },
-    { title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
-    { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
-    { title: '承接方', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
-    { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
-    { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
-    {
-      title: '操作', key: 'action', width: 250, render: (_, r) => {
-        const acts = []
-        if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
-        if (r.status === 'teacher_accepted' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认项目</Button>)
-        if (r.status === 'pending_complete' && (role === 'enterprise' || role === 'mentor')) acts.push(<Button key="cc" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseCompleteConfirm(r.id)}>确认结项</Button>)
-        if (r.teacherId === teacherId) {
-          if (r.status === 'in_progress') {
-            acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
-            acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
-            acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
-              onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
+  const projectColumns = useMemo(() => {
+    const isEnt = role === 'enterprise' || role === 'mentor'
+    const cols = [
+      { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
+    ]
+    if (isEnt) {
+      cols.push({ title: '发布方', key: 'publisher', render: (_, r) => <span style={{ color: '#1677ff', fontSize: 13 }}>{r.publisher || r.enterpriseName}</span> })
+    }
+    if (!isEnt) {
+      cols.push({ title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> })
+    }
+    cols.push(
+      { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
+      { title: '承接方', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
+      { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
+      { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
+      {
+        title: '操作', key: 'action', width: 200, render: (_, r) => {
+          const acts = []
+          if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
+          if (r.status === 'teacher_accepted' && isEnt) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认项目</Button>)
+          if (r.status === 'pending_complete' && isEnt) acts.push(<Button key="cc" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseCompleteConfirm(r.id)}>确认结项</Button>)
+          if (r.teacherId === teacherId && !isEnt) {
+            if (r.status === 'in_progress') {
+              acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
+              acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
+              acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
+                onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
+            }
+            acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>组建团队</Button>)
           }
-          acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>组建团队</Button>)
+          if (isEnt || role === 'park') acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
+          if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
+          return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
         }
-        if (role === 'enterprise' || role === 'mentor' || role === 'park') {
-          acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
-        }
-        if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
-        return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
-      }
-    },
-  ]
+      },
+    )
+    return cols
+  }, [role, teacherId])
 
   const taskColumns = [
     { title: '任务名称', dataIndex: 'name', key: 'name' },
