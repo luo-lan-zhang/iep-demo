@@ -19,8 +19,8 @@ const FIVE_DIMS = [
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialProjects = [
-  { id: 1,  name: '区块链电子档案',                       enterpriseId: 11, enterpriseName: '河北圣诺',  budget: 350600, teacherId: 1,  teacherName: '陈新',   status: 'in_progress', progress: 80,  description: '区块链电子档案管理系统开发', deliverables: '电子档案管理系统', requirements: '区块链、档案管理', tags: ['区块链', '档案'] },
-  { id: 2,  name: '燃气管线绘制辅助工具开发项目',          enterpriseId: 12, enterpriseName: '恒华信息',  budget: 286000, teacherId: 2,  teacherName: '张晓蕾', status: 'in_progress', progress: 90,  description: '燃气管线绘制辅助工具开发', deliverables: '管线绘制工具', requirements: 'GIS、管线设计', tags: ['燃气', 'GIS'] },
+  { id: 1,  name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 11, enterpriseName: '河北圣诺',  budget: 350600, teacherId: 1,  teacherName: '陈新',   status: 'in_progress', progress: 80,  description: '物联网固件AI污点检测与POC智能协同验证系统', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'] },
+  { id: 2,  name: '矿用无线张力油压监测系统',                 enterpriseId: 12, enterpriseName: '恒华信息',  budget: 286000, teacherId: 2,  teacherName: '张晓蕾', status: 'in_progress', progress: 90,  description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'] },
   { id: 3,  name: '信息安全课程开发服务',                 enterpriseId: 13, enterpriseName: '卓升电子',  budget: 200000, teacherId: 3,  teacherName: '马晓丽', status: 'completed',   progress: 100, description: '信息安全课程开发服务', deliverables: '信息安全课程内容', requirements: '信息安全、教学', tags: ['信息安全', '课程'] },
   { id: 4,  name: '系统及网络安全维护',                   enterpriseId: 14, enterpriseName: '仁谦信息',  budget: 396000, teacherId: 4,  teacherName: '贺宏',   status: 'completed',   progress: 100, description: '系统及网络安全维护服务', deliverables: '安全维护方案', requirements: '网络安全、系统维护', tags: ['网络安全', '系统'] },
   { id: 5,  name: '自定位机器人网络安全虚拟仿真测试平台',  enterpriseId: 15, enterpriseName: '顶天科技',  budget: 300500, teacherId: 5,  teacherName: '武雪芳', status: 'completed',   progress: 100, description: '机器人网络安全虚拟仿真测试平台', deliverables: '仿真测试平台', requirements: '机器人、网络安全', tags: ['机器人', '仿真'] },
@@ -34,13 +34,13 @@ const initialProjects = [
 
 // Tasks with 五维 evaluation data
 const initialTasks = [
-  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '张三', deadline: '2024-08-15', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 85, teamwork: 95, learning: 88, adaptability: 92 } },
-  { id: 2, projectId: 1, name: '后端API开发', assigneeId: 2, assignee: '李四', deadline: '2024-09-30', status: 'submitted', score: null, comment: '', dims: null },
-  { id: 3, projectId: 1, name: '前端界面开发', assigneeId: 3, assignee: '王五', deadline: '2024-10-15', status: 'pending', score: null, comment: '', dims: null },
-  { id: 4, projectId: 1, name: 'AGV调度算法', assigneeId: 4, assignee: '赵六', deadline: '2024-09-01', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 5, projectId: 2, name: '数据集标注', assigneeId: 5, assignee: '孙七', deadline: '2024-08-30', status: 'completed', score: 88, comment: '数据质量很高', dims: { profession: 85, innovation: 75, teamwork: 90, learning: 80, adaptability: 85 } },
-  { id: 6, projectId: 2, name: '模型训练调优', assigneeId: 6, assignee: '周八', deadline: '2024-10-01', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 7, projectId: 5, name: '数据采集模块', assigneeId: 1, assignee: '张三', deadline: '2024-06-01', status: 'completed', score: 95, comment: '主动完成，质量优秀', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
+  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
+  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'completed', score: 90, comment: '数据质量高，按时交付', dims: { profession: 88, innovation: 85, teamwork: 92, learning: 90, adaptability: 88 } },
+  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'completed', score: 89, comment: '模型效果优秀', dims: { profession: 90, innovation: 92, teamwork: 85, learning: 88, adaptability: 86 } },
+  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
+  { id: 5, projectId: 2, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
+  { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'completed', score: 92, comment: '架构设计清晰，可扩展性强', dims: { profession: 90, innovation: 88, teamwork: 94, learning: 91, adaptability: 89 } },
+  { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'completed', score: 90, comment: '性能提升显著', dims: { profession: 88, innovation: 86, teamwork: 92, learning: 90, adaptability: 91 } },
 ]
 
 const statusMap = {
