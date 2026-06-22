@@ -69,6 +69,12 @@ const taskStatusMap = {
 
 export default function ProjectCooperation() {
   const { user, hasPermission } = useAuth()
+  const role = user?.role || 'council'
+  const enterpriseId = user?.enterpriseId
+  const teacherId = user?.teacherId
+  const schoolId = user?.schoolId
+  const studentId = user?.id || 7
+
   const isEnterpriseRole = role === 'enterprise' || role === 'mentor'
   const [projects, setProjects] = useState(isEnterpriseRole ? enterpriseProjects : initialProjects)
   const [tasks, setTasks] = useState(initialTasks)
@@ -94,11 +100,6 @@ export default function ProjectCooperation() {
     return saved ? JSON.parse(saved) : []
   })
 
-  const role = user?.role || 'council'
-  const enterpriseId = user?.enterpriseId
-  const teacherId = user?.teacherId
-  const schoolId = user?.schoolId
-  const studentId = user?.id || 7
 
   // ─── Filtered ─────────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
