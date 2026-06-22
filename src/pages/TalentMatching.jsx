@@ -8,58 +8,49 @@ import { useAuth } from '../context/AuthContext'
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialPositions = [
-  { id: 1, title: 'HarmonyOS开发工程师', enterpriseId: 1, enterpriseName: '华为技术有限公司', salary: '25K-40K', education: '本科', description: '负责HarmonyOS应用开发，参与核心模块设计', requirements: '熟悉Java/Kotlin，有移动端开发经验', status: 'active' },
-  { id: 2, title: 'AI算法工程师', enterpriseId: 2, enterpriseName: '腾讯科技（深圳）有限公司', salary: '30K-50K', education: '硕士', description: '从事AI大模型算法研究和应用开发', requirements: '熟悉深度学习框架，有NLP/CV经验', status: 'active' },
-  { id: 3, title: '嵌入式软件工程师', enterpriseId: 5, enterpriseName: '大疆创新科技有限公司', salary: '20K-35K', education: '本科', description: '负责嵌入式系统软件开发', requirements: '熟悉C/C++，有RTOS开发经验', status: 'active' },
-  { id: 4, title: '自动驾驶测试工程师', enterpriseId: 3, enterpriseName: '广州小鹏汽车科技有限公司', salary: '15K-30K', education: '本科', description: '负责自动驾驶系统测试和验证', requirements: '有测试经验，了解自动驾驶', status: 'active' },
-  { id: 5, title: '产品经理', enterpriseId: 2, enterpriseName: '腾讯科技（深圳）有限公司', salary: '20K-40K', education: '本科', description: '负责产品规划和需求分析', requirements: '有互联网产品经验', status: 'closed' },
+  { id: 1, title: '大数据开发工程师', enterpriseName: '中数智创科技有限公司', salary: '7000', education: '大专及以上', description: '负责大数据平台开发和数据治理', requirements: '熟悉Hadoop/Spark，有数据处理经验', status: 'active' },
+  { id: 2, title: '产品经理', enterpriseName: '河北信服科技有限公司', salary: '4500', education: '大专', description: '负责产品需求分析和项目推进', requirements: '有产品思维，沟通能力强', status: 'active' },
+  { id: 3, title: '开发工程师', enterpriseName: '石家庄中川科技有限公司', salary: '6000', education: '大专及以上', description: '负责软件系统开发与维护', requirements: '熟悉Java/Spring，有项目开发经验', status: 'active' },
+  { id: 4, title: '软件开发工程师', enterpriseName: '河北唐讯科技有限公司', salary: '5000', education: '大专及以上', description: '负责软件产品开发和迭代', requirements: '熟悉前端或后端技术栈', status: 'active' },
+  { id: 5, title: '系统运维工程师', enterpriseName: '河北新磁信息技术有限公司', salary: '5000', education: '大专', description: '负责系统运维和故障处理', requirements: '熟悉Linux/网络，有运维经验', status: 'active' },
+  { id: 6, title: 'LED调试技术员', enterpriseName: '石家庄市京华电子实业有限公司', salary: '4000', education: '大专及以上', description: '负责LED显示设备调试与维护', requirements: '有电子技术基础，动手能力强', status: 'active' },
+  { id: 7, title: '工程制图员', enterpriseName: '石家庄市京华电子实业有限公司', salary: '4300', education: '大专及以上', description: '负责工程图纸绘制和文档整理', requirements: '熟练使用CAD，有制图经验', status: 'active' },
+  { id: 8, title: '网络运维工程师', enterpriseName: '中憬科技集团有限公司', salary: '5000', education: '大专及以上', description: '负责网络设备运维和安全管理', requirements: '熟悉网络协议，有运维经验', status: 'active' },
 ]
 
 const initialApplications = [
-  { id: 1, positionId: 1, studentId: 1, studentName: '张三', major: '计算机科学与技术', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-07-01', matchScore: 92 },
-  { id: 2, positionId: 2, studentId: 2, studentName: '李四', major: '软件工程', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-05', matchScore: 88 },
-  { id: 3, positionId: 1, studentId: 3, studentName: '王五', major: '人工智能', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-06-28', matchScore: 95 },
-  { id: 4, positionId: 3, studentId: 4, studentName: '赵六', major: '电子信息工程', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'rejected', applyDate: '2024-06-20', matchScore: 75 },
-  { id: 5, positionId: 2, studentId: 1, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-08', matchScore: 85 },
-  { id: 6, positionId: 4, studentId: 2, studentName: '李四', major: '软件工程', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'approved', applyDate: '2024-07-03', matchScore: 82 },
-  { id: 7, positionId: 3, studentId: 5, studentName: '孙七', major: '物联网工程', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', applyDate: '2024-07-10', matchScore: 91 },
-  { id: 8, positionId: 1, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'rejected', applyDate: '2024-07-06', matchScore: 68 },
-  { id: 9, positionId: 2, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'pending', applyDate: '2024-07-15', matchScore: 87 },
-  { id: 10, positionId: 3, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', applyDate: '2024-07-18', matchScore: 83 },
-  { id: 11, positionId: 4, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'approved', applyDate: '2024-07-12', matchScore: 90 },
-  { id: 12, positionId: 5, studentId: 7, studentName: '张三', major: '计算机科学与技术', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: '产品经理', status: 'rejected', applyDate: '2024-06-25', matchScore: 72 },
-  { id: 13, positionId: 1, studentId: 4, studentName: '赵六', major: '电子信息工程', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'approved', applyDate: '2024-07-16', matchScore: 88 },
+  { id: 1, positionId: 1, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '中数智创科技有限公司', positionTitle: '大数据开发工程师', status: 'approved', applyDate: '2026-05-10', matchScore: 92 },
+  { id: 2, positionId: 2, studentId: 2, studentName: '陈芝树', major: '软件技术', enterpriseName: '河北信服科技有限公司', positionTitle: '产品经理', status: 'pending', applyDate: '2026-05-15', matchScore: 85 },
+  { id: 3, positionId: 3, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '石家庄中川科技有限公司', positionTitle: '开发工程师', status: 'pending', applyDate: '2026-05-18', matchScore: 88 },
+  { id: 4, positionId: 1, studentId: 2, studentName: '陈芝树', major: '软件技术', enterpriseName: '中数智创科技有限公司', positionTitle: '大数据开发工程师', status: 'rejected', applyDate: '2026-06-01', matchScore: 78 },
+  { id: 5, positionId: 4, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '河北唐讯科技有限公司', positionTitle: '软件开发工程师', status: 'pending', applyDate: '2026-06-05', matchScore: 90 },
+  { id: 6, positionId: 5, studentId: 3, studentName: '王五', major: '人工智能', enterpriseName: '河北新磁信息技术有限公司', positionTitle: '系统运维工程师', status: 'approved', applyDate: '2026-05-20', matchScore: 82 },
+  { id: 7, positionId: 8, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '中憬科技集团有限公司', positionTitle: '网络运维工程师', status: 'pending', applyDate: '2026-06-10', matchScore: 86 },
+  { id: 8, positionId: 3, studentId: 2, studentName: '陈芝树', major: '软件技术', enterpriseName: '石家庄中川科技有限公司', positionTitle: '开发工程师', status: 'pending', applyDate: '2026-06-12', matchScore: 84 },
 ]
 
 const initialInterviews = [
-  { id: 1, positionId: 1, studentId: 1, studentName: '张三', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'pending', interviewDate: '2024-08-01 14:00', inviteDate: '2024-07-20', source: 'enterprise' },
-  { id: 2, positionId: 2, studentId: 5, studentName: '孙七', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'accepted', interviewDate: '2024-08-05 10:00', inviteDate: '2024-07-22', source: 'enterprise' },
-  { id: 3, positionId: 4, studentId: 3, studentName: '王五', enterpriseName: '广州小鹏汽车科技有限公司', positionTitle: '自动驾驶测试工程师', status: 'rejected', interviewDate: '2024-08-10 15:00', inviteDate: '2024-07-25', source: 'enterprise' },
-  { id: 4, positionId: 1, studentId: 3, studentName: '王五', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'accepted', interviewDate: '2024-08-08 09:30', inviteDate: '2024-07-24', source: 'enterprise' },
-  { id: 5, positionId: 3, studentId: 1, studentName: '张三', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'pending', interviewDate: '2024-08-12 15:00', inviteDate: '2024-07-26', source: 'teacher' },
-  { id: 6, positionId: 2, studentId: 7, studentName: '张三', enterpriseName: '腾讯科技（深圳）有限公司', positionTitle: 'AI算法工程师', status: 'confirmed', interviewDate: '2024-08-15 10:00', inviteDate: '2024-07-28', source: 'enterprise' },
-  { id: 7, positionId: 1, studentId: 7, studentName: '张三', enterpriseName: '华为技术有限公司', positionTitle: 'HarmonyOS开发工程师', status: 'pending', interviewDate: '2024-08-18 14:00', inviteDate: '2024-07-30', source: 'enterprise' },
-  { id: 8, positionId: 3, studentId: 7, studentName: '张三', enterpriseName: '大疆创新科技有限公司', positionTitle: '嵌入式软件工程师', status: 'accepted', interviewDate: '2024-08-20 10:00', inviteDate: '2024-08-01', source: 'teacher' },
+  { id: 1, positionId: 1, studentId: 1, studentName: '贾梦圆', enterpriseName: '中数智创科技有限公司', positionTitle: '大数据开发工程师', status: 'pending', interviewDate: '2026-07-15 14:00', inviteDate: '2026-06-20', source: 'enterprise' },
+  { id: 2, positionId: 3, studentId: 2, studentName: '陈芝树', enterpriseName: '石家庄中川科技有限公司', positionTitle: '开发工程师', status: 'accepted', interviewDate: '2026-07-10 10:00', inviteDate: '2026-06-18', source: 'enterprise' },
+  { id: 3, positionId: 4, studentId: 1, studentName: '贾梦圆', enterpriseName: '河北唐讯科技有限公司', positionTitle: '软件开发工程师', status: 'pending', interviewDate: '2026-07-20 15:00', inviteDate: '2026-06-22', source: 'teacher' },
 ]
 
 const initialRecommendations = [
-  { id: 1, positionId: 1, studentId: 5, studentName: '孙七', major: '物联网工程', teacherId: 1, teacherName: '张教授', reason: '该生HarmonyOS开发能力突出，获得过省级竞赛奖项', status: 'pending', recommendDate: '2024-07-10' },
-  { id: 2, positionId: 2, studentId: 1, studentName: '张三', major: '计算机科学与技术', teacherId: 1, teacherName: '张教授', reason: 'AI方向成绩优异，有丰富的项目实战经验', status: 'pending', recommendDate: '2024-07-12' },
-  { id: 3, positionId: 4, studentId: 6, studentName: '周八', major: '机械工程', teacherId: 4, teacherName: '陈教授', reason: '自动驾驶项目经验丰富，团队协作能力强', status: 'interviewed', recommendDate: '2024-07-08' },
-  { id: 4, positionId: 3, studentId: 2, studentName: '李四', major: '软件工程', teacherId: 1, teacherName: '张教授', reason: '嵌入式系统课程成绩优异，参加过全国电子设计大赛', status: 'pending', recommendDate: '2024-07-15' },
-  { id: 5, positionId: 1, studentId: 1, studentName: '张三', major: '计算机科学与技术', teacherId: 2, teacherName: '李教授', reason: '全栈开发能力突出，有华为HCIA认证', status: 'interviewed', recommendDate: '2024-07-08' },
-  { id: 6, positionId: 2, studentId: 5, studentName: '孙七', major: '物联网工程', teacherId: 2, teacherName: '李教授', reason: '精通Python和TensorFlow，参加过Kaggle竞赛', status: 'pending', recommendDate: '2024-07-18' },
+  { id: 1, positionId: 1, studentId: 2, studentName: '陈芝树', major: '软件技术', teacherId: 1, teacherName: '张教授', reason: '该生后端开发能力扎实，有信息安全课程项目经验', status: 'pending', recommendDate: '2026-06-10' },
+  { id: 2, positionId: 3, studentId: 1, studentName: '贾梦圆', major: '软件技术', teacherId: 1, teacherName: '张教授', reason: '前端开发能力突出，有智慧校园餐饮系统项目经验', status: 'pending', recommendDate: '2026-06-12' },
+  { id: 3, positionId: 4, studentId: 2, studentName: '陈芝树', major: '软件技术', teacherId: 2, teacherName: '李教授', reason: '全栈能力突出，学习能力强', status: 'interviewed', recommendDate: '2026-06-08' },
 ]
 
 const statusMap = {
-  pending: { text: '待审核', color: 'orange' },
+  pending: { text: '待处理', color: 'orange' },
   approved: { text: '已通过', color: 'green' },
   rejected: { text: '已拒绝', color: 'red' },
   accepted: { text: '已接受', color: 'green' },
   confirmed: { text: '已确认', color: 'purple' },
   interviewed: { text: '已邀约', color: 'blue' },
+  applied: { text: '已投递', color: 'blue' },
 }
-const posStatusMap = { active: { text: '招聘中', color: 'green' }, closed: { text: '已关闭', color: 'default' } }
+const posStatusMap = { active: { text: '招聘中', color: 'processing' }, closed: { text: '已关闭', color: 'default' } }
 
 // ─── Calculate match score between student and position ──────────────────────
 function calcMatchScore(student, position) {
@@ -101,36 +92,23 @@ export default function TalentMatching() {
 
   // ─── Filtered Data ─────────────────────────────────────────────────────
   const filteredPositions = useMemo(() => {
-    if (role === 'enterprise') return positions.filter(p => p.enterpriseId === enterpriseId)
     return positions
-  }, [positions, role, enterpriseId])
+  }, [positions])
 
   const myApplications = useMemo(() => {
     if (role === 'student') return applications.filter(a => a.studentId === studentId)
-    if (role === 'enterprise') {
-      const posIds = positions.filter(p => p.enterpriseId === enterpriseId).map(p => p.id)
-      return applications.filter(a => posIds.includes(a.positionId))
-    }
     return applications
-  }, [role, studentId, applications, positions, enterpriseId])
+  }, [role, studentId, applications])
 
   const myInterviews = useMemo(() => {
     if (role === 'student') return interviews.filter(i => i.studentId === studentId)
-    if (role === 'enterprise') {
-      const posIds = positions.filter(p => p.enterpriseId === enterpriseId).map(p => p.id)
-      return interviews.filter(i => posIds.includes(i.positionId))
-    }
     return interviews
-  }, [role, studentId, interviews, positions, enterpriseId])
+  }, [role, studentId, interviews])
 
   const myRecommendations = useMemo(() => {
     if (role === 'teacher') return recommendations.filter(r => r.teacherId === teacherId)
-    if (role === 'enterprise') {
-      const posIds = positions.filter(p => p.enterpriseId === enterpriseId).map(p => p.id)
-      return recommendations.filter(r => posIds.includes(r.positionId))
-    }
     return recommendations
-  }, [role, teacherId, recommendations, positions, enterpriseId])
+  }, [role, teacherId, recommendations])
 
   // Enterprise: 匹配学生列表（根据企业岗位匹配学生）
   const matchedStudents = useMemo(() => {
@@ -478,7 +456,7 @@ export default function TalentMatching() {
       <div>
         {role === 'student' && (
           <div>
-            <h4 style={{ marginBottom: 16 }}>推荐岗位（基于您的专业方向 — 计算机科学与技术）</h4>
+            <h4 style={{ marginBottom: 16 }}>推荐岗位（基于您的专业方向 — 软件技术）</h4>
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
               {[
                 { title: '匹配岗位数', value: positions.filter(p => p.status === 'active').length, icon: <NodeIndexOutlined />, color: '#1677ff' },
@@ -502,7 +480,7 @@ export default function TalentMatching() {
               { title: '操作', key: 'action', render: (_, r) => <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button> },
             ]} rowKey="id" />
             <div style={{ marginTop: 16, padding: 12, background: '#f0f5ff', borderRadius: 8, fontSize: 13, color: '#1677ff' }}>
-              <strong>AI 职业建议：</strong>您的专业技能与嵌入式/IoT方向高度匹配，建议在投递简历时突出您的项目经验和竞赛获奖经历。人工智能方向岗位需求增长迅速，建议同步关注。
+              <strong>AI 职业建议：</strong>您的软件技术专业与大数据开发、软件开发方向高度匹配，建议在投递简历时突出您的项目经验和实践能力。系统运维和网络运维方向岗位需求增长迅速，建议同步关注。
             </div>
           </div>
         )}
