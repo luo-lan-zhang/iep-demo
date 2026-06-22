@@ -44,12 +44,12 @@ const enterpriseProjects = [
 // Tasks with 五维 evaluation data
 const initialTasks = [
   { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
-  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'completed', score: 90, comment: '数据质量高，按时交付', dims: { profession: 88, innovation: 85, teamwork: 92, learning: 90, adaptability: 88 } },
-  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'completed', score: 89, comment: '模型效果优秀', dims: { profession: 90, innovation: 92, teamwork: 85, learning: 88, adaptability: 86 } },
+  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'submitted', score: null, comment: '', dims: null },
+  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'pending', score: null, comment: '', dims: null },
   { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
   { id: 5, projectId: 2, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
-  { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'completed', score: 92, comment: '架构设计清晰，可扩展性强', dims: { profession: 90, innovation: 88, teamwork: 94, learning: 91, adaptability: 89 } },
-  { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'completed', score: 90, comment: '性能提升显著', dims: { profession: 88, innovation: 86, teamwork: 92, learning: 90, adaptability: 91 } },
+  { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'submitted', score: null, comment: '', dims: null },
+  { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'pending', score: null, comment: '', dims: null },
 ]
 
 const statusMap = {
@@ -79,6 +79,7 @@ export default function ProjectCooperation() {
   const [projects, setProjects] = useState(isEnterpriseRole ? enterpriseProjects : initialProjects)
   const [tasks, setTasks] = useState(initialTasks)
   const [filterStatus, setFilterStatus] = useState('all')
+  const [taskFilterStatus, setTaskFilterStatus] = useState('all')
 
   // Modals
   const [publishOpen, setPublishOpen] = useState(false)
@@ -100,6 +101,35 @@ export default function ProjectCooperation() {
     return saved ? JSON.parse(saved) : []
   })
 
+  // AI润色 mock
+  const [aiPolishing, setAiPolishing] = useState(false)
+  const handleAiPolish = () => {
+    const current = evaluateForm.getFieldValue('comment') || ''
+    if (!current.trim()) { message.warning('请先输入评语内容'); return }
+    setAiPolishing(true)
+    message.loading({ content: 'AI正在润色...', key: 'ai_polish', duration: 0 })
+    setTimeout(() => {
+      const polished = current
+        .replace(/可以/g, '能够')
+        .replace(/不错/g, '表现优异')
+        .replace(/还行/g, '达到预期水平')
+        .replace(/一般/g, '中规中矩')
+        .replace(/完成/g, '圆满完成')
+        .replace(/好/g, '出色')
+        .replace(/做了/g, '完成了')
+        .replace(/有/g, '具备')
+      message.success({ content: 'AI润色完成！', key: 'ai_polish', duration: 2 })
+      evaluateForm.setFieldsValue({ comment: polished })
+      setAiPolishing(false)
+    }, 800)
+  }
+
+  // 教师承接任务
+  const handleTaskStart = (taskId) => {
+    setTasks(tasks.map(t => t.id === taskId ? { ...t, status: 'in_progress' } : t))
+    message.success('已承接任务，学生可以执行了')
+  }
+
 
   // ─── Filtered ─────────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
@@ -113,17 +143,19 @@ export default function ProjectCooperation() {
   }, [projects, role, enterpriseId, teacherId, schoolId, filterStatus])
 
   const visibleTasks = useMemo(() => {
-    if (role === 'student') return tasks.filter(t => t.assigneeId === user?.id)
+    let list = tasks
+    if (role === 'student') list = list.filter(t => t.assigneeId === user?.id)
     if (role === 'teacher' && teacherId) {
       const tIds = projects.filter(p => p.teacherId === teacherId).map(p => p.id)
-      return tasks.filter(t => tIds.includes(t.projectId))
+      list = list.filter(t => tIds.includes(t.projectId))
+      if (taskFilterStatus !== 'all') list = list.filter(t => t.status === taskFilterStatus)
     }
     if (role === 'mentor') {
       const tIds = projects.filter(p => p.enterpriseId === enterpriseId).map(p => p.id)
-      return tasks.filter(t => tIds.includes(t.projectId))
+      list = list.filter(t => tIds.includes(t.projectId))
     }
-    return tasks
-  }, [role, tasks, user, teacherId, enterpriseId, projects])
+    return list
+  }, [role, tasks, user, teacherId, enterpriseId, projects, taskFilterStatus])
 
   // Gantt Chart
   const [ganttOpen, setGanttOpen] = useState(false)
@@ -144,6 +176,11 @@ export default function ProjectCooperation() {
   const [memberReviewOpen, setMemberReviewOpen] = useState(false)
   const [memberReviewTarget, setMemberReviewTarget] = useState(null)
   const [memberReviewProject, setMemberReviewProject] = useState(null)
+  // Project-level scoring
+  const [projectScoreOpen, setProjectScoreOpen] = useState(false)
+  const [projectScoreTarget, setProjectScoreTarget] = useState(null)
+  const [projectScoreForm] = Form.useForm()
+  const [projectDimScores, setProjectDimScores] = useState({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 })
 
   const saveReviews = (r) => { setReviews(r); localStorage.setItem('project_reviews', JSON.stringify(r)) }
 
@@ -190,6 +227,37 @@ export default function ProjectCooperation() {
     })
   }
 
+  // Project-level scoring
+  const handleProjectScore = () => {
+    projectScoreForm.validateFields().then(v => {
+      const avgScore = Math.round(
+        (projectDimScores.profession + projectDimScores.innovation + projectDimScores.teamwork +
+         projectDimScores.learning + projectDimScores.adaptability) / 5
+      )
+      const key = `${projectScoreTarget.id}_score`
+      const record = { dims: { ...projectDimScores }, avgScore, comment: v.comment, date: new Date().toISOString().split('T')[0], reviewer: user?.name }
+      const updated = { ...reviews, [key]: record }
+      saveReviews(updated)
+      message.success(`项目综合评分 ${avgScore} 分，评分已保存！`)
+      setProjectScoreOpen(false); setProjectScoreTarget(null); projectScoreForm.resetFields()
+      setProjectDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 })
+    })
+  }
+
+  const handleProjectComplete = (project) => {
+    Modal.confirm({
+      title: '确认结项',
+      content: `确定要将项目「${project.name}」标记为结项吗？结项后项目将进入待企业确认状态。`,
+      okText: '确认结项',
+      cancelText: '取消',
+      onOk: () => {
+        setProjects(projects.map(p =>
+          p.id === project.id ? { ...p, status: 'pending_complete', progress: 100 } : p
+        ))
+        message.success('项目已提交结项，等待企业确认！')
+      }
+    })
+  }
 
   // Gantt chart: compute task positions
   const getGanttData = (projectId) => {
@@ -320,18 +388,18 @@ export default function ProjectCooperation() {
       { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
     ]
     if (isEnt) {
-      cols.push({ title: '发布方', key: 'publisher', render: (_, r) => <span style={{ color: '#1677ff', fontSize: 13 }}>{r.publisher || r.enterpriseName}</span> })
+      cols.push({ title: '原企业', key: 'publisher', render: (_, r) => <span style={{ color: '#1677ff', fontSize: 13 }}>{r.publisher || r.enterpriseName}</span> })
     }
     if (!isEnt) {
       cols.push({ title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> })
     }
     cols.push(
       { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
-      { title: '承接方', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
+      { title: '原负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
       { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
       { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
       {
-        title: '操作', key: 'action', width: 200, render: (_, r) => {
+        title: '操作', key: 'action', width: 340, render: (_, r) => {
           const acts = []
           if (r.status === 'pending' && role === 'teacher') acts.push(<Button key="ta" size="small" type="primary" onClick={() => handleTeacherAccept(r.id)}>承接项目</Button>)
           if (r.status === 'teacher_accepted' && isEnt) acts.push(<Button key="ec" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleEnterpriseConfirm(r.id)}>确认项目</Button>)
@@ -342,6 +410,8 @@ export default function ProjectCooperation() {
               acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
               acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }}
                 onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
+              acts.push(<Button key="ps" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setProjectScoreTarget(r); projectScoreForm.resetFields(); setProjectScoreOpen(true) }}>评分</Button>)
+              acts.push(<Button key="pc" size="small" icon={<CheckCircleOutlined />} style={{ borderColor: '#52c41a', color: '#52c41a' }} onClick={() => handleProjectComplete(r)}>结项</Button>)
             }
             acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>组建团队</Button>)
           }
@@ -384,11 +454,39 @@ export default function ProjectCooperation() {
       }
     },
     {
-      title: '操作', key: 'action', width: 160, render: (_, r) => {
+      title: '操作', key: 'action', width: 200, render: (_, r) => {
         const acts = []
+        // 教师：待开始 → 承接 + 组建团队
+        if (r.status === 'pending' && role === 'teacher') {
+          acts.push(<Button key="start" size="small" type="primary" icon={<CheckCircleOutlined />} onClick={() => handleTaskStart(r.id)}>承接</Button>)
+          acts.push(<Button key="team" size="small" icon={<TeamOutlined />} onClick={() => {
+            const p = projects.find(pj => pj.id === r.projectId)
+            setTeamProject(p || { id: r.projectId, assignedStudents: [], teamData: {} })
+            setTeamStudents(p?.assignedStudents || [])
+            setTeamMentors(p?.teamData?.mentors || [])
+            setTeamTeachers(p?.teamData?.teachers || [])
+            setTeamOpen(true)
+          }}>组建团队</Button>)
+        }
         if (r.assigneeId === studentId && (r.status === 'pending' || r.status === 'in_progress')) {
           if (role === 'student') acts.push(<Button key="sb" size="small" type="primary" icon={<SendOutlined />} onClick={() => { setSubmitTask(r); submitForm.resetFields(); setSubmitOpen(true) }}>提交成果</Button>)
           if (role === 'teacher') acts.push(<Button key="ed" size="small" onClick={() => { setTaskProjectId(r.projectId); taskForm.resetFields(); setTaskOpen(true) }}>编辑</Button>)
+        }
+        // 教师：进行中 → 评分 + 结项
+        if (r.status === 'in_progress' && role === 'teacher') {
+          acts.push(<Button key="ev" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评分</Button>)
+          acts.push(<Button key="complete" size="small" style={{ borderColor: '#52c41a', color: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => {
+            Modal.confirm({
+              title: '确认结项',
+              content: `确认将任务「${r.name}」结项？结项后任务状态将变为已完成。`,
+              okText: '确认结项',
+              cancelText: '取消',
+              onOk: () => {
+                setTasks(tasks.map(t => t.id === r.id ? { ...t, status: 'completed', score: null, comment: '', dims: null } : t))
+                message.success(`任务「${r.name}」已结项`)
+              },
+            })
+          }}>结项</Button>)
         }
         if (r.status === 'submitted' && (role === 'teacher' || role === 'mentor')) {
           acts.push(<Button key="ev" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>)
@@ -407,7 +505,7 @@ export default function ProjectCooperation() {
                 <Descriptions.Item label="状态"><Tag color={taskStatusMap[r.status]?.color}>{taskStatusMap[r.status]?.text}</Tag></Descriptions.Item>
                 {r.score && <>
                   <Descriptions.Item label="五维均分">{r.score}分</Descriptions.Item>
-                  <Descriptions.Item label="评语">{r.comment || '无'}</Descriptions.Item>
+                  <Descriptions.Item label="教师点评">{r.comment || '无'}</Descriptions.Item>
                 </>}
               </Descriptions>
             ),
@@ -454,7 +552,7 @@ export default function ProjectCooperation() {
       }
     },
     {
-      title: '评语', dataIndex: 'comment', key: 'comment', render: (c) => c || <span style={{ color: '#ccc' }}>-</span>,
+      title: '教师点评', dataIndex: 'comment', key: 'comment', render: (c) => c || <span style={{ color: '#ccc' }}>-</span>,
     },
     {
       title: '操作', key: 'action', render: (_, r) => {
@@ -483,7 +581,7 @@ export default function ProjectCooperation() {
               <Table dataSource={myProjects} columns={[
                 { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
                 { title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
-                { title: '承接方', dataIndex: 'teacherName', key: 'teacherName' },
+                { title: '原负责教师', dataIndex: 'teacherName', key: 'teacherName' },
                 { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" /> },
                 { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
                 { title: '接收状态', key: 'accept', render: (_, r) => {
@@ -522,7 +620,7 @@ export default function ProjectCooperation() {
         key: 'list', label: '任务分配', children: (
           <div>
             <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-              <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
+              <Select value={taskFilterStatus} onChange={setTaskFilterStatus} style={{ width: 160 }}
                 options={[
                   { value: 'all', label: '全部状态' },
                   { value: 'pending', label: '待开始' },
@@ -798,8 +896,21 @@ export default function ProjectCooperation() {
             </div>
 
             <Form form={evaluateForm} layout="vertical">
-              <Form.Item name="comment" label="评语" rules={[{ required: true }]}>
-                <Input.TextArea rows={3} placeholder="请对学生的整体表现进行评价" />
+              <Form.Item label="教师点评" required>
+                <div style={{ marginBottom: 8 }}>
+                  <Form.Item name="comment" rules={[{ required: true, message: '请输入教师点评' }]} noStyle>
+                    <Input.TextArea rows={4} placeholder="请对学生的整体表现进行点评，可点击AI润色优化文字表达" />
+                  </Form.Item>
+                  <Button
+                    size="small"
+                    type="dashed"
+                    loading={aiPolishing}
+                    onClick={handleAiPolish}
+                    style={{ marginTop: 8 }}
+                  >
+                    ✨ AI润色
+                  </Button>
+                </div>
               </Form.Item>
             </Form>
           </div>
@@ -970,6 +1081,66 @@ export default function ProjectCooperation() {
               </Form.Item>
               <Form.Item name="comment" label="评审意见" rules={[{ required: true }]}>
                 <Input.TextArea rows={3} placeholder={reviewType === 'mid' ? '评估该成员的阶段表现' : '对该成员整个项目周期的工作进行综合评价'} />
+              </Form.Item>
+            </Form>
+          </div>
+        )}
+      </Modal>
+
+      {/* 项目评分 */}
+      <Modal title={<span><StarOutlined /> 项目评分 — {projectScoreTarget?.name}</span>}
+        open={projectScoreOpen} onOk={handleProjectScore}
+        onCancel={() => { setProjectScoreOpen(false); setProjectScoreTarget(null); projectScoreForm.resetFields() }}
+        width={640} okText="提交评分">
+        {projectScoreTarget && (
+          <div>
+            <Descriptions column={2} size="small" style={{ marginBottom: 16 }}>
+              <Descriptions.Item label="项目名称">{projectScoreTarget.name}</Descriptions.Item>
+              <Descriptions.Item label="当前进度"><Progress percent={projectScoreTarget.progress} size="small" /></Descriptions.Item>
+            </Descriptions>
+            {reviews[`${projectScoreTarget.id}_score`] && (
+              <div style={{ background: '#fff7e6', padding: 12, borderRadius: 6, marginBottom: 16 }}>
+                <div style={{ fontWeight: 500 }}>上次评分记录</div>
+                <div style={{ fontSize: 13, color: '#666', marginTop: 4 }}>
+                  评分人：{reviews[`${projectScoreTarget.id}_score`].reviewer} | 日期：{reviews[`${projectScoreTarget.id}_score`].date}
+                </div>
+                <div style={{ fontSize: 13, color: '#666' }}>综合评分：{reviews[`${projectScoreTarget.id}_score`].avgScore}分</div>
+                <div style={{ fontSize: 13, color: '#666' }}>评语：{reviews[`${projectScoreTarget.id}_score`].comment}</div>
+              </div>
+            )}
+            <Divider orientation="left" style={{ fontSize: 14, fontWeight: 500 }}>五维能力评价</Divider>
+            <div style={{ padding: '0 8px' }}>
+              {FIVE_DIMS.map(d => (
+                <div key={d.key} style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <span style={{ fontWeight: 500, color: d.color }}>{d.label}</span>
+                    <span style={{ color: '#666', fontSize: 13 }}>{projectDimScores[d.key]}分</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#999', marginBottom: 4 }}>{d.desc}</div>
+                  <Slider
+                    min={0} max={100} step={1}
+                    value={projectDimScores[d.key]}
+                    onChange={v => setProjectDimScores(prev => ({ ...prev, [d.key]: v }))}
+                    trackStyle={{ backgroundColor: d.color }}
+                    handleStyle={{ borderColor: d.color }}
+                  />
+                </div>
+              ))}
+            </div>
+            <Divider />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, background: '#f0f5ff', padding: '12px 16px', borderRadius: 8 }}>
+              <span style={{ fontWeight: 500 }}>五维综合评分</span>
+              <span style={{ fontSize: 28, fontWeight: 'bold', color: '#faad14' }}>
+                {Math.round(
+                  (projectDimScores.profession + projectDimScores.innovation + projectDimScores.teamwork +
+                   projectDimScores.learning + projectDimScores.adaptability) / 5
+                )}
+                <span style={{ fontSize: 14, color: '#999' }}> 分</span>
+              </span>
+            </div>
+            <Form form={projectScoreForm} layout="vertical">
+              <Form.Item name="comment" label="评分评语" rules={[{ required: true, message: '请输入评分评语' }]}>
+                <Input.TextArea rows={3} placeholder="请对项目整体完成质量进行综合评价" />
               </Form.Item>
             </Form>
           </div>
