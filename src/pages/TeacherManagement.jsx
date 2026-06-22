@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Popconfirm } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Popconfirm, Descriptions } from 'antd'
+import { PlusOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockTeachers } from '../mock/teachers'
 import { mockSchools } from '../mock/schools'
 import { useAuth } from '../context/AuthContext'
@@ -9,6 +9,8 @@ export default function TeacherManagement() {
   const { user } = useAuth()
   const [teachers, setTeachers] = useState(mockTeachers)
   const [modalOpen, setModalOpen] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [detailTeacher, setDetailTeacher] = useState(null)
   const [form] = Form.useForm()
 
   const schoolMap = Object.fromEntries(mockSchools.map(s => [s.id, s.name]))
@@ -28,9 +30,12 @@ export default function TeacherManagement() {
     { title: '联系电话', dataIndex: 'phone', key: 'phone' },
     { title: '邮箱', dataIndex: 'email', key: 'email' },
     { title: '操作', key: 'action', render: (_, r) => (
-      <Popconfirm title="确定删除此教师？" onConfirm={() => { setTeachers(teachers.filter(t => t.id !== r.id)); message.success('已删除') }} okText="确定" cancelText="取消">
-        <Button size="small" danger icon={<DeleteOutlined />}>删除</Button>
-      </Popconfirm>
+      <span style={{ display: 'flex', gap: 4 }}>
+        <Button size="small" icon={<EyeOutlined />} onClick={() => { setDetailTeacher(r); setDetailOpen(true) }}>查看</Button>
+        <Popconfirm title="确定删除此教师？" onConfirm={() => { setTeachers(teachers.filter(t => t.id !== r.id)); message.success('已删除') }} okText="确定" cancelText="取消">
+          <Button size="small" danger icon={<DeleteOutlined />}>删除</Button>
+        </Popconfirm>
+      </span>
     )},
   ]
 
@@ -59,6 +64,19 @@ export default function TeacherManagement() {
           <Form.Item name="phone" label="联系电话"><Input /></Form.Item>
           <Form.Item name="email" label="邮箱"><Input /></Form.Item>
         </Form>
+      </Modal>
+
+      <Modal title="教师详情" open={detailOpen} onCancel={() => { setDetailOpen(false); setDetailTeacher(null) }} footer={null} width={500}>
+        {detailTeacher && (
+          <Descriptions column={2} bordered size="small">
+            <Descriptions.Item label="姓名">{detailTeacher.name}</Descriptions.Item>
+            <Descriptions.Item label="所属院校">{schoolMap[detailTeacher.schoolId] || '-'}</Descriptions.Item>
+            <Descriptions.Item label="职称">{detailTeacher.title}</Descriptions.Item>
+            <Descriptions.Item label="院系">{detailTeacher.department}</Descriptions.Item>
+            <Descriptions.Item label="电话">{detailTeacher.phone}</Descriptions.Item>
+            <Descriptions.Item label="邮箱">{detailTeacher.email}</Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
     </Card>
   )

@@ -242,11 +242,14 @@ export default function TalentMatching() {
     { title: '学历', dataIndex: 'education', key: 'education' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={posStatusMap[s]?.color}>{posStatusMap[s]?.text}</Tag> },
     { title: '操作', key: 'action', render: (_, r) => {
-      if (r.status !== 'active') return <span style={{ color: '#999' }}>-</span>
-      if (role === 'student') return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button>
-      if (role === 'teacher') return <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setRecommendPosition(r); setRecommendOpen(true) }}>推荐学生</Button>
-      if (role === 'enterprise') return <a onClick={() => { setDetailPosition(r); setDetailOpen(true) }}>查看</a>
-      return <span style={{ color: '#999' }}>-</span>
+      const acts = []
+      if (r.status !== 'active') acts.push(<span style={{ color: '#999' }}>-</span>)
+      if (role === 'student') acts.push(<Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button>)
+      if (role === 'teacher') acts.push(<Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setRecommendPosition(r); setRecommendOpen(true) }}>推荐学生</Button>)
+      if (role === 'enterprise') acts.push(<Button size="small" type="primary" icon={<EyeOutlined />} onClick={() => { setDetailPosition(r); setDetailOpen(true) }}>查看</Button>)
+      if (role !== 'enterprise' && role !== 'student' && role !== 'teacher') acts.push(<Button size="small" icon={<EyeOutlined />} onClick={() => { setDetailPosition(r); setDetailOpen(true) }}>查看</Button>)
+      if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -262,19 +265,22 @@ export default function TalentMatching() {
       return <Tag color={m[s]?.color}>{m[s]?.text}</Tag>
     }},
     { title: '操作', key: 'action', render: (_, r) => {
+      const acts = []
       if (r.status === 'matched' || r.status === 'recommended') {
-        return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => {
+        acts.push(<Button key="inv" size="small" type="primary" icon={<SendOutlined />} onClick={() => {
           setInviteTarget({
             studentId: r.studentId, studentName: r.studentName,
             positionId: r.positionId, positionTitle: r.positionTitle,
             enterpriseName: positions.find(p => p.id === r.positionId)?.enterpriseName || '',
           })
           inviteForm.resetFields(); setInviteOpen(true)
-        }}>发送面试邀请</Button>
+        }}>发送面试邀请</Button>)
       }
-      if (r.status === 'applied') return <Tag color="blue">待审核</Tag>
-      if (r.status === 'interviewed') return <Tag color="green">已邀约</Tag>
-      return <span style={{ color: '#999' }}>-</span>
+      if (r.status === 'applied') acts.push(<Tag color="blue">待审核</Tag>)
+      if (r.status === 'interviewed') acts.push(<Tag color="green">已邀约</Tag>)
+      acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailStudent(r); setStudentDetailOpen(true) }}>查看</Button>)
+      if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -306,19 +312,21 @@ export default function TalentMatching() {
       return <Tag color={statusMap[r.status]?.color}>{statusMap[r.status]?.text}</Tag>
     }},
     { title: '操作', key: 'action', render: (_, r) => {
+      const acts = []
       if (r.status === 'pending') {
-        return <span style={{ display: 'flex', gap: 4 }}>
-          <Button size="small" type="primary" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleApproveApp(r.id)}>通过</Button>
-          <Button size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectApp(r.id)}>拒绝</Button>
-        </span>
+        acts.push(<Button key="ap" size="small" type="primary" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleApproveApp(r.id)}>通过</Button>)
+        acts.push(<Button key="rj" size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectApp(r.id)}>拒绝</Button>)
       }
       if (r.status === 'approved') {
         const hasInvite = interviews.some(ri => ri.studentId === r.studentId && ri.positionId === r.positionId)
-        if (hasInvite) return <span style={{ color: '#999' }}>-</span>
-        const pos = positions.find(p => p.id === r.positionId)
-        return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setInviteTarget({ studentId: r.studentId, studentName: r.studentName, positionId: r.positionId, positionTitle: r.positionTitle, enterpriseName: pos?.enterpriseName || '' }); inviteForm.resetFields(); setInviteOpen(true) }}>发送面试</Button>
+        if (!hasInvite) {
+          const pos = positions.find(p => p.id === r.positionId)
+          acts.push(<Button key="inv" size="small" type="primary" icon={<SendOutlined />} onClick={() => { setInviteTarget({ studentId: r.studentId, studentName: r.studentName, positionId: r.positionId, positionTitle: r.positionTitle, enterpriseName: pos?.enterpriseName || '' }); inviteForm.resetFields(); setInviteOpen(true) }}>发送面试</Button>)
+        }
       }
-      return <span style={{ color: '#999' }}>-</span>
+      acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setViewApp(r); setViewAppOpen(true) }}>查看</Button>)
+      if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -329,13 +337,15 @@ export default function TalentMatching() {
     { title: '面试时间', dataIndex: 'interviewDate', key: 'interviewDate' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     { title: '操作', key: 'action', render: (_, r) => {
+      const acts = []
       if (r.status === 'pending') {
-        return <span style={{ display: 'flex', gap: 4 }}>
-          <Button size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleAcceptInterview(r.id)}>接受面试</Button>
-          <Button size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectInterview(r.id)}>拒绝</Button>
-        </span>
+        acts.push(<Button key="ac" size="small" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => handleAcceptInterview(r.id)}>接受面试</Button>)
+        acts.push(<Button key="rj" size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectInterview(r.id)}>拒绝</Button>)
+      } else {
+        acts.push(<Tag color={r.status === 'accepted' ? 'green' : 'red'}>{r.status === 'accepted' ? '已接受' : '已拒绝'}</Tag>)
       }
-      return <Tag color={r.status === 'accepted' ? 'green' : 'red'}>{r.status === 'accepted' ? '已接受' : '已拒绝'}</Tag>
+      acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { const p = positions.find(pp => pp.id === r.positionId); if (p) { setDetailPosition(p); setDetailOpen(true) } }}>查看</Button>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -346,9 +356,12 @@ export default function TalentMatching() {
     { title: '面试时间', dataIndex: 'interviewDate', key: 'interviewDate' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     { title: '操作', key: 'action', render: (_, r) => {
-      if (r.status === 'accepted') return <Button size="small" type="primary" icon={<CheckCircleOutlined />} onClick={() => handleConfirmInterview(r.id)}>确认面试</Button>
-      if (r.status === 'pending') return <Tag color="orange">等待学生确认</Tag>
-      return <span style={{ color: '#999' }}>-</span>
+      const acts = []
+      if (r.status === 'accepted') acts.push(<Button key="cf" size="small" type="primary" icon={<CheckCircleOutlined />} onClick={() => handleConfirmInterview(r.id)}>确认面试</Button>)
+      if (r.status === 'pending') acts.push(<Tag color="orange">等待学生确认</Tag>)
+      acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { const p = positions.find(pp => pp.id === r.positionId); if (p) { setDetailPosition(p); setDetailOpen(true) } }}>查看</Button>)
+      if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -363,8 +376,11 @@ export default function TalentMatching() {
       return <Tag color={m[s]?.color}>{m[s]?.text}</Tag>
     }},
     { title: '操作', key: 'action', render: (_, r) => {
-      if (r.status === 'pending') return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => handleRecommendToInvite(r)}>发送面试邀请</Button>
-      return <span style={{ color: '#999' }}>-</span>
+      const acts = []
+      if (r.status === 'pending') acts.push(<Button key="inv" size="small" type="primary" icon={<SendOutlined />} onClick={() => handleRecommendToInvite(r)}>发送面试邀请</Button>)
+      acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailStudent(r); setStudentDetailOpen(true) }}>查看</Button>)
+      if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+      return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
     }},
   ]
 
@@ -375,6 +391,7 @@ export default function TalentMatching() {
     { title: '推荐理由', dataIndex: 'reason', key: 'reason', ellipsis: true },
     { title: '推荐日期', dataIndex: 'recommendDate', key: 'recommendDate' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={s === 'interviewed' ? 'green' : s === 'rejected' ? 'red' : 'orange'}>{s === 'interviewed' ? '企业已邀约面试' : s === 'rejected' ? '企业已拒绝' : '待企业处理'}</Tag> },
+    { title: '操作', key: 'action', render: (_, r) => <Button size="small" icon={<EyeOutlined />} onClick={() => { const p = positions.find(pp => pp.id === r.positionId); if (p) { setDetailPosition(p); setDetailOpen(true) } }}>查看</Button> },
   ]
 
   // ─── Tab Items ─────────────────────────────────────────────────────────

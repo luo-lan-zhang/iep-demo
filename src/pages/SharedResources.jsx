@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Descriptions, Steps, Empty } from 'antd'
-import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockResources, mockApplications } from '../mock/resources'
 import { mockSchools } from '../mock/schools'
 import { mockEnterprises } from '../mock/enterprises'
@@ -17,6 +17,8 @@ export default function SharedResources() {
   const [detailResource, setDetailResource] = useState(null)
   const [auditOpen, setAuditOpen] = useState(false)
   const [auditResource, setAuditResource] = useState(null)
+  const [detailApp, setDetailApp] = useState(null)
+  const [detailAppOpen, setDetailAppOpen] = useState(false)
   const [publishForm] = Form.useForm()
   const [applyForm] = Form.useForm()
 
@@ -64,15 +66,16 @@ export default function SharedResources() {
       const m = { pending: { text: '待审核', color: 'orange' }, approved: { text: '已通过', color: 'green' }, rejected: { text: '已拒绝', color: 'red' } }
       return <Tag color={m[s]?.color}>{m[s]?.text}</Tag>
     }},
-    { title: '操作', key: 'action', render: (_, r) => (
-      r.status === 'pending' && hasPermission('resource.manageApp') ? (
-        <span>
-          <a style={{ color: 'green' }} onClick={() => handleApprove(r.id)}><CheckCircleOutlined /> 通过</a>
-          <span> | </span>
-          <a style={{ color: 'red' }} onClick={() => handleReject(r.id)}><CloseCircleOutlined /> 拒绝</a>
-        </span>
-      ) : null
-    )},
+    { title: '操作', key: 'action', render: (_, r) => {
+      const acts = []
+      if (r.status === 'pending' && hasPermission('resource.manageApp')) {
+        acts.push(<a key="ap" style={{ color: 'green' }} onClick={() => handleApprove(r.id)}><CheckCircleOutlined /> 通过</a>)
+        acts.push(<span key="s1"> | </span>)
+        acts.push(<a key="rj" style={{ color: 'red' }} onClick={() => handleReject(r.id)}><CloseCircleOutlined /> 拒绝</a>)
+      }
+      if (acts.length === 0) acts.push(<a key="vd" style={{ color: '#1677ff', cursor: 'pointer' }} onClick={() => { setDetailApp(r); setDetailAppOpen(true) }}>查看</a>)
+      return <span>{acts}</span>
+    }},
   ]
 
   const handlePublish = () => {
@@ -273,6 +276,20 @@ export default function SharedResources() {
             <Descriptions.Item label="每日积分">{detailResource.dailyPoints}</Descriptions.Item>
             <Descriptions.Item label="状态"><Tag color={statusMap[detailResource.status]?.color}>{statusMap[detailResource.status]?.text}</Tag></Descriptions.Item>
             <Descriptions.Item label="发布时间">{detailResource.publishDate}</Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
+
+      <Modal title="申请详情" open={detailAppOpen} onCancel={() => { setDetailAppOpen(false); setDetailApp(null) }} footer={null} width={500}>
+        {detailApp && (
+          <Descriptions column={1} bordered size="small">
+            <Descriptions.Item label="资源名称">{resources.find(r => r.id === detailApp.resourceId)?.name || '-'}</Descriptions.Item>
+            <Descriptions.Item label="申请企业">{detailApp.enterpriseName}</Descriptions.Item>
+            <Descriptions.Item label="使用理由">{detailApp.reason}</Descriptions.Item>
+            <Descriptions.Item label="使用周期">{detailApp.period}</Descriptions.Item>
+            <Descriptions.Item label="总积分">{detailApp.points}</Descriptions.Item>
+            <Descriptions.Item label="申请日期">{detailApp.applyDate}</Descriptions.Item>
+            <Descriptions.Item label="状态"><Tag color={detailApp.status === 'approved' ? 'green' : detailApp.status === 'rejected' ? 'red' : 'orange'}>{detailApp.status === 'approved' ? '已通过' : detailApp.status === 'rejected' ? '已拒绝' : '待审核'}</Tag></Descriptions.Item>
           </Descriptions>
         )}
       </Modal>

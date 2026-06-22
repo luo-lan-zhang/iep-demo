@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Upload } from 'antd'
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Upload, Descriptions } from 'antd'
+import { PlusOutlined, UploadOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockStudents } from '../mock/students'
 import { mockSchools } from '../mock/schools'
 import { useAuth } from '../context/AuthContext'
@@ -11,6 +11,8 @@ export default function StudentManagement() {
   const [modalOpen, setModalOpen] = useState(false)
   const [batchOpen, setBatchOpen] = useState(false)
   const [batchText, setBatchText] = useState('')
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [detailStudent, setDetailStudent] = useState(null)
   const [form] = Form.useForm()
 
   const schoolMap = Object.fromEntries(mockSchools.map(s => [s.id, s.name]))
@@ -29,6 +31,7 @@ export default function StudentManagement() {
     { title: '年级', dataIndex: 'grade', key: 'grade' },
     { title: '联系电话', dataIndex: 'phone', key: 'phone' },
     { title: '邮箱', dataIndex: 'email', key: 'email' },
+    { title: '操作', key: 'action', render: (_, r) => <Button size="small" icon={<EyeOutlined />} onClick={() => { setDetailStudent(r); setDetailOpen(true) }}>查看</Button> },
   ]
 
   const handleAdd = () => {
@@ -87,6 +90,19 @@ export default function StudentManagement() {
         <Input.TextArea rows={10} value={batchText} onChange={e => setBatchText(e.target.value)}
           placeholder={'张三,1,计算机科学与技术,2022级,13900139001,zhangsan@szu.edu.cn\n李四,1,软件工程,2022级,13900139002,lisi@szu.edu.cn\n王五,1,人工智能,2023级'}
         />
+      </Modal>
+
+      <Modal title="学生详情" open={detailOpen} onCancel={() => { setDetailOpen(false); setDetailStudent(null) }} footer={null} width={500}>
+        {detailStudent && (
+          <Descriptions column={2} bordered size="small">
+            <Descriptions.Item label="姓名">{detailStudent.name}</Descriptions.Item>
+            <Descriptions.Item label="所属院校">{schoolMap[detailStudent.schoolId] || '-'}</Descriptions.Item>
+            <Descriptions.Item label="专业">{detailStudent.major}</Descriptions.Item>
+            <Descriptions.Item label="年级">{detailStudent.grade}</Descriptions.Item>
+            <Descriptions.Item label="电话">{detailStudent.phone || '-'}</Descriptions.Item>
+            <Descriptions.Item label="邮箱">{detailStudent.email || '-'}</Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
     </Card>
   )

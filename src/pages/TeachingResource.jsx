@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Row, Col, Space, Empty, Typography, Progress, Popconfirm, Descriptions, Upload } from 'antd'
-import { PlusOutlined, UploadOutlined, CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined, BookOutlined, LinkOutlined } from '@ant-design/icons'
+import { PlusOutlined, UploadOutlined, CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined, BookOutlined, LinkOutlined, EyeOutlined } from '@ant-design/icons'
 import { mockTeachers } from '../mock/teachers'
 import { mockSchools } from '../mock/schools'
 import { useAuth } from '../context/AuthContext'
@@ -168,15 +168,15 @@ export default function TeachingResource() {
     { title: '提交日期', dataIndex: 'submitDate', key: 'submitDate' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={reviewStatusMap[s]?.color}>{reviewStatusMap[s]?.text}</Tag> },
     { title: '操作', key: 'action', render: (_, r) => {
+      const acts = []
       if (r.status === 'pending' && hasPermission('teaching.review')) {
-        return (
-          <Space>
-            <Button type="link" style={{ color: 'green' }} icon={<CheckCircleOutlined />} onClick={() => handleApprove(r.id)}>通过</Button>
-            <Button type="link" danger icon={<CloseCircleOutlined />} onClick={() => handleReject(r.id)}>退回</Button>
-          </Space>
-        )
+        acts.push(<Button key="ap" type="link" style={{ color: 'green' }} icon={<CheckCircleOutlined />} onClick={() => handleApprove(r.id)}>通过</Button>)
+        acts.push(<Button key="rj" type="link" danger icon={<CloseCircleOutlined />} onClick={() => handleReject(r.id)}>退回</Button>)
+      } else {
+        acts.push(<Tag color={reviewStatusMap[r.status]?.color}>{reviewStatusMap[r.status]?.text}</Tag>)
       }
-      return <Tag color={reviewStatusMap[r.status]?.color}>{reviewStatusMap[r.status]?.text}</Tag>
+      acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailResource(r); setDetailOpen(true) }}>查看</Button>)
+      return <span style={{ display: 'flex', gap: 4, alignItems: 'center' }}>{acts}</span>
     }},
   ]
 

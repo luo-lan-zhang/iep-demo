@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Row, Col, Statistic, Descriptions, Popconfirm, Timeline, Upload } from 'antd'
-import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, UploadOutlined, HistoryOutlined, FundOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons'
+import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, UploadOutlined, HistoryOutlined, FundOutlined, ArrowUpOutlined, ArrowDownOutlined, EyeOutlined } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext'
 
 // ==================== Mock Data ====================
@@ -54,6 +54,8 @@ export default function PointsManagement() {
   const [editRule, setEditRule] = useState(null)
   const [fileOpen, setFileOpen] = useState(false)
   const [fileText, setFileText] = useState('')
+  const [detailApp, setDetailApp] = useState(null)
+  const [detailAppOpen, setDetailAppOpen] = useState(false)
 
   const role = user?.role || 'admin'
 
@@ -186,11 +188,12 @@ export default function PointsManagement() {
     { title: '理由', dataIndex: 'reason', key: 'reason', ellipsis: true },
     { title: '申请日期', dataIndex: 'applyDate', key: 'applyDate' },
     { title: '操作', key: 'action', render: (_, r) => (
-      <span>
+      <span style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
         <Button type="link" style={{ color: 'green' }} icon={<CheckCircleOutlined />} onClick={() => handleApprove(r.id)}>通过</Button>
         <Popconfirm title="确定拒绝此申请？" onConfirm={() => handleReject(r.id)} okText="确定" cancelText="取消">
           <Button type="link" danger icon={<CloseCircleOutlined />}>拒绝</Button>
         </Popconfirm>
+        <Button size="small" icon={<EyeOutlined />} onClick={() => { setDetailApp(r); setDetailAppOpen(true) }}>查看</Button>
       </span>
     )},
   ]
@@ -437,6 +440,21 @@ export default function PointsManagement() {
             <Select options={[{ value: '计算设备', label: '计算设备' }, { value: '制造设备', label: '制造设备' }, { value: '测试仪器', label: '测试仪器' }, { value: '教学设备', label: '教学设备' }]} />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* View detail modal */}
+      <Modal title="申请详情" open={detailAppOpen} onCancel={() => { setDetailAppOpen(false); setDetailApp(null) }} footer={null} width={500}>
+        {detailApp && (
+          <Descriptions column={1} bordered size="small">
+            <Descriptions.Item label="申请人">{detailApp.applicant}</Descriptions.Item>
+            <Descriptions.Item label="角色">{detailApp.role}</Descriptions.Item>
+            <Descriptions.Item label="类型">{detailApp.type === 'increase' ? '增加' : '减少'}</Descriptions.Item>
+            <Descriptions.Item label="数量">{detailApp.amount}</Descriptions.Item>
+            <Descriptions.Item label="理由">{detailApp.reason}</Descriptions.Item>
+            <Descriptions.Item label="日期">{detailApp.applyDate}</Descriptions.Item>
+            <Descriptions.Item label="状态">{detailApp.status || '待审核'}</Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
     </Card>
   )
