@@ -39,7 +39,7 @@ const initialTasks = [
 ]
 
 const statusMap = {
-  pending:           { text: '待教师承接',   color: 'orange' },
+  pending:           { text: '待承接',   color: 'orange' },
   teacher_accepted:  { text: '待企业确认',   color: 'purple' },
   in_progress:       { text: '进行中',       color: 'processing' },
   pending_complete:  { text: '待确认结项',   color: 'geekblue' },
@@ -197,7 +197,7 @@ export default function ProjectCooperation() {
         status: 'pending', progress: 0,
         tags: v.tags ? v.tags.split(',').map(t => t.trim()) : [],
       }, ...projects])
-      message.success('项目已发布，等待教师承接！')
+      message.success('项目已发布，等待承接！')
       setPublishOpen(false); publishForm.resetFields()
     })
   }
@@ -300,9 +300,9 @@ export default function ProjectCooperation() {
   // ─── Columns ────────────────────────────────────────────────────────────
   const projectColumns = [
     { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
-    { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+    { title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
     { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
-    { title: '负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待指定</Tag> },
+    { title: '承接方', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
     { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     {
@@ -434,8 +434,8 @@ export default function ProjectCooperation() {
             ) : (
               <Table dataSource={myProjects} columns={[
                 { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
-                { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
-                { title: '负责教师', dataIndex: 'teacherName', key: 'teacherName' },
+                { title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '承接方', dataIndex: 'teacherName', key: 'teacherName' },
                 { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" /> },
                 { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
                 { title: '接收状态', key: 'accept', render: (_, r) => {
@@ -476,7 +476,7 @@ export default function ProjectCooperation() {
             <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
               options={[
                 { value: 'all', label: '全部状态' },
-                { value: 'pending', label: '待教师承接' },
+                { value: 'pending', label: '待承接' },
                 { value: 'teacher_accepted', label: '待企业确认' },
                 { value: 'in_progress', label: '进行中' },
                 { value: 'pending_complete', label: '待确认结项' },
