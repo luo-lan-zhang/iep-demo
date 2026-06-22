@@ -5,8 +5,8 @@ const AuthContext = createContext(null)
 const roleMeta = {
   council:    { schoolId: null,      enterpriseId: null,  teacherId: null,  label: '产教融合理事会' },
   park:       { schoolId: null,      enterpriseId: null,  teacherId: null,  label: '园区', parkId: 1 },
-  enterprise: { schoolId: null,      enterpriseId: 1,     teacherId: null,  label: '企业' },
-  mentor:     { schoolId: null,      enterpriseId: 1,     teacherId: null,  label: '企业导师' },
+  enterprise: { schoolId: null,      enterpriseId: 11,    teacherId: null,  label: '企业（河北圣诺）' },
+  mentor:     { schoolId: null,      enterpriseId: 11,    teacherId: null,  label: '企业导师' },
   school:     { schoolId: 1,         enterpriseId: null,  teacherId: null,  label: '院校' },
   teacher:    { schoolId: 1,         enterpriseId: null,  teacherId: 1,     label: '教师' },
   student:    { schoolId: 1,         enterpriseId: null,  teacherId: null,  label: '学生' },
@@ -27,8 +27,8 @@ export function AuthProvider({ children }) {
   const accounts = {
     council:    { id: 1,  username: 'council',  name: '理事会管理员',   role: 'council',    avatar: '' },
     park:       { id: 2,  username: 'park',      name: '王园区',        role: 'park',       avatar: '' },
-    enterprise: { id: 3,  username: 'enterprise', name: '赵总（华为）',  role: 'enterprise', avatar: '' },
-    mentor:     { id: 4,  username: 'mentor',    name: '王导师（华为）', role: 'mentor',     avatar: '' },
+    enterprise: { id: 3,  username: 'enterprise', name: '刘总（河北圣诺）',  role: 'enterprise', avatar: '' },
+    mentor:     { id: 4,  username: 'mentor',    name: '王导师（河北圣诺）', role: 'mentor',     avatar: '' },
     school:     { id: 5,  username: 'school',    name: '李校长（深大）', role: 'school',     avatar: '' },
     teacher:    { id: 6,  username: 'teacher',   name: '张教授（深大）', role: 'teacher',    avatar: '' },
     student:    { id: 7,  username: 'student',   name: '张三（深大）',   role: 'student',    avatar: '' },

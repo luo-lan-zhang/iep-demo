@@ -305,7 +305,7 @@ export default function ProjectCooperation() {
   // ─── Columns ────────────────────────────────────────────────────────────
   const projectColumns = [
     { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
-    { title: '发布方', dataIndex: 'enterpriseName', key: 'publisher', render: (t) => <Tag color="cyan">{t}</Tag> },
+    { title: '发布方', key: 'publisher', render: (_, r) => <Tag color="cyan">{mockEnterprises.find(e => e.id === r.enterpriseId)?.name || r.enterpriseName}</Tag> },
     { title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
     { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
     { title: '承接方', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
