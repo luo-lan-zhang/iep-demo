@@ -27,57 +27,59 @@ const NAV_ITEMS = [
 
 // ─── Chart config generators ─────────────────────────────────────────────────
 const getPolicyBarOption = () => ({
-  title: { text: '历年政策出台数', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
-  tooltip: { trigger: 'axis' },
-  legend: { data: ['园区', '企业', '院校'], bottom: 0, textStyle: { color: '#8ba9cc', fontSize: 10 } },
-  grid: { left: '10%', right: '6%', top: '18%', bottom: '14%' },
-  xAxis: { type: 'category', data: ['2020', '2021', '2022', '2023', '2024'], axisLabel: { color: '#8ba9cc', fontSize: 10 } },
+  title: { text: '历年政策出台数', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 14, fontWeight: 600 } },
+  tooltip: { trigger: 'axis', formatter: (p) => {
+    const prev = { '2021': 60, '2022': 103, '2023': 126, '2024': 167 }[p[0].name] || 0
+    const curr = p[0].value
+    const yoy = prev ? Math.round((curr - prev) / prev * 100) : '-'
+    return `${p[0].name}年<br/>${p.map(x => x.marker + ' ' + x.seriesName + ': ' + x.value).join('<br/>')}<br/>合计同比: ${yoy}%`
+  } },
+  legend: { data: ['园区', '企业', '院校'], bottom: 0, textStyle: { color: '#8ba9cc', fontSize: 11 } },
+  grid: { left: '10%', right: '8%', top: '18%', bottom: '16%' },
+  xAxis: { type: 'category', data: ['2020', '2021', '2022', '2023', '2024'], axisLabel: { color: '#8ba9cc', fontSize: 11 } },
   yAxis: { type: 'value', axisLabel: { color: '#8ba9cc' }, splitLine: { lineStyle: { color: '#1a3350' } } },
   series: [
-    { name: '园区', type: 'bar', data: [12, 18, 25, 32, 45], itemStyle: { color: '#1677ff' }, barWidth: 8 },
-    { name: '企业', type: 'bar', data: [28, 35, 48, 56, 72], itemStyle: { color: '#52c41a' }, barWidth: 8 },
-    { name: '院校', type: 'bar', data: [20, 25, 30, 38, 50], itemStyle: { color: '#722ed1' }, barWidth: 8 },
+    { name: '园区', type: 'bar', data: [12, 18, 25, 32, 45], itemStyle: { color: '#1677ff' }, barWidth: 10, label: { show: true, position: 'top', color: '#8ba9cc', fontSize: 9 } },
+    { name: '企业', type: 'bar', data: [28, 35, 48, 56, 72], itemStyle: { color: '#52c41a' }, barWidth: 10, label: { show: true, position: 'top', color: '#8ba9cc', fontSize: 9 } },
+    { name: '院校', type: 'bar', data: [20, 25, 30, 38, 50], itemStyle: { color: '#722ed1' }, barWidth: 10, label: { show: true, position: 'top', color: '#8ba9cc', fontSize: 9 } },
   ],
 })
 
 const getJobTrendOption = () => ({
-  title: { text: '新一代信息技术各岗位趋势', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  title: { text: '新一代信息技术各岗位趋势', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 14, fontWeight: 600 } },
   tooltip: { trigger: 'axis' },
   legend: { data: ['AI工程师', '大数据', '云计算', '物联网', '安全'], bottom: 0, textStyle: { color: '#8ba9cc', fontSize: 10 } },
-  grid: { left: '10%', right: '6%', top: '18%', bottom: '14%' },
-  xAxis: { type: 'category', data: ['2022Q1', '2022Q3', '2023Q1', '2023Q3', '2024Q1', '2024Q3'], axisLabel: { color: '#8ba9cc', fontSize: 9 } },
+  grid: { left: '10%', right: '6%', top: '18%', bottom: '16%' },
+  xAxis: { type: 'category', data: ['22Q1', '22Q3', '23Q1', '23Q3', '24Q1', '24Q3'], axisLabel: { color: '#8ba9cc', fontSize: 10 } },
   yAxis: { type: 'value', axisLabel: { color: '#8ba9cc' }, splitLine: { lineStyle: { color: '#1a3350' } } },
   series: [
-    { name: 'AI工程师', type: 'line', data: [320, 380, 450, 520, 580, 680], smooth: true, lineStyle: { color: '#00d4ff', width: 2 }, itemStyle: { color: '#00d4ff' }, symbol: 'circle', symbolSize: 4 },
-    { name: '大数据', type: 'line', data: [280, 310, 360, 400, 450, 500], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 4 },
-    { name: '云计算', type: 'line', data: [200, 240, 280, 320, 350, 420], smooth: true, lineStyle: { color: '#52c41a', width: 2 }, itemStyle: { color: '#52c41a' }, symbol: 'circle', symbolSize: 4 },
-    { name: '物联网', type: 'line', data: [150, 180, 220, 260, 300, 360], smooth: true, lineStyle: { color: '#ff9800', width: 2 }, itemStyle: { color: '#ff9800' }, symbol: 'circle', symbolSize: 4 },
-    { name: '安全', type: 'line', data: [100, 130, 160, 190, 230, 280], smooth: true, lineStyle: { color: '#722ed1', width: 2 }, itemStyle: { color: '#722ed1' }, symbol: 'circle', symbolSize: 4 },
+    { name: 'AI工程师', type: 'line', data: [320, 380, 450, 520, 580, 680], smooth: true, lineStyle: { color: '#00d4ff', width: 2 }, itemStyle: { color: '#00d4ff' }, symbol: 'circle', symbolSize: 5 },
+    { name: '大数据', type: 'line', data: [280, 310, 360, 400, 450, 500], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 5 },
+    { name: '云计算', type: 'line', data: [200, 240, 280, 320, 350, 420], smooth: true, lineStyle: { color: '#52c41a', width: 2 }, itemStyle: { color: '#52c41a' }, symbol: 'circle', symbolSize: 5 },
+    { name: '物联网', type: 'line', data: [150, 180, 220, 260, 300, 360], smooth: true, lineStyle: { color: '#ff9800', width: 2 }, itemStyle: { color: '#ff9800' }, symbol: 'circle', symbolSize: 5 },
+    { name: '安全', type: 'line', data: [100, 130, 160, 190, 230, 280], smooth: true, lineStyle: { color: '#722ed1', width: 2 }, itemStyle: { color: '#722ed1' }, symbol: 'circle', symbolSize: 5 },
   ],
 })
 
 const getResourceBarOption = () => ({
-  title: { text: '项目转化教学资源统计', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  title: { text: '项目转化教学资源统计', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 14, fontWeight: 600 } },
   tooltip: { trigger: 'axis' },
-  grid: { left: '22%', right: '12%', top: '12%', bottom: '8%' },
+  grid: { left: '24%', right: '12%', top: '12%', bottom: '8%' },
   xAxis: { type: 'value', axisLabel: { color: '#8ba9cc' }, splitLine: { lineStyle: { color: '#1a3350' } } },
-  yAxis: { type: 'category', data: ['实训指导书', '实训任务单', '源代码', '脱敏数据集', '设备操作手册', '技能考核题库'], axisLabel: { color: '#8ba9cc', fontSize: 10 }, inverse: true },
+  yAxis: { type: 'category', data: ['实训指导书', '实训任务单', '源代码', '脱敏数据集', '设备操作手册', '技能考核题库'], axisLabel: { color: '#8ba9cc', fontSize: 9 }, inverse: true },
   series: [{
     type: 'bar', data: [156, 238, 89, 45, 72, 128],
-    itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-      { offset: 0, color: '#0d47a1' }, { offset: 1, color: '#00e5ff' },
-    ]) },
-    barWidth: 12, label: { show: true, position: 'right', color: '#b8d4ff', formatter: '{c}', fontSize: 11 },
+    itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#0d47a1' }, { offset: 1, color: '#00e5ff' }]) },
+    barWidth: 14, label: { show: true, position: 'right', color: '#b8d4ff', formatter: '{c} 份', fontSize: 10 },
   }],
 })
 
 const getAchievementPieOption = () => ({
-  title: { text: '成果转化', left: 'center', textStyle: { color: '#b8d4ff', fontSize: 13, fontWeight: 500 } },
+  title: { text: '', left: 'center' },
   tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' },
   series: [{
-    type: 'pie', radius: ['45%', '72%'], center: ['50%', '55%'],
-    label: { color: '#8ba9cc', fontSize: 9 },
-    emphasis: { label: { fontSize: 13, fontWeight: 'bold' } },
+    type: 'pie', radius: ['45%', '75%'], center: ['50%', '52%'],
+    label: { color: '#8ba9cc', fontSize: 9, formatter: '{b}\n{d}%' },
     data: [
       { value: 38, name: '发明专利', itemStyle: { color: '#1677ff' } },
       { value: 65, name: '实用新型专利', itemStyle: { color: '#00d4ff' } },
@@ -287,8 +289,8 @@ function SharedResourcesPanel() {
   )
 }
 
-// 成果转化明细表
-function AchievementTable() {
+// M9: 成果转化（饼图 + 明细表 合并）
+function AchievementPanel({ pieRef }) {
   const items = [
     { type: '发明专利', count: 38, value: '1,260万', color: '#1677ff' },
     { type: '实用新型专利', count: 65, value: '890万', color: '#00d4ff' },
@@ -299,39 +301,46 @@ function AchievementTable() {
   const total = items.reduce((s, i) => s + i.count, 0)
   const totalValue = '3,300万'
   return (
-    <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 12 }}>
-      <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 13, fontWeight: 500, marginBottom: 10 }}>成果转化明细</div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-        <div style={{ flex: 1, textAlign: 'center', background: 'rgba(22,119,255,0.08)', borderRadius: 6, padding: 8 }}>
-          <div style={{ fontSize: 10, color: '#8ba9cc' }}>转化总数</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#1677ff', fontFamily: 'DIN, monospace' }}>{total}</div>
-        </div>
-        <div style={{ flex: 1, textAlign: 'center', background: 'rgba(82,196,26,0.08)', borderRadius: 6, padding: 8 }}>
-          <div style={{ fontSize: 10, color: '#8ba9cc' }}>经济价值</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#52c41a', fontFamily: 'DIN, monospace' }}>{totalValue}</div>
+    <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>成果转化</div>
+      <div style={{ display: 'flex', flex: 1, gap: 10 }}>
+        {/* pie chart */}
+        <div ref={pieRef} style={{ flex: 1, minHeight: 200 }} />
+        {/* detail */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <div style={{ flex: 1, textAlign: 'center', background: 'rgba(22,119,255,0.08)', borderRadius: 4, padding: '4px 6px' }}>
+              <div style={{ fontSize: 9, color: '#8ba9cc' }}>转化总数</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1677ff', fontFamily: 'DIN, monospace' }}>{total}</div>
+            </div>
+            <div style={{ flex: 1, textAlign: 'center', background: 'rgba(82,196,26,0.08)', borderRadius: 4, padding: '4px 6px' }}>
+              <div style={{ fontSize: 9, color: '#8ba9cc' }}>经济价值</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#52c41a', fontFamily: 'DIN, monospace' }}>{totalValue}</div>
+            </div>
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <th style={{ padding: '3px 6px', fontSize: 9, color: '#8ba9cc', textAlign: 'left' }}>类型</th>
+                <th style={{ padding: '3px 6px', fontSize: 9, color: '#8ba9cc', textAlign: 'center', width: 36 }}>数量</th>
+                <th style={{ padding: '3px 6px', fontSize: 9, color: '#8ba9cc', textAlign: 'center', width: 48 }}>价值</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '3px 6px' }}>
+                    <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: 2, background: item.color, marginRight: 4, verticalAlign: 'middle' }} />
+                    <span style={{ fontSize: 10, color: '#c5d9f0' }}>{item.type}</span>
+                  </td>
+                  <td style={{ padding: '3px 6px', textAlign: 'center', fontSize: 11, fontWeight: 700, color: '#fff', fontFamily: 'DIN, monospace' }}>{item.count}</td>
+                  <td style={{ padding: '3px 6px', textAlign: 'center', fontSize: 10, color: '#52c41a' }}>{item.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            <th style={{ padding: '5px 8px', fontSize: 10, color: '#8ba9cc', textAlign: 'left' }}>类型</th>
-            <th style={{ padding: '5px 8px', fontSize: 10, color: '#8ba9cc', textAlign: 'center' }}>数量(项)</th>
-            <th style={{ padding: '5px 8px', fontSize: 10, color: '#8ba9cc', textAlign: 'center' }}>价值</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <td style={{ padding: '7px 8px' }}>
-                <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: item.color, marginRight: 8 }} />
-                <span style={{ fontSize: 12, color: '#c5d9f0' }}>{item.type}</span>
-              </td>
-              <td style={{ padding: '7px 8px', textAlign: 'center', fontSize: 13, fontWeight: 700, color: '#fff', fontFamily: 'DIN, monospace' }}>{item.count}</td>
-              <td style={{ padding: '7px 8px', textAlign: 'center', fontSize: 12, color: '#52c41a', fontWeight: 500 }}>{item.value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   )
 }
@@ -506,53 +515,73 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* ═══ Row 1: 历年政策出台数 + 京津冀地图 + 积分概览 ═══ */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px 240px', gap: 14, marginBottom: 14 }}>
-            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 280 }} ref={policyBarRef} />
-            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 8, left: 0, right: 0, zIndex: 2, textAlign: 'center', color: '#b8d4ff', fontSize: 12, fontWeight: 500, pointerEvents: 'none' }}>京津冀 · 岗位需求热力图</div>
-              <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-              {!mapReady && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a7aaa', fontSize: 13 }}>加载地图数据中...</div>
-              )}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {[
-                { title: '教师参与', value: 356, pct: '↑ 22.5%', color: '#1677ff', bg: 'rgba(22,119,255,0.12)' },
-                { title: '学生参与', value: '5,280', pct: '↑ 35.2%', color: '#52c41a', bg: 'rgba(82,196,26,0.12)' },
-                { title: '企业导师', value: 182, pct: '↑ 18.6%', color: '#faad14', bg: 'rgba(250,173,20,0.12)' },
-              ].map((item, i) => (
-                <div key={i} style={{ background: item.bg, borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: '12px 14px', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <div style={{ fontSize: 11, color: '#8ba9cc', marginBottom: 4 }}>{item.title}</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: item.color, fontFamily: 'DIN, monospace' }}>{item.value}</div>
-                  <div style={{ fontSize: 10, color: '#4caf50', marginTop: 2 }}>{item.pct}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* ═══ Row 1: 历年政策出台数 | 京津冀地图(含左右参与数据) | 积分排行榜 ═══ */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px 280px', gap: 14, marginBottom: 14 }}>
+            {/* M1: 历年政策出台数 */}
+            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 300 }} ref={policyBarRef} />
 
-          {/* ═══ Row 2: 积分排行榜 + 项目总览 ═══ */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+            {/* M2: 左:参与方数据卡片 + 中:京津冀地图 + 右:教师/学生/导师卡片 */}
+            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', padding: 10, display: 'flex', gap: 8 }}>
+              {/* 左侧: 园区、企业、院校 */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center', width: 72 }}>
+                {[
+                  { label: '园区', value: 18, color: '#1677ff' },
+                  { label: '企业', value: 86, color: '#52c41a' },
+                  { label: '院校', value: 42, color: '#722ed1' },
+                ].map((item, i) => (
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 6px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 10, color: '#8ba9cc', marginBottom: 2 }}>{item.label}</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: item.color, fontFamily: 'DIN, monospace' }}>{item.value}</div>
+                    <div style={{ fontSize: 9, color: '#52c41a' }}>↑ {item.value > 40 ? 12 : 8}%</div>
+                  </div>
+                ))}
+              </div>
+              {/* 中间: 地图 */}
+              <div style={{ flex: 1, position: 'relative', overflow: 'hidden', borderRadius: 8 }}>
+                <div style={{ position: 'absolute', top: 4, left: 0, right: 0, zIndex: 2, textAlign: 'center', color: '#b8d4ff', fontSize: 11, fontWeight: 500, pointerEvents: 'none' }}>京津冀 · 岗位需求热力图</div>
+                <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+                {!mapReady && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a7aaa', fontSize: 12 }}>加载地图数据中...</div>
+                )}
+              </div>
+              {/* 右侧: 教师/学生/企业导师 */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center', width: 72 }}>
+                {[
+                  { label: '教师', value: 356, color: '#faad14' },
+                  { label: '学生', value: '5,280', color: '#ff9800' },
+                  { label: '企业导师', value: 182, color: '#ff6b35' },
+                ].map((item, i) => (
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 6px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 10, color: '#8ba9cc', marginBottom: 2 }}>{item.label}</div>
+                    <div style={{ fontSize: typeof item.value === 'string' ? 16 : 20, fontWeight: 700, color: item.color, fontFamily: 'DIN, monospace' }}>{item.value}</div>
+                    <div style={{ fontSize: 9, color: '#52c41a' }}>↑ 22.5%</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* M3: 积分排行榜 */}
             <TabsRanking />
-            <ProjectOverview />
           </div>
 
-          {/* ═══ Row 3: 供需对接项目进度 + 岗位趋势 ═══ */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+          {/* ═══ Row 2: 项目总览 | 供需对接项目进度 | 新一代信息技术各岗位趋势 ═══ */}
+          <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr 1fr', gap: 14, marginBottom: 14 }}>
+            {/* M4: 项目总览 */}
+            <ProjectOverview />
+            {/* M5: 供需对接项目进度一览表 */}
             <ProjectProgressTable />
+            {/* M6: 新一代信息技术各岗位趋势 */}
             <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 300 }} ref={jobTrendRef} />
           </div>
 
-          {/* ═══ Row 4: 教学资源统计 + 共享资源池 ═══ */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
-            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 280 }} ref={resourceBarRef} />
+          {/* ═══ Row 3: 教学资源统计 | 共享资源池 | 成果转化(饼图+明细) ═══ */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px 1fr', gap: 14 }}>
+            {/* M7: 项目转化教学资源统计 */}
+            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 300 }} ref={resourceBarRef} />
+            {/* M8: 共享资源池 */}
             <SharedResourcesPanel />
-          </div>
-
-          {/* ═══ Row 5: 成果转化 ═══ */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 10, minHeight: 280 }} ref={achievementPieRef} />
-            <AchievementTable />
+            {/* M9: 成果转化(饼图+明细表) */}
+            <AchievementPanel pieRef={achievementPieRef} />
           </div>
         </div>
       </section>
