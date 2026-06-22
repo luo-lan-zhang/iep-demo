@@ -385,14 +385,37 @@ export default function ProjectCooperation() {
     },
     {
       title: '操作', key: 'action', width: 160, render: (_, r) => {
+        const acts = []
         if (r.assigneeId === studentId && (r.status === 'pending' || r.status === 'in_progress')) {
-          if (role === 'student') return <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setSubmitTask(r); submitForm.resetFields(); setSubmitOpen(true) }}>提交成果</Button>
-          if (role === 'teacher') return <Button size="small" onClick={() => { setTaskProjectId(r.projectId); taskForm.resetFields(); setTaskOpen(true) }}>编辑</Button>
+          if (role === 'student') acts.push(<Button key="sb" size="small" type="primary" icon={<SendOutlined />} onClick={() => { setSubmitTask(r); submitForm.resetFields(); setSubmitOpen(true) }}>提交成果</Button>)
+          if (role === 'teacher') acts.push(<Button key="ed" size="small" onClick={() => { setTaskProjectId(r.projectId); taskForm.resetFields(); setTaskOpen(true) }}>编辑</Button>)
         }
         if (r.status === 'submitted' && (role === 'teacher' || role === 'mentor')) {
-          return <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>
+          acts.push(<Button key="ev" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>)
         }
-        return <span style={{ color: '#999' }}>-</span>
+        acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => {
+          const pj = projects.find(p => p.id === r.projectId)
+          Modal.info({
+            title: r.name,
+            width: 560,
+            content: (
+              <Descriptions column={1} bordered size="small" style={{ marginTop: 16 }}>
+                <Descriptions.Item label="任务名称">{r.name}</Descriptions.Item>
+                <Descriptions.Item label="所属项目">{pj?.name || '-'}</Descriptions.Item>
+                <Descriptions.Item label="负责人">{r.assignee}</Descriptions.Item>
+                <Descriptions.Item label="截止日期">{r.deadline}</Descriptions.Item>
+                <Descriptions.Item label="状态"><Tag color={taskStatusMap[r.status]?.color}>{taskStatusMap[r.status]?.text}</Tag></Descriptions.Item>
+                {r.score && <>
+                  <Descriptions.Item label="五维均分">{r.score}分</Descriptions.Item>
+                  <Descriptions.Item label="评语">{r.comment || '无'}</Descriptions.Item>
+                </>}
+              </Descriptions>
+            ),
+            okText: '关闭',
+          })
+        }}>查看</Button>)
+        if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+        return <span style={{ display: 'flex', gap: 4 }}>{acts}</span>
       }
     },
   ]
