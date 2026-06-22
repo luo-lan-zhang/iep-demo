@@ -494,32 +494,57 @@ export default function ProjectCooperation() {
     }
 
     // 非学生角色：项目列表
-    items.push({
-      key: 'list', label: '项目列表', children: (
-        <div>
-          <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
-              options={[
-                { value: 'all', label: '全部状态' },
-                { value: 'pending', label: '待承接' },
-                { value: 'teacher_accepted', label: '待企业确认' },
-                { value: 'in_progress', label: '进行中' },
-                { value: 'pending_complete', label: '待确认结项' },
-                { value: 'completed', label: '已结项' },
-              ]}
-            />
-            {role === 'enterprise' && (
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布新项目</Button>
+    if (role === 'teacher') {
+      items.push({
+        key: 'list', label: '任务列表', children: (
+          <div>
+            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
+                options={[
+                  { value: 'all', label: '全部状态' },
+                  { value: 'pending', label: '待开始' },
+                  { value: 'in_progress', label: '进行中' },
+                  { value: 'submitted', label: '待评价' },
+                  { value: 'completed', label: '已完成' },
+                ]}
+              />
+            </div>
+            {visibleTasks.length === 0 ? (
+              <Empty description="暂无任务" />
+            ) : (
+              <Table dataSource={visibleTasks} columns={taskColumns} rowKey="id" />
             )}
           </div>
-          {filteredProjects.length === 0 ? (
-            <Empty description="暂无项目" />
-          ) : (
-            <Table dataSource={filteredProjects} columns={projectColumns} rowKey="id" />
-          )}
-        </div>
-      )
-    })
+        )
+      })
+    } else {
+      items.push({
+        key: 'list', label: '项目列表', children: (
+          <div>
+            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
+                options={[
+                  { value: 'all', label: '全部状态' },
+                  { value: 'pending', label: '待承接' },
+                  { value: 'teacher_accepted', label: '待企业确认' },
+                  { value: 'in_progress', label: '进行中' },
+                  { value: 'pending_complete', label: '待确认结项' },
+                  { value: 'completed', label: '已结项' },
+                ]}
+              />
+              {role === 'enterprise' && (
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => { publishForm.resetFields(); setPublishOpen(true) }}>发布新项目</Button>
+              )}
+            </div>
+            {filteredProjects.length === 0 ? (
+              <Empty description="暂无项目" />
+            ) : (
+              <Table dataSource={filteredProjects} columns={projectColumns} rowKey="id" />
+            )}
+          </div>
+        )
+      })
+    }
 
     if (role === 'enterprise') {
       items.push({
@@ -590,7 +615,7 @@ export default function ProjectCooperation() {
     }
 
     // 任务分配/管理
-    if (role !== 'mentor' && role !== 'enterprise') items.push({
+    if (role !== 'teacher' && role !== 'mentor' && role !== 'enterprise') items.push({
       key: 'tasks', label: '任务分配', children: (
         <div>
           {role === 'teacher' && (
