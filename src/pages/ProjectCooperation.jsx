@@ -19,8 +19,8 @@ const FIVE_DIMS = [
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialProjects = [
-  { id: 1, name: '智能仓储管理系统开发', enterpriseId: 1, enterpriseName: '华为', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '开发一套基于RFID和AGV的智能仓储管理系统', deliverables: '完整的仓储管理系统，包含Web端和移动端', requirements: '有Java/Spring Boot开发经验', tags: ['仓储', 'RFID', 'AGV'], assignedStudents: [1, 2, 3, 7] },
-  { id: 2, name: 'AI质检模型训练', enterpriseId: 2, enterpriseName: '腾讯', budget: 300000, teacherId: 2, teacherName: '李教授', schoolId: 1, status: 'in_progress', progress: 40, description: '基于深度学习的工业质检模型训练和部署', deliverables: '质检模型、训练数据集', requirements: '熟悉CV、PyTorch', tags: ['AI', 'CV'], assignedStudents: [1, 5, 7] },
+  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '华为', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
+  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '腾讯', budget: 286000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
   { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '华为', budget: 800000, teacherId: null, teacherName: null, schoolId: null, status: 'pending', progress: 0, description: '5G基站天线阵列的优化设计', deliverables: '设计方案', requirements: '', tags: ['5G', '天线'], assignedStudents: [] },
   { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '华为', budget: 600000, teacherId: 6, teacherName: '陈教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
   { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '腾讯', budget: 200000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
@@ -47,9 +47,9 @@ const initialTasks = [
   { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'completed', score: 90, comment: '数据质量高，按时交付', dims: { profession: 88, innovation: 85, teamwork: 92, learning: 90, adaptability: 88 } },
   { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'completed', score: 89, comment: '模型效果优秀', dims: { profession: 90, innovation: 92, teamwork: 85, learning: 88, adaptability: 86 } },
   { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 5, projectId: 1, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
-  { id: 6, projectId: 1, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'completed', score: 92, comment: '架构设计清晰，可扩展性强', dims: { profession: 90, innovation: 88, teamwork: 94, learning: 91, adaptability: 89 } },
-  { id: 7, projectId: 1, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'completed', score: 90, comment: '性能提升显著', dims: { profession: 88, innovation: 86, teamwork: 92, learning: 90, adaptability: 91 } },
+  { id: 5, projectId: 2, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
+  { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'completed', score: 92, comment: '架构设计清晰，可扩展性强', dims: { profession: 90, innovation: 88, teamwork: 94, learning: 91, adaptability: 89 } },
+  { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'completed', score: 90, comment: '性能提升显著', dims: { profession: 88, innovation: 86, teamwork: 92, learning: 90, adaptability: 91 } },
 ]
 
 const statusMap = {
@@ -496,7 +496,7 @@ export default function ProjectCooperation() {
     // 非学生角色：项目列表
     if (role === 'teacher') {
       items.push({
-        key: 'list', label: '任务列表', children: (
+        key: 'list', label: '任务分配', children: (
           <div>
             <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
               <Select value={filterStatus} onChange={setFilterStatus} style={{ width: 160 }}
