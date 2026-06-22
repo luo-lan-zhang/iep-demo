@@ -93,7 +93,7 @@ export default function ProjectCooperation() {
   // ─── Filtered ─────────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
     let list = projects
-    if (role === 'enterprise' || role === 'mentor') list = list.filter(p => p.enterpriseId === enterpriseId)
+    if (role === 'mentor') list = list.filter(p => p.enterpriseId === enterpriseId)
     if (role === 'teacher') list = list.filter(p => p.teacherId === teacherId || p.status === 'pending')
     if (role === 'school') list = list.filter(p => p.schoolId === schoolId || !p.schoolId)
     if (role === 'student') return []  // 学生不能查看项目列表
