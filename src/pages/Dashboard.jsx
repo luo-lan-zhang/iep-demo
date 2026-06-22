@@ -98,7 +98,7 @@ export default function Dashboard() {
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
             <Card title={<span><UserOutlined /> 个人简历</span>}>
-              <Table dataSource={[resume, mockStudentResumeB]} columns={[
+              <Table dataSource={[resume]} columns={[
                 { title: '学生姓名', dataIndex: 'name', key: 'name', width: 100 },
                 { title: '学号', dataIndex: 'studentId', key: 'studentId', width: 130 },
                 { title: '专业', dataIndex: 'major', key: 'major', width: 100 },
