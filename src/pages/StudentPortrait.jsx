@@ -160,10 +160,10 @@ export default function StudentPortrait() {
   }
 
   const projectColumns = [
-    { title: '项目名称', dataIndex: 'name', key: 'name', ellipsis: true },
-    { title: '担任角色', dataIndex: 'role', key: 'role', width: 100 },
-    { title: '评分', dataIndex: 'score', key: 'score', width: 70, render: (v) => <Tag color="gold">{v}分</Tag> },
-    { title: '时间', dataIndex: 'date', key: 'date', width: 90 },
+    { title: '项目名称', dataIndex: 'name', key: 'name', width: 140, render: (t) => <div style={{ whiteSpace: 'normal', wordBreak: 'break-all', lineHeight: 1.5 }}>{t}</div> },
+    { title: '角色', dataIndex: 'role', key: 'role', width: 80 },
+    { title: '评分', dataIndex: 'score', key: 'score', width: 60, render: (v) => <Tag color="gold">{v}分</Tag> },
+    { title: '时间', dataIndex: 'date', key: 'date', width: 80 },
   ]
 
   return (
@@ -174,9 +174,9 @@ export default function StudentPortrait() {
         />
       </Card>
 
-      <Row gutter={16}>
-        <Col span={6}>
-          <Card title="学生简历" size="small">
+      <Row gutter={16} style={{ alignItems: 'stretch' }}>
+        <Col span={6} style={{ display: 'flex' }}>
+          <Card title="学生简历" size="small" style={{ width: '100%' }}>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
               {avatar ? (
                 <Image src={avatar} width={120} height={120} style={{ borderRadius: 8, objectFit: 'cover' }} />
@@ -209,20 +209,20 @@ export default function StudentPortrait() {
               {portrait.projects.length === 0 ? (
                 <Empty description="暂无完成项目" image={Empty.PRESENTED_IMAGE_SIMPLE} />
               ) : (
-                <Table dataSource={portrait.projects} columns={projectColumns} rowKey="name" size="small" pagination={false} />
+                <Table dataSource={portrait.projects} columns={projectColumns} rowKey="name" size="small" pagination={{ pageSize: 3, size: 'small' }} />
               )}
             </div>
           </Card>
         </Col>
 
-        <Col span={10}>
-          <Card title="五维度能力评价" size="small" style={{ height: '100%' }}>
+        <Col span={10} style={{ display: 'flex' }}>
+          <Card title="五维度能力评价" size="small" style={{ width: '100%' }}>
             <div ref={radarRef} style={{ width: '100%', height: 380 }} />
           </Card>
         </Col>
 
-        <Col span={8}>
-          <Card title="能力详情" size="small">
+        <Col span={8} style={{ display: 'flex' }}>
+          <Card title="能力详情" size="small" style={{ width: '100%' }}>
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>五维度评分</div>
               {FIVE_DIMS.map(d => (
