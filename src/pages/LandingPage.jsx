@@ -382,13 +382,15 @@ export default function LandingPage() {
     return () => clearInterval(id)
   }, [])
 
-  // Load china map geojson from local
+  // Load china map geojson from local — keep only 京津冀
   useEffect(() => {
     let cancelled = false
     fetch('./china.json')
       .then(r => r.json())
       .then(geo => {
         if (cancelled) return
+        const jjj = ['北京市', '天津市', '河北省']
+        geo.features = geo.features.filter(f => jjj.includes(f.properties.name))
         echarts.registerMap('china', geo)
         setMapReady(true)
       })
