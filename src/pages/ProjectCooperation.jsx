@@ -388,14 +388,15 @@ export default function ProjectCooperation() {
       { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
     ]
     if (isEnt) {
-      cols.push({ title: '原企业', key: 'publisher', render: (_, r) => <span style={{ color: '#1677ff', fontSize: 13 }}>{r.publisher || r.enterpriseName}</span> })
+      const entLabel = role === 'council' ? '发布方' : '原企业'
+      cols.push({ title: entLabel, key: 'publisher', render: (_, r) => <span style={{ color: '#1677ff', fontSize: 13 }}>{r.publisher || r.enterpriseName}</span> })
     }
     if (!isEnt) {
       cols.push({ title: '企业简称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> })
     }
     cols.push(
       { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
-      { title: '原负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
+      { title: role === 'council' ? '承接方' : '原负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <Tag color="default">待承接</Tag> },
       { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
       { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
       {
