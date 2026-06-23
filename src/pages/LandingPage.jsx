@@ -211,39 +211,38 @@ function ProjectProgressTable() {
     { id: 110, name: '分级数据存储系统', enterpriseName: '高誉', teacherName: '李擎', budget: 200000, progress: 100, status: 'completed' },
     { id: 111, name: '数字矿山主流岩体识别系统', enterpriseName: '诺桦', teacherName: '罗文', budget: 200000, progress: 100, status: 'completed' },
   ]
-  const st = { in_progress: '进行中', pending_complete: '待确认', completed: '已结项' }
-  const sc = { in_progress: 'processing', pending_complete: 'orange', completed: 'green' }
+  const stColor = { in_progress: '#1677ff', pending_complete: '#fa8c16', completed: '#52c41a' }
   return (
-    <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 12, overflow: 'hidden' }}>
-      <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 13, fontWeight: 500, marginBottom: 10 }}>供需对接项目进度一览表</div>
-      <div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+    <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: '10px 8px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 13, fontWeight: 500, marginBottom: 8, flexShrink: 0 }}>供需对接项目进度一览表</div>
+      <div style={{ flex: 1, overflow: 'hidden' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'sticky', top: 0, background: 'rgba(10,30,60,0.98)' }}>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'left', fontSize: 10 }}>项目</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>企业</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>承接方</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>预算</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 60 }}>进度</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>状态</th>
+            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <th style={{ padding: '4px 4px', color: '#8ba9cc', textAlign: 'left', fontSize: 10, width: '32%' }}>项目</th>
+              <th style={{ padding: '4px 4px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: '12%' }}>企业</th>
+              <th style={{ padding: '4px 4px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: '10%' }}>承接方</th>
+              <th style={{ padding: '4px 4px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: '13%' }}>预算</th>
+              <th style={{ padding: '4px 4px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: '21%' }}>进度</th>
+              <th style={{ padding: '4px 4px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: '12%' }}>状态</th>
             </tr>
           </thead>
           <tbody>
             {projects.map((p, i) => (
               <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td style={{ padding: '6px', color: '#c5d9f0', fontSize: 11, maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</td>
-                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#8ba9cc' }}>{p.enterpriseName}</td>
-                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#8ba9cc' }}>{p.teacherName}</td>
-                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#faad14', fontFamily: 'DIN, monospace' }}>¥{(p.budget / 10000).toFixed(1)}万</td>
-                <td style={{ padding: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
-                    <div style={{ flex: 1, maxWidth: 50, height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden' }}>
+                <td style={{ padding: '3px 4px', color: '#c5d9f0', fontSize: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={p.name}>{p.name}</td>
+                <td style={{ padding: '3px 4px', textAlign: 'center', fontSize: 10, color: '#8ba9cc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={p.enterpriseName}>{p.enterpriseName}</td>
+                <td style={{ padding: '3px 4px', textAlign: 'center', fontSize: 10, color: '#8ba9cc', whiteSpace: 'nowrap' }}>{p.teacherName}</td>
+                <td style={{ padding: '3px 4px', textAlign: 'center', fontSize: 10, color: '#faad14', fontFamily: 'DIN, monospace', whiteSpace: 'nowrap' }}>¥{(p.budget / 10000).toFixed(1)}万</td>
+                <td style={{ padding: '3px 4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'center' }}>
+                    <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden' }}>
                       <div style={{ width: `${p.progress}%`, height: '100%', background: p.progress >= 100 ? '#52c41a' : '#00e5ff', borderRadius: 2 }} />
                     </div>
-                    <span style={{ fontSize: 10, color: '#8ba9cc', width: 26, textAlign: 'right' }}>{p.progress}%</span>
+                    <span style={{ fontSize: 9, color: '#8ba9cc', width: 27, textAlign: 'right', flexShrink: 0 }}>{p.progress}%</span>
                   </div>
                 </td>
-                <td style={{ padding: '6px', textAlign: 'center' }}><Tag color={sc[p.status]} style={{ fontSize: 9, margin: 0, padding: '0 4px' }}>{st[p.status]}</Tag></td>
+                <td style={{ padding: '3px 4px', textAlign: 'center', fontSize: 10, color: stColor[p.status], fontWeight: 500, whiteSpace: 'nowrap' }}>{st[p.status]}</td>
               </tr>
             ))}
           </tbody>
