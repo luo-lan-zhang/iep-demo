@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Card, Row, Col, Select, Descriptions, Tag, Image, Progress, Empty, Table } from 'antd'
-import { UserOutlined, FileTextOutlined, FundOutlined, BulbOutlined } from '@ant-design/icons'
+import { UserOutlined, FileTextOutlined, FundOutlined, BulbOutlined, ProjectOutlined } from '@ant-design/icons'
 import * as echarts from 'echarts'
 import { mockStudents } from '../mock/students'
 import { mockSchools } from '../mock/schools'
@@ -199,27 +199,21 @@ export default function StudentPortrait() {
 
         <Col span={16} style={{ display: 'flex' }}>
           <Card title="五维评价雷达图" size="small" style={{ width: '100%' }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
-              <div ref={radarRef} style={{ flex: 1, minHeight: 460 }} />
-              <div style={{ width: 220, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>最新项目</div>
-                {portrait.projects.slice(0, 5).map((p, i) => (
-                  <div key={i} style={{
-                    padding: '10px 12px', borderRadius: 8, border: '1px solid #e8e8e8',
-                    background: i === 0 ? 'linear-gradient(135deg, #e6f7ff, #f0f5ff)' : '#fafafa',
-                  }}>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: '#333', marginBottom: 4, lineHeight: 1.5 }}>{p.name}</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 11, color: '#999' }}>{p.role} · {p.date}</span>
-                      <Tag color="gold" style={{ fontSize: 11, margin: 0 }}>{p.score}分</Tag>
-                    </div>
-                  </div>
-                ))}
-                {portrait.projects.length === 0 && (
-                  <Empty description="暂无项目" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                )}
-              </div>
-            </div>
+            <div ref={radarRef} style={{ width: '100%', height: 460 }} />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Row 2: 最新项目 */}
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col span={24}>
+          <Card title={<span><ProjectOutlined /> 最新项目</span>} size="small">
+            <Table dataSource={portrait.projects} columns={[
+              { title: '项目名称', dataIndex: 'name', key: 'name', render: (t) => <span style={{ fontWeight: 500 }}>{t}</span> },
+              { title: '担任角色', dataIndex: 'role', key: 'role', width: 100 },
+              { title: '评分', dataIndex: 'score', key: 'score', width: 80, render: (v) => <Tag color="gold">{v}分</Tag> },
+              { title: '时间', dataIndex: 'date', key: 'date', width: 100 },
+            ]} rowKey="name" size="small" pagination={{ pageSize: 5, size: 'small' }} />
           </Card>
         </Col>
       </Row>
