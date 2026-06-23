@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
     mentor:     { id: 4,  username: 'mentor',    name: '王导师（河北圣诺）', role: 'mentor',     avatar: '' },
     school:     { id: 5,  username: 'school',    name: '李校长（深大）', role: 'school',     avatar: '' },
     teacher:    { id: 6,  username: 'teacher',   name: '张教授（深大）', role: 'teacher',    avatar: '' },
-    student:    { id: 7,  username: 'student',   name: '张三（深大）',   role: 'student',    avatar: '' },
+    student:    { id: 7,  username: 'student',   name: '杨亚楠',   role: 'student',    avatar: '' },
   }
 
   const login = (username, password) => {

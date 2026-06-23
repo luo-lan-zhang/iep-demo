@@ -92,7 +92,7 @@ const MOCK_PORTRAITS = {
 
 export default function StudentPortrait() {
   const [studentId, setStudentId] = useState(1)
-  const [avatar, setAvatar] = useState('/tupian.jpg')
+  const [avatar, setAvatar] = useState(import.meta.env.BASE_URL + 'tupian.jpg')
   const radarRef = useRef(null)
   const chartRef = useRef(null)
 
