@@ -75,7 +75,7 @@ export default function ProjectCooperation() {
   const schoolId = user?.schoolId
   const studentId = user?.id || 7
 
-  const isEnterpriseRole = role === 'enterprise' || role === 'mentor'
+  const isEnterpriseRole = role === 'enterprise' || role === 'mentor' || role === 'council'
   const [projects, setProjects] = useState(isEnterpriseRole ? enterpriseProjects : initialProjects)
   const [tasks, setTasks] = useState(initialTasks)
   const [filterStatus, setFilterStatus] = useState('all')
@@ -134,7 +134,7 @@ export default function ProjectCooperation() {
   // ─── Filtered ─────────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
     let list = projects
-    if (role === 'enterprise' || role === 'mentor') { /* 全部显示 */ }
+    if (role === 'enterprise' || role === 'mentor' || role === 'council') { /* 全部显示 */ }
     if (role === 'teacher') list = list.filter(p => p.teacherId === teacherId || p.status === 'pending')
     if (role === 'school') list = list.filter(p => p.schoolId === schoolId || !p.schoolId)
     if (role === 'student') return []  // 学生不能查看项目列表
@@ -383,7 +383,7 @@ export default function ProjectCooperation() {
 
   // ─── Columns ────────────────────────────────────────────────────────────
   const projectColumns = useMemo(() => {
-    const isEnt = role === 'enterprise' || role === 'mentor'
+    const isEnt = role === 'enterprise' || role === 'mentor' || role === 'council'
     const cols = [
       { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
     ]
