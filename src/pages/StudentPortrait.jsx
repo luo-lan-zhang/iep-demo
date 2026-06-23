@@ -152,17 +152,17 @@ export default function StudentPortrait() {
 
 
   const projectColumns = [
-    { title: '项目名称', dataIndex: 'name', key: 'name', width: 140, render: (t) => <div style={{ whiteSpace: 'normal', wordBreak: 'break-all', lineHeight: 1.5 }}>{t}</div> },
-    { title: '角色', dataIndex: 'role', key: 'role', width: 80 },
-    { title: '评分', dataIndex: 'score', key: 'score', width: 60, render: (v) => <Tag color="gold">{v}分</Tag> },
-    { title: '时间', dataIndex: 'date', key: 'date', width: 80 },
+    { title: '项目名称', dataIndex: 'name', key: 'name', width: 180, render: (t) => <div style={{ whiteSpace: 'normal', wordBreak: 'break-all', lineHeight: 1.5 }}>{t}</div> },
+    { title: '角色', dataIndex: 'role', key: 'role', width: 90 },
+    { title: '评分', dataIndex: 'score', key: 'score', width: 70, render: (v) => <Tag color="gold">{v}分</Tag> },
+    { title: '时间', dataIndex: 'date', key: 'date', width: 90 },
   ]
 
   return (
     <div style={{ padding: 24 }}>
 
       <Row gutter={16} style={{ alignItems: 'stretch' }}>
-        <Col span={6} style={{ display: 'flex' }}>
+        <Col span={8} style={{ display: 'flex' }}>
           <Card title="学生简历" size="small" style={{ width: '100%' }}>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
               {avatar ? (
@@ -197,9 +197,9 @@ export default function StudentPortrait() {
           </Card>
         </Col>
 
-        <Col span={10} style={{ display: 'flex' }}>
+        <Col span={16} style={{ display: 'flex' }}>
           <Card title="五维评价雷达图" size="small" style={{ width: '100%' }}>
-            <div ref={radarRef} style={{ width: '100%', height: 380 }} />
+            <div ref={radarRef} style={{ width: '100%', height: 500 }} />
           </Card>
         </Col>
       </Row>
