@@ -97,11 +97,11 @@ function TabsRanking() {
   const [tab, setTab] = useState('enterprise')
   const data = {
     enterprise: [
-      { rank: 1, name: '华为技术有限公司', score: 98, projects: 12 },
-      { rank: 2, name: '腾讯科技（深圳）有限公司', score: 92, projects: 10 },
-      { rank: 3, name: '大疆创新科技有限公司', score: 87, projects: 8 },
-      { rank: 4, name: '中兴通讯股份有限公司', score: 82, projects: 7 },
-      { rank: 5, name: '比亚迪股份有限公司', score: 78, projects: 6 },
+      { rank: 1, name: '河北仁谦信息科技有限公司', score: 98, projects: 12 },
+      { rank: 2, name: '河北圣诺联合科技有限公司', score: 92, projects: 10 },
+      { rank: 3, name: '石家庄市顶天科技开发有限公司', score: 87, projects: 8 },
+      { rank: 4, name: '河北恒华信息技术有限公司', score: 82, projects: 7 },
+      { rank: 5, name: '河北国龙制药有限公司', score: 78, projects: 6 },
     ],
     teacher: [
       { rank: 1, name: '张教授', score: 95, projects: 8 },
