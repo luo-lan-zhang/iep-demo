@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Card, Row, Col, Select, Descriptions, Tag, Image, Progress, Empty, Table } from 'antd'
-import { UserOutlined } from '@ant-design/icons'
+import { UserOutlined, FileTextOutlined, FundOutlined, BulbOutlined } from '@ant-design/icons'
 import * as echarts from 'echarts'
 import { mockStudents } from '../mock/students'
 import { mockSchools } from '../mock/schools'
@@ -244,6 +244,58 @@ export default function StudentPortrait() {
                   {latestProjectScore}
                 </div>
                 <div style={{ fontSize: 12, color: '#999' }}>分</div>
+              </div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Row 3: 综评报告 + 项目诊断 */}
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col span={12}>
+          <Card title={<span><FileTextOutlined /> 综评报告</span>} style={{ height: '100%' }}>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.9, textIndent: '2em' }}>
+              学业成绩优异，逻辑思维灵活敏锐，深耕编程开发、算法应用等专业内容，主动关注人工智能、前端架构等行业前沿技术，自主学习意愿极强。具备出色的创新思辨能力，能够结合项目场景优化算法模型、改良开发方案，擅长联动计算机、新媒体、工业交互等跨领域知识解决开发难题，项目创新度突出。短板方面，工程规范化素养有待提升，编写项目开发手册、技术说明文档意识薄弱，代码编写规范性、模块化整洁度不足；项目前期用户需求拆解研判能力不足，代码实验、项目运行结果标准化可复现能力需要专项强化。
+            </p>
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card title={<span><FundOutlined /> 本项目个性化智能诊断报告</span>} style={{ height: '100%' }}>
+            <p style={{ fontSize: 13, color: '#555', lineHeight: 1.9, textIndent: '2em' }}>
+              创新优势凸显，能够跳出传统开发范式，针对项目原有业务逻辑、算法模型、交互架构提出轻量化改良方案，主动调研行业同类项目前沿解法，结合跨领域思路优化项目功能，适配多元化使用场景，项目创意维度评分位居小组前列。但项目落地短板直观显现：项目全流程文档缺失完整架构，需求调研记录、版本迭代日志、接口调试文档撰写零散潦草；项目部署调试步骤无标准化记录，不同运行环境下项目成果复现难度较高，项目工程化、标准化落地能力有待补齐。
+            </p>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Row 4: 提升建议 */}
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col span={24}>
+          <Card title={<span style={{ color: '#1677ff' }}><BulbOutlined /> 提升建议</span>}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{ background: '#f6ffed', borderRadius: 8, padding: 16, border: '1px solid #b7eb8f' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#52c41a', marginBottom: 8 }}>📋 工程规范提升</div>
+                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, margin: 0 }}>
+                  建议系统学习项目开发文档编写规范，在每次迭代中同步维护需求文档、接口文档及部署手册。参考行业标准（如GB/T 8567）建立个人代码规范检查清单，使用ESLint、Prettier等工具辅助代码格式化训练，逐步养成模块化、可维护的编码习惯。
+                </p>
+              </div>
+              <div style={{ background: '#e6f7ff', borderRadius: 8, padding: 16, border: '1px solid #91d5ff' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#1677ff', marginBottom: 8 }}>🔍 需求分析能力</div>
+                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, margin: 0 }}>
+                  参与项目初期需求调研环节，学习使用用户故事地图、流程图等工具进行需求拆解。建议在每次开发前完成需求分析文档并请导师评审，通过反复练习提升对业务场景的理解力和需求到代码的转化能力。
+                </p>
+              </div>
+              <div style={{ background: '#fff7e6', borderRadius: 8, padding: 16, border: '1px solid #ffd591' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#fa8c16', marginBottom: 8 }}>🧪 实验复现标准化</div>
+                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, margin: 0 }}>
+                  建立标准化实验环境配置流程，使用Docker容器化技术统一运行环境，记录完整的环境依赖、参数配置与运行步骤。引入自动化测试框架（如Jest、Pytest），确保项目在不同环境下结果可复现、可验证。
+                </p>
+              </div>
+              <div style={{ background: '#f9f0ff', borderRadius: 8, padding: 16, border: '1px solid #d3adf7' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#722ed1', marginBottom: 8 }}>🚀 前沿技术拓展</div>
+                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, margin: 0 }}>
+                  继续保持对AI大模型、前端微架构、云原生等前沿方向的关注，建议每季度参与一次行业技术沙龙或开源项目贡献。结合专业方向，选择2-3个技术主题进行深度学习并产出技术博客，积累个人技术品牌影响力。
+                </p>
               </div>
             </div>
           </Card>
