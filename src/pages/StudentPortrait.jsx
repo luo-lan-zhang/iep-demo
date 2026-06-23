@@ -112,7 +112,7 @@ export default function StudentPortrait() {
 
     inst.setOption({
       tooltip: {},
-      legend: { data: ['该学生', '班级平均'], bottom: 0, textStyle: { color: '#666', fontSize: 12 } },
+      legend: { data: ['学生平时', '班级平均'], bottom: 0, textStyle: { color: '#666', fontSize: 12 } },
       radar: {
         center: ['50%', '46%'],
         radius: '65%',
@@ -121,8 +121,8 @@ export default function StudentPortrait() {
       },
       series: [
         {
-          type: 'radar', name: '该学生',
-          data: [{ value: studentValues, name: '该学生' }],
+          type: 'radar', name: '学生平时',
+          data: [{ value: studentValues, name: '学生平时' }],
           symbol: 'circle', symbolSize: 5,
           lineStyle: { color: '#1677ff', width: 2 },
           areaStyle: { color: 'rgba(22,119,255,0.15)' },
@@ -198,7 +198,7 @@ export default function StudentPortrait() {
         </Col>
 
         <Col span={10} style={{ display: 'flex' }}>
-          <Card title="学生平时" size="small" style={{ width: '100%' }}>
+          <Card title="五维评价雷达图" size="small" style={{ width: '100%' }}>
             <div ref={radarRef} style={{ width: '100%', height: 380 }} />
           </Card>
         </Col>
