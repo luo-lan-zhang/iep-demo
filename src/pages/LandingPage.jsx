@@ -407,7 +407,7 @@ export default function LandingPage() {
     return disposeCharts
   }, [disposeCharts])
 
-  // Create map chart (京津冀岗位需求热力图)
+  // Create map chart (京津冀地图)
   useEffect(() => {
     if (!mapReady || !mapRef.current) return
     const inst = echarts.init(mapRef.current)
@@ -425,7 +425,7 @@ export default function LandingPage() {
       },
       series: [
         {
-          type: 'effectScatter', coordinateSystem: 'geo',
+          type: 'scatter', coordinateSystem: 'geo',
           data: [
             { name: '北京', value: [116.40, 39.90, 520] },
             { name: '天津', value: [117.20, 39.13, 280] },
@@ -438,7 +438,6 @@ export default function LandingPage() {
             { name: '雄安新区', value: [116.10, 39.02, 210] },
           ],
           symbolSize: v => Math.sqrt(v[2]) * 2.2,
-          showEffectOn: 'render', rippleEffect: { brushType: 'stroke', scale: 2.5, period: 3 },
           itemStyle: { color: '#ff6b35' }, label: { show: true, position: 'right', formatter: '{b}', color: '#b8d4ff', fontSize: 9 },
         },
       ],
@@ -522,7 +521,7 @@ export default function LandingPage() {
 
             {/* M2: 左:参与方数据卡片 + 中:京津冀地图 + 右:教师/学生/导师卡片 */}
             <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.18)', padding: 10, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 12, fontWeight: 500, marginBottom: 6, flexShrink: 0 }}>京津冀 · 岗位需求热力图</div>
+              <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 12, fontWeight: 500, marginBottom: 6, flexShrink: 0 }}>京津冀地图</div>
               <div style={{ flex: 1, display: 'flex', gap: 8, minHeight: 0 }}>
                 {/* 左侧: 园区、企业、院校 */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center', width: 80, flexShrink: 0 }}>
