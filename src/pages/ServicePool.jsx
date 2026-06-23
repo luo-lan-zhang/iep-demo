@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react'
-import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Progress, Row, Col, Empty, Descriptions, Popconfirm, Typography } from 'antd'
+import { Card, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Tabs, message, Progress, Row, Col, Empty, Descriptions, Popconfirm } from 'antd'
+import Paragraph from 'antd/es/typography/Paragraph'
 import { PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, ToolOutlined, TeamOutlined, TrophyOutlined } from '@ant-design/icons'
 import { mockEnterprises } from '../mock/enterprises'
 import { mockSchools } from '../mock/schools'
 import { mockTeachers } from '../mock/teachers'
 import { useAuth } from '../context/AuthContext'
-
-const { Paragraph } = Typography
 
 // ==================== Mock Data ====================
 
@@ -20,9 +19,9 @@ const mockQuotas = [
 ]
 
 const mockAcceptances = [
-  { id: 1, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 1, schoolName: '石家庄信息工程职业学院', assignedCount: 20, status: 'in_progress', acceptDate: '2024-07-01', completeDate: '' },
+  { id: 1, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 1, schoolName: '深圳大学', assignedCount: 20, status: 'in_progress', acceptDate: '2024-07-01', completeDate: '' },
   { id: 2, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 2, schoolName: '深圳职业技术学院', assignedCount: 15, status: 'completed', acceptDate: '2024-07-01', completeDate: '2024-08-15' },
-  { id: 3, quotaId: 2, quotaTitle: 'AI大模型应用培训', schoolId: 1, schoolName: '石家庄信息工程职业学院', assignedCount: 10, status: 'in_progress', acceptDate: '2024-07-10', completeDate: '' },
+  { id: 3, quotaId: 2, quotaTitle: 'AI大模型应用培训', schoolId: 1, schoolName: '深圳大学', assignedCount: 10, status: 'in_progress', acceptDate: '2024-07-10', completeDate: '' },
   { id: 4, quotaId: 4, quotaTitle: '嵌入式系统开发培训', schoolId: 2, schoolName: '深圳职业技术学院', assignedCount: 25, status: 'completed', acceptDate: '2024-05-01', completeDate: '2024-06-25' },
 ]
 
@@ -30,7 +29,6 @@ const statusMap = {
   pending: { text: '待承接', color: 'orange' },
   in_progress: { text: '进行中', color: 'blue' },
   completed: { text: '已完成', color: 'green' },
-  rejected: { text: '已拒绝', color: 'red' },
 }
 
 const techStatusMap = {
@@ -48,15 +46,15 @@ const mockTechServices = [
 ]
 
 const mockTechInterests = [
-  { id: 1, serviceId: 1, unitName: '石家庄信息工程职业学院', contact: '李教授', type: 'school', status: 'pending', message: '我们学校机器人实验室有相关产线改造经验，希望合作' },
-  { id: 2, serviceId: 2, unitName: '张教授（石家庄信息工程职业学院）', contact: '张教授', type: 'teacher', status: 'approved', message: 'AI视觉检测是我们的研究方向，可以提供算法优化方案' },
+  { id: 1, serviceId: 1, unitName: '深圳大学', contact: '李教授', type: 'school', status: 'pending', message: '我们学校机器人实验室有相关产线改造经验，希望合作' },
+  { id: 2, serviceId: 2, unitName: '张教授（深圳大学）', contact: '张教授', type: 'teacher', status: 'approved', message: 'AI视觉检测是我们的研究方向，可以提供算法优化方案' },
 ]
 
 const mockCapabilities = [
-  { id: 1, name: 'AI视觉检测方案', industry: '智能制造', provider: '石家庄信息工程职业学院', contact: '张教授', contactPhone: '13800139001', description: '提供基于深度学习的工业视觉检测全套解决方案，包括缺陷检测、尺寸测量、字符识别等' },
+  { id: 1, name: 'AI视觉检测方案', industry: '智能制造', provider: '深圳大学', contact: '张教授', contactPhone: '13800139001', description: '提供基于深度学习的工业视觉检测全套解决方案，包括缺陷检测、尺寸测量、字符识别等' },
   { id: 2, name: '工业机器人集成', industry: '智能制造', provider: '深圳职业技术学院', contact: '王老师', contactPhone: '13800139003', description: '提供六轴工业机器人编程、仿真、集成调试服务，支持多种品牌机器人' },
-  { id: 3, name: '5G通信测试服务', industry: '信息通信', provider: '石家庄信息工程职业学院', contact: '陈教授', contactPhone: '13800139004', description: '提供5G基站、终端设备的射频性能测试、协议一致性测试服务' },
-  { id: 4, name: '嵌入式系统开发', industry: '电子信息', provider: '石家庄信息工程职业学院', contact: '刘老师', contactPhone: '13800139006', description: '提供基于ARM/RISC-V的嵌入式系统软硬件开发服务，包括RTOS移植、驱动开发' },
+  { id: 3, name: '5G通信测试服务', industry: '信息通信', provider: '华南理工大学', contact: '陈教授', contactPhone: '13800139004', description: '提供5G基站、终端设备的射频性能测试、协议一致性测试服务' },
+  { id: 4, name: '嵌入式系统开发', industry: '电子信息', provider: '广东工业大学', contact: '刘老师', contactPhone: '13800139006', description: '提供基于ARM/RISC-V的嵌入式系统软硬件开发服务，包括RTOS移植、驱动开发' },
 ]
 
 export default function ServicePool() {
@@ -80,8 +78,6 @@ export default function ServicePool() {
   const [interestService, setInterestService] = useState(null)
   const [techForm] = Form.useForm()
   const [interestForm] = Form.useForm()
-  const [auditInterestOpen, setAuditInterestOpen] = useState(false)
-  const [auditInterestService, setAuditInterestService] = useState(null)
 
   // Capability modals
   const [capPublishOpen, setCapPublishOpen] = useState(false)
@@ -91,14 +87,6 @@ export default function ServicePool() {
   const [proofOpen, setProofOpen] = useState(false)
   const [proofService, setProofService] = useState(null)
   const [proofForm] = Form.useForm()
-
-  // Audit modal for council
-  const [auditOpen, setAuditOpen] = useState(false)
-  const [auditQuota, setAuditQuota] = useState(null)
-
-  // Detail modal for training quotas
-  const [quotaDetailOpen, setQuotaDetailOpen] = useState(false)
-  const [quotaDetailItem, setQuotaDetailItem] = useState(null)
 
   const role = user?.role || 'admin'
   const schoolId = user?.schoolId
@@ -197,41 +185,6 @@ export default function ServicePool() {
     })
   }
 
-  const handleApproveInterest = (interestId) => {
-    setTechInterests(techInterests.map(ti =>
-      ti.id === interestId ? { ...ti, status: 'approved' } : ti
-    ))
-    const interest = techInterests.find(ti => ti.id === interestId)
-    if (interest) {
-      setTechServices(techServices.map(ts =>
-        ts.id === interest.serviceId ? { ...ts, status: 'in_progress' } : ts
-      ))
-    }
-    message.success('已确认承接意向')
-  }
-
-  const handleRejectInterest = (interestId) => {
-    setTechInterests(techInterests.map(ti =>
-      ti.id === interestId ? { ...ti, status: 'rejected' } : ti
-    ))
-    message.success('已拒绝该承接意向')
-  }
-
-  const handleConfirmComplete = (interestId) => {
-    setTechInterests(techInterests.map(ti =>
-      ti.id === interestId ? { ...ti, status: 'completed' } : ti
-    ))
-    const interest = techInterests.find(ti => ti.id === interestId)
-    if (interest) {
-      setTechServices(techServices.map(ts =>
-        ts.id === interest.serviceId ? { ...ts, status: 'completed' } : ts
-      ))
-    }
-    message.success('已完成确认！')
-    setAuditInterestOpen(false)
-    setAuditInterestService(null)
-  }
-
   const handleSubmitProof = () => {
     proofForm.validateFields().then(values => {
       setTechInterests(techInterests.map(ti =>
@@ -275,19 +228,10 @@ export default function ServicePool() {
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     { title: '总积分', dataIndex: 'points', key: 'points', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
     { title: '操作', key: 'action', render: (_, r) => {
-      if (role === 'council') {
-        return <span style={{ display: 'inline-flex', gap: 4 }}>
-          <Button size="small" onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</Button>
-          {r.status === 'pending' && <Button size="small" type="primary" onClick={() => { setAuditQuota(r); setAuditOpen(true) }}>审核</Button>}
-        </span>
-      }
       if (hasPermission('quota.accept') && r.status === 'pending') {
         return <Button size="small" type="primary" onClick={() => { setAcceptQuota(r); setAcceptOpen(true) }}>承接培训</Button>
       }
-      if (role === 'park') {
-        return <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
-      }
-      return <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
+      return '-'
     }},
   ]
 
@@ -299,7 +243,7 @@ export default function ServicePool() {
     { title: '完成日期', dataIndex: 'completeDate', key: 'completeDate', render: (d) => d || '-' },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
     { title: '操作', key: 'action', render: (_, r) => (
-      r.status === 'in_progress' && hasPermission('quota.complete') ? <Button size="small" type="primary" onClick={() => handleComplete(r.id)}>标记完成</Button> : <a onClick={() => { setQuotaDetailItem(r); setQuotaDetailOpen(true) }}>查看</a>
+      r.status === 'in_progress' && hasPermission('quota.complete') ? <Button size="small" type="primary" onClick={() => handleComplete(r.id)}>标记完成</Button> : '-'
     )},
   ]
 
@@ -322,16 +266,7 @@ export default function ServicePool() {
           }
         }
       }
-      if (role === 'enterprise' && r.enterpriseId === enterpriseId) {
-        const pendingInterests = techInterests.filter(ti => ti.serviceId === r.id && ti.status === 'pending')
-        if (r.status === 'pending' && pendingInterests.length > 0) {
-          return <Button size="small" type="primary" onClick={() => { setAuditInterestService(r); setAuditInterestOpen(true) }}>承接确认</Button>
-        }
-        if (r.status === 'in_progress') {
-          return <Button size="small" type="primary" onClick={() => { setAuditInterestService(r); setAuditInterestOpen(true) }}>完成确认</Button>
-        }
-      }
-      return <a onClick={() => { setInterestService(r); setInterestOpen(true) }}>查看</a>
+      return <Button size="small" onClick={() => message.info('查看详细')}>查看</Button>
     }},
   ]
 
@@ -347,12 +282,12 @@ export default function ServicePool() {
       children: (
         <div>
           <div style={{ marginBottom: 16 }}>
-            {hasPermission('quota.publish') && role !== 'council' && (
+            {hasPermission('quota.publish') && (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => setQuotaPublishOpen(true)} style={{ marginRight: 16 }}>发布培训指标</Button>
             )}
           </div>
           <Table dataSource={quotas} columns={quotaColumns} rowKey="id" pagination={false} style={{ marginBottom: 24 }} />
-          {(role === 'admin' || role === 'enterprise' || role === 'school') && role !== 'council' && (
+          {(role === 'admin' || role === 'enterprise' || role === 'school') && (
             <Card title="承接列表" size="small" style={{ marginTop: 16 }}>
               <Table dataSource={filteredAcceptances} columns={acceptColumns} rowKey="id" pagination={false} />
             </Card>
@@ -417,7 +352,7 @@ export default function ServicePool() {
   }, [quotas, techServices, filteredAcceptances, capabilities, role, hasPermission])
 
   return (
-    <Card title="技术服务情况">
+    <Card title="技术服务池">
       <Tabs items={tabItems} />
 
       {/* Publish Quota Modal */}
@@ -498,7 +433,7 @@ export default function ServicePool() {
                 <Select allowClear placeholder="选择教师（院校承接时可选）" options={mockTeachers.map(t => ({ value: t.id, label: `${t.name} (${mockSchools.find(s => s.id === t.schoolId)?.name || ''})` }))} />
               </Form.Item>
               <Form.Item name="unitName" label="单位/个人名称" rules={[{ required: true }]}>
-                <Input placeholder="如：石家庄信息工程职业学院计算机学院" />
+                <Input placeholder="如：深圳大学计算机学院" />
               </Form.Item>
               <Form.Item name="contact" label="联系人" rules={[{ required: true }]}>
                 <Input placeholder="联系人姓名" />
@@ -507,41 +442,6 @@ export default function ServicePool() {
                 <Input.TextArea rows={3} placeholder="请说明技术能力和承接方案..." />
               </Form.Item>
             </Form>
-          </div>
-        )}
-      </Modal>
-
-      {/* Enterprise Audit Interest Modal — 承接确认 / 完成确认 */}
-      <Modal title={auditInterestService?.status === 'pending' ? '承接确认' : '完成确认'}
-        open={auditInterestOpen} onCancel={() => { setAuditInterestOpen(false); setAuditInterestService(null) }}
-        width={600} footer={null}>
-        {auditInterestService && (
-          <div>
-            <p style={{ marginBottom: 16, color: '#666' }}>
-              服务：<strong>{auditInterestService.name}</strong> | 预算：<strong style={{ color: '#faad14' }}>¥{auditInterestService.budget.toLocaleString()}</strong>
-            </p>
-            {techInterests.filter(ti => ti.serviceId === auditInterestService.id).length === 0 ? (
-              <div style={{ color: '#999', padding: 20, textAlign: 'center' }}>暂无院校/教师表达承接意向</div>
-            ) : (
-              techInterests.filter(ti => ti.serviceId === auditInterestService.id).map(ti => (
-                <Card key={ti.id} size="small" style={{ marginBottom: 12 }}>
-                  <p><strong>承接方：</strong>{ti.unitName}</p>
-                  <p><strong>联系人：</strong>{ti.contact}</p>
-                  <p><strong>类型：</strong>{ti.type === 'school' ? '院校' : '教师个人'}</p>
-                  <p><strong>说明：</strong>{ti.message}</p>
-                  <p><strong>状态：</strong><Tag color={ti.status === 'approved' ? 'green' : ti.status === 'rejected' ? 'red' : 'orange'}>{ti.status === 'approved' ? '已确认承接' : ti.status === 'rejected' ? '已拒绝' : '待确认'}</Tag></p>
-                  {ti.status === 'approved' && auditInterestService.status === 'in_progress' && (
-                    <Button type="primary" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleConfirmComplete(ti.id)}>确认完成</Button>
-                  )}
-                  {ti.status === 'pending' && auditInterestService.status === 'pending' && (
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <Button type="primary" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} onClick={() => handleApproveInterest(ti.id)}>确认承接</Button>
-                      <Button size="small" danger icon={<CloseCircleOutlined />} onClick={() => handleRejectInterest(ti.id)}>拒绝</Button>
-                    </div>
-                  )}
-                </Card>
-              ))
-            )}
           </div>
         )}
       </Modal>
@@ -589,65 +489,6 @@ export default function ServicePool() {
                 <Input placeholder="代码仓库/文档链接（模拟）" />
               </Form.Item>
             </Form>
-          </div>
-        )}
-      </Modal>
-
-      {/* Training Quota Detail Modal */}
-      <Modal title="培训指标详情" open={quotaDetailOpen} onCancel={() => { setQuotaDetailOpen(false); setQuotaDetailItem(null) }} footer={null} width={600}>
-        {quotaDetailItem && (
-          <div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-              <Tag color="blue">{quotaDetailItem.enterpriseName}</Tag>
-              <Tag color={statusMap[quotaDetailItem.status]?.color}>{statusMap[quotaDetailItem.status]?.text}</Tag>
-            </div>
-            <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>{quotaDetailItem.title}</h3>
-            <Descriptions column={1} bordered size="small">
-              <Descriptions.Item label="企业名称">{quotaDetailItem.enterpriseName}</Descriptions.Item>
-              <Descriptions.Item label="培训目标人数">{quotaDetailItem.targetCount}人</Descriptions.Item>
-              <Descriptions.Item label="已完成培训">{quotaDetailItem.completedCount}人</Descriptions.Item>
-              <Descriptions.Item label="培训进度">
-                <Progress percent={Math.round((quotaDetailItem.completedCount / quotaDetailItem.targetCount) * 100)} format={() => `${quotaDetailItem.completedCount}/${quotaDetailItem.targetCount}`} />
-              </Descriptions.Item>
-              <Descriptions.Item label="截止日期">{quotaDetailItem.deadline}</Descriptions.Item>
-              <Descriptions.Item label="总积分"><span style={{ color: '#faad14', fontWeight: 'bold' }}>{quotaDetailItem.points}</span></Descriptions.Item>
-            </Descriptions>
-          </div>
-        )}
-      </Modal>
-
-      {/* Council Audit Modal for Training Quotas */}
-      <Modal title={<span>审核培训指标 — {auditQuota?.title}</span>}
-        open={auditOpen} onCancel={() => { setAuditOpen(false); setAuditQuota(null) }}
-        width={550} footer={null}>
-        {auditQuota && (
-          <div>
-            <div style={{ marginBottom: 12 }}>
-              <Tag color="blue">{auditQuota.enterpriseName}</Tag>
-              <span style={{ fontWeight: 500, marginLeft: 8 }}>{auditQuota.title}</span>
-            </div>
-            <Descriptions column={1} bordered size="small">
-              <Descriptions.Item label="企业">{auditQuota.enterpriseName}</Descriptions.Item>
-              <Descriptions.Item label="目标人数">{auditQuota.targetCount}人</Descriptions.Item>
-              <Descriptions.Item label="已完成">{auditQuota.completedCount}人</Descriptions.Item>
-              <Descriptions.Item label="截止日期">{auditQuota.deadline}</Descriptions.Item>
-              <Descriptions.Item label="总积分">{auditQuota.points}</Descriptions.Item>
-            </Descriptions>
-            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 24 }}>
-              <Button type="primary" size="large" icon={<CheckCircleOutlined />}
-                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-                onClick={() => {
-                  setQuotas(quotas.map(q => q.id === auditQuota.id ? { ...q, status: 'in_progress' } : q))
-                  message.success('培训指标审核通过！')
-                  setAuditOpen(false); setAuditQuota(null)
-                }}>审核通过</Button>
-              <Button danger size="large" icon={<CloseCircleOutlined />}
-                onClick={() => {
-                  setQuotas(quotas.map(q => q.id === auditQuota.id ? { ...q, status: 'rejected' } : q))
-                  message.success('已拒绝该培训指标')
-                  setAuditOpen(false); setAuditQuota(null)
-                }}>拒绝</Button>
-            </div>
           </div>
         )}
       </Modal>

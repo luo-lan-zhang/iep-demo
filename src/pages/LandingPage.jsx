@@ -199,13 +199,17 @@ function ProjectOverview() {
 // 供需对接项目进度一览表
 function ProjectProgressTable() {
   const projects = [
-    { name: '物联网固件AI污点检测系统', enterprise: '华为', school: '石家庄信息工程职业学院', progress: 65, status: 'in_progress' },
-    { name: '矿用无线张力油压监测系统', enterprise: '腾讯', school: '石家庄信息工程职业学院', progress: 90, status: 'in_progress' },
-    { name: '5G基站天线优化设计', enterprise: '华为', school: '石家庄信息工程职业学院', progress: 35, status: 'in_progress' },
-    { name: '工业机器人控制算法', enterprise: '大疆', school: '石家庄信息工程职业学院', progress: 60, status: 'in_progress' },
-    { name: '自动驾驶感知算法优化', enterprise: '华为', school: '石家庄信息工程职业学院', progress: 100, status: 'pending_complete' },
-    { name: '区块链电子档案系统', enterprise: '河北圣诺', school: '石家庄信息工程职业学院', progress: 80, status: 'in_progress' },
-    { name: '自定位机器人仿真平台', enterprise: '顶天科技', school: '石家庄信息工程职业学院', progress: 100, status: 'completed' },
+    { id: 101, name: '区块链电子档案', enterpriseName: '河北圣诺', teacherName: '陈新', budget: 350600, progress: 80, status: 'in_progress' },
+    { id: 102, name: '燃气管线绘制辅助工具开发项目', enterpriseName: '恒华信息', teacherName: '张晓蕾', budget: 286000, progress: 90, status: 'in_progress' },
+    { id: 103, name: '信息安全课程开发服务', enterpriseName: '卓升电子', teacherName: '马晓丽', budget: 200000, progress: 100, status: 'completed' },
+    { id: 104, name: '系统及网络安全维护', enterpriseName: '仁谦信息', teacherName: '贺宏', budget: 396000, progress: 100, status: 'completed' },
+    { id: 105, name: '自定位机器人网络安全虚拟仿真测试平台', enterpriseName: '顶天科技', teacherName: '武雪芳', budget: 300500, progress: 100, status: 'completed' },
+    { id: 106, name: '企业生产数据分析与可视化解决方案', enterpriseName: '国龙制药', teacherName: '陈建伟', budget: 300000, progress: 90, status: 'in_progress' },
+    { id: 107, name: '数实合一智慧古建信息系统', enterpriseName: '棣烨', teacherName: '底雪峰', budget: 204700, progress: 100, status: 'completed' },
+    { id: 108, name: '微晶玻璃晶化炉自动控制系统', enterpriseName: '美科', teacherName: '陶玉梅', budget: 450000, progress: 100, status: 'completed' },
+    { id: 109, name: '虚拟实验教学资源软件', enterpriseName: '惠美', teacherName: '刘娇', budget: 401000, progress: 100, status: 'completed' },
+    { id: 110, name: '分级数据存储系统', enterpriseName: '高誉', teacherName: '李擎', budget: 200000, progress: 100, status: 'completed' },
+    { id: 111, name: '数字矿山主流岩体识别系统', enterpriseName: '诺桦', teacherName: '罗文', budget: 200000, progress: 100, status: 'completed' },
   ]
   const st = { in_progress: '进行中', pending_complete: '待确认', completed: '已结项' }
   const sc = { in_progress: 'processing', pending_complete: 'orange', completed: 'green' }
@@ -218,17 +222,19 @@ function ProjectProgressTable() {
             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'sticky', top: 0, background: 'rgba(10,30,60,0.98)' }}>
               <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'left', fontSize: 10 }}>项目</th>
               <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>企业</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 60 }}>院校</th>
-              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 70 }}>进度</th>
+              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>承接方</th>
+              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>预算</th>
+              <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 60 }}>进度</th>
               <th style={{ padding: '5px 6px', color: '#8ba9cc', textAlign: 'center', fontSize: 10, width: 50 }}>状态</th>
             </tr>
           </thead>
           <tbody>
             {projects.map((p, i) => (
               <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td style={{ padding: '6px', color: '#c5d9f0', fontSize: 11, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</td>
-                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#8ba9cc' }}>{p.enterprise}</td>
-                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#8ba9cc' }}>{p.school}</td>
+                <td style={{ padding: '6px', color: '#c5d9f0', fontSize: 11, maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</td>
+                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#8ba9cc' }}>{p.enterpriseName}</td>
+                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#8ba9cc' }}>{p.teacherName}</td>
+                <td style={{ padding: '6px', textAlign: 'center', fontSize: 11, color: '#faad14', fontFamily: 'DIN, monospace' }}>¥{(p.budget / 10000).toFixed(1)}万</td>
                 <td style={{ padding: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
                     <div style={{ flex: 1, maxWidth: 50, height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden' }}>
