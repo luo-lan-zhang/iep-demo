@@ -16,10 +16,10 @@ const difficultyConfig = {
 // ==================== Mock Data ====================
 
 const mockTeachingResources = [
-  { id: 1, name: '智能仓储系统-项目任务书', teacherId: 1, teacherName: '张教授', schoolId: 1, schoolName: '深圳大学', difficulty: '初级', domain: '物联网', fileType: '项目任务书', description: '基于RFID的智能仓储管理系统项目任务书，包含项目背景、目标、技术路线、验收标准等内容。', fileCount: 3, status: 'approved', submitDate: '2024-05-10', reviewComment: '内容完整，符合教学要求' },
-  { id: 2, name: 'AI视觉检测-实验指导手册', teacherId: 2, teacherName: '李教授', schoolId: 1, schoolName: '深圳大学', difficulty: '高级', domain: 'AI算法', fileType: '指导手册', description: '基于深度学习的工业缺陷检测实验指导手册，包含数据集准备、模型训练、部署推理全流程。', fileCount: 5, status: 'approved', submitDate: '2024-05-15', reviewComment: '实验设计合理，技术深度适中' },
+  { id: 1, name: '智能仓储系统-项目任务书', teacherId: 1, teacherName: '张教授', schoolId: 1, schoolName: '石家庄信息工程职业学院', difficulty: '初级', domain: '物联网', fileType: '项目任务书', description: '基于RFID的智能仓储管理系统项目任务书，包含项目背景、目标、技术路线、验收标准等内容。', fileCount: 3, status: 'approved', submitDate: '2024-05-10', reviewComment: '内容完整，符合教学要求' },
+  { id: 2, name: 'AI视觉检测-实验指导手册', teacherId: 2, teacherName: '李教授', schoolId: 1, schoolName: '石家庄信息工程职业学院', difficulty: '高级', domain: 'AI算法', fileType: '指导手册', description: '基于深度学习的工业缺陷检测实验指导手册，包含数据集准备、模型训练、部署推理全流程。', fileCount: 5, status: 'approved', submitDate: '2024-05-15', reviewComment: '实验设计合理，技术深度适中' },
   { id: 3, name: '工业机器人编程-教学资源包', teacherId: 3, teacherName: '王老师', schoolId: 2, schoolName: '深圳职业技术学院', difficulty: '中级', domain: '智能制造', fileType: '资源', description: '六轴工业机器人编程教学资源包，包含课件、实验指导书、仿真模型、考核题库。', fileCount: 8, status: 'pending', submitDate: '2024-06-01', reviewComment: '' },
-  { id: 4, name: '5G通信技术-课程设计指导书', teacherId: 4, teacherName: '陈教授', schoolId: 3, schoolName: '华南理工大学', difficulty: '中级', domain: '信息通信', fileType: '指导手册', description: '5G通信系统课程设计指导书，涵盖5G网络架构、Massive MIMO、波束赋形等关键技术。', fileCount: 2, status: 'needs_revision', submitDate: '2024-05-20', reviewComment: '建议补充实验数据和仿真代码' },
+  { id: 4, name: '5G通信技术-课程设计指导书', teacherId: 4, teacherName: '陈教授', schoolId: 3, schoolName: '石家庄信息工程职业学院', difficulty: '中级', domain: '信息通信', fileType: '指导手册', description: '5G通信系统课程设计指导书，涵盖5G网络架构、Massive MIMO、波束赋形等关键技术。', fileCount: 2, status: 'needs_revision', submitDate: '2024-05-20', reviewComment: '建议补充实验数据和仿真代码' },
   { id: 5, name: '嵌入式系统开发-项目案例集', teacherId: 5, teacherName: '黄老师', schoolId: 2, schoolName: '深圳职业技术学院', difficulty: '初级', domain: '嵌入式', fileType: '项目任务书', description: '基于STM32的嵌入式开发项目案例集，包含8个由浅入深的项目案例。', fileCount: 6, status: 'pending', submitDate: '2024-06-10', reviewComment: '' },
 ]
 

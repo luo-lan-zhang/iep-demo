@@ -25,7 +25,7 @@ export default function DataCockpit() {
 
   const topRanking = [
     { rank: 1, name: '华为技术有限公司', type: '企业', score: 98, value: '12项合作' },
-    { rank: 2, name: '深圳大学', type: '院校', score: 92, value: '10项合作' },
+    { rank: 2, name: '石家庄信息工程职业学院', type: '院校', score: 92, value: '10项合作' },
     { rank: 3, name: '腾讯科技（深圳）有限公司', type: '企业', score: 87, value: '8项合作' },
   ]
 

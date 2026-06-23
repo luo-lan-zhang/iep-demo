@@ -7,8 +7,8 @@ export const mockTrainingQuotas = [
 ]
 
 export const mockTrainingAcceptances = [
-  { id: 1, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 1, schoolName: '深圳大学', assignedCount: 20, status: 'in_progress', acceptDate: '2024-07-01', completeDate: '' },
+  { id: 1, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 1, schoolName: '石家庄信息工程职业学院', assignedCount: 20, status: 'in_progress', acceptDate: '2024-07-01', completeDate: '' },
   { id: 2, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 2, schoolName: '深圳职业技术学院', assignedCount: 15, status: 'completed', acceptDate: '2024-07-01', completeDate: '2024-08-15' },
-  { id: 3, quotaId: 2, quotaTitle: 'AI大模型应用培训', schoolId: 1, schoolName: '深圳大学', assignedCount: 10, status: 'in_progress', acceptDate: '2024-07-10', completeDate: '' },
+  { id: 3, quotaId: 2, quotaTitle: 'AI大模型应用培训', schoolId: 1, schoolName: '石家庄信息工程职业学院', assignedCount: 10, status: 'in_progress', acceptDate: '2024-07-10', completeDate: '' },
   { id: 4, quotaId: 4, quotaTitle: '嵌入式系统开发培训', schoolId: 2, schoolName: '深圳职业技术学院', assignedCount: 25, status: 'completed', acceptDate: '2024-05-01', completeDate: '2024-06-25' },
 ]

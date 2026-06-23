@@ -3,12 +3,12 @@ import { Card, Table, Tag, Button, Modal, Form, Input, Select, message, Descript
 import { PlusOutlined, EyeOutlined } from '@ant-design/icons'
 
 const initialPlatforms = [
-  { id: 1, name: '具身智能实验室', type: '实验室', location: '深圳大学知行楼A栋3层', capacity: 60, equipment: '人形机器人、力反馈手套、3D视觉系统、激光雷达', status: 'active', schoolId: 1, schoolName: '深圳大学' },
-  { id: 2, name: '大数据产教实习基地', type: '实习基地', location: '深圳大学科技楼B栋5层', capacity: 120, equipment: 'GPU服务器集群、Hadoop集群、数据可视化大屏', status: 'active', schoolId: 1, schoolName: '深圳大学' },
-  { id: 3, name: '5G通信联合实验室', type: '实验室', location: '深圳大学信息楼2层', capacity: 40, equipment: '5G基站设备、频谱分析仪、矢量网络分析仪', status: 'active', schoolId: 1, schoolName: '深圳大学' },
+  { id: 1, name: '具身智能实验室', type: '实验室', location: '石家庄信息工程职业学院知行楼A栋3层', capacity: 60, equipment: '人形机器人、力反馈手套、3D视觉系统、激光雷达', status: 'active', schoolId: 1, schoolName: '石家庄信息工程职业学院' },
+  { id: 2, name: '大数据产教实习基地', type: '实习基地', location: '石家庄信息工程职业学院科技楼B栋5层', capacity: 120, equipment: 'GPU服务器集群、Hadoop集群、数据可视化大屏', status: 'active', schoolId: 1, schoolName: '石家庄信息工程职业学院' },
+  { id: 3, name: '5G通信联合实验室', type: '实验室', location: '石家庄信息工程职业学院信息楼2层', capacity: 40, equipment: '5G基站设备、频谱分析仪、矢量网络分析仪', status: 'active', schoolId: 1, schoolName: '石家庄信息工程职业学院' },
   { id: 4, name: '工业机器人实训中心', type: '实训中心', location: '深圳职业技术学院知行楼1层', capacity: 80, equipment: '六轴工业机器人、AGV小车、PLC控制系统', status: 'active', schoolId: 2, schoolName: '深圳职业技术学院' },
-  { id: 5, name: '新能源电池检测中心', type: '实验室', location: '华南理工大学新能源楼1层', capacity: 30, equipment: '充放电测试系统、电化学工作站、热分析仪', status: 'active', schoolId: 3, schoolName: '华南理工大学' },
-  { id: 6, name: '智能制造实训车间', type: '实训中心', location: '广东工业大学工训中心', capacity: 100, equipment: '数控机床、3D打印机、数字化产线', status: 'active', schoolId: 4, schoolName: '广东工业大学' },
+  { id: 5, name: '新能源电池检测中心', type: '实验室', location: '石家庄信息工程职业学院新能源楼1层', capacity: 30, equipment: '充放电测试系统、电化学工作站、热分析仪', status: 'active', schoolId: 3, schoolName: '石家庄信息工程职业学院' },
+  { id: 6, name: '智能制造实训车间', type: '实训中心', location: '石家庄信息工程职业学院工训中心', capacity: 100, equipment: '数控机床、3D打印机、数字化产线', status: 'active', schoolId: 4, schoolName: '石家庄信息工程职业学院' },
 ]
 
 const typeMap = { '实验室': 'purple', '实习基地': 'blue', '实训中心': 'green', '创新中心': 'orange' }

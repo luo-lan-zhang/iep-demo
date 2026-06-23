@@ -6,11 +6,11 @@ import { mockStudents } from '../mock/students'
 import { mockSchools } from '../mock/schools'
 
 const FIVE_DIMS = [
-  { key: 'profession',  label: '职业胜任力', color: '#1677ff' },
-  { key: 'innovation',  label: '技术创新力', color: '#722ed1' },
-  { key: 'teamwork',    label: '团队协作力', color: '#13c2c2' },
-  { key: 'learning',    label: '终身学习力', color: '#52c41a' },
-  { key: 'adaptability', label: '职业适应力', color: '#faad14' },
+  { key: 'profession',  label: '知识建构', color: '#1677ff' },
+  { key: 'innovation',  label: '工程实践', color: '#722ed1' },
+  { key: 'teamwork',    label: '迭代创新', color: '#13c2c2' },
+  { key: 'learning',    label: '团队协同', color: '#52c41a' },
+  { key: 'adaptability', label: '职业胜任', color: '#faad14' },
 ]
 
 const MOCK_PORTRAITS = {

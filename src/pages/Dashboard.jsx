@@ -64,13 +64,13 @@ const getLastEvalDims = (sid) => {
 }
 
 const mockStudentResumeA = {
-  name: '贾梦圆', studentId: '32419160313', major: '软件技术', grade: '2024级', school: '深圳大学',
+  name: '贾梦圆', studentId: '32419160313', major: '软件技术', grade: '2024级', school: '石家庄信息工程职业学院',
   projects: [
     { name: '智慧校园餐饮系统', role: '前端开发' },
   ],
 }
 const mockStudentResumeB = {
-  name: '陈芝树', studentId: '32319160306', major: '软件技术', grade: '2023级', school: '深圳大学',
+  name: '陈芝树', studentId: '32319160306', major: '软件技术', grade: '2023级', school: '石家庄信息工程职业学院',
   projects: [
     { name: '信息安全课程开发服务', role: '后端开发' },
   ],
@@ -570,7 +570,7 @@ export default function Dashboard() {
             </Col>
             <Col xs={24} md={8}>
               <Card title="投入排行榜 Top 3" size="small">
-                {[{rank:1,name:'华为技术有限公司',type:'企业',score:98,value:'12项合作'},{rank:2,name:'深圳大学',type:'院校',score:92,value:'10项合作'},{rank:3,name:'腾讯科技（深圳）有限公司',type:'企业',score:87,value:'8项合作'}].map(item => (
+                {[{rank:1,name:'华为技术有限公司',type:'企业',score:98,value:'12项合作'},{rank:2,name:'石家庄信息工程职业学院',type:'院校',score:92,value:'10项合作'},{rank:3,name:'腾讯科技（深圳）有限公司',type:'企业',score:87,value:'8项合作'}].map(item => (
                   <div key={item.rank} style={{ padding:'10px 12px', marginBottom:8, background: item.rank===1?'#fff7e6':'#fafafa', borderRadius:6, border: item.rank===1?'1px solid #ffd591':'none' }}>
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                       <span><Tag color={item.rank===1?'gold':item.rank===2?'blue':'cyan'} style={{ fontWeight:'bold' }}>#{item.rank}</Tag><strong>{item.name}</strong></span>

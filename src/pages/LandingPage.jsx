@@ -199,13 +199,13 @@ function ProjectOverview() {
 // 供需对接项目进度一览表
 function ProjectProgressTable() {
   const projects = [
-    { name: '物联网固件AI污点检测系统', enterprise: '华为', school: '深圳大学', progress: 65, status: 'in_progress' },
-    { name: '矿用无线张力油压监测系统', enterprise: '腾讯', school: '华南理工', progress: 90, status: 'in_progress' },
-    { name: '5G基站天线优化设计', enterprise: '华为', school: '深圳大学', progress: 35, status: 'in_progress' },
-    { name: '工业机器人控制算法', enterprise: '大疆', school: '哈尔滨工业', progress: 60, status: 'in_progress' },
-    { name: '自动驾驶感知算法优化', enterprise: '华为', school: '深圳大学', progress: 100, status: 'pending_complete' },
-    { name: '区块链电子档案系统', enterprise: '河北圣诺', school: '河北大学', progress: 80, status: 'in_progress' },
-    { name: '自定位机器人仿真平台', enterprise: '顶天科技', school: '石家庄学院', progress: 100, status: 'completed' },
+    { name: '物联网固件AI污点检测系统', enterprise: '华为', school: '石家庄信息工程职业学院', progress: 65, status: 'in_progress' },
+    { name: '矿用无线张力油压监测系统', enterprise: '腾讯', school: '石家庄信息工程职业学院', progress: 90, status: 'in_progress' },
+    { name: '5G基站天线优化设计', enterprise: '华为', school: '石家庄信息工程职业学院', progress: 35, status: 'in_progress' },
+    { name: '工业机器人控制算法', enterprise: '大疆', school: '石家庄信息工程职业学院', progress: 60, status: 'in_progress' },
+    { name: '自动驾驶感知算法优化', enterprise: '华为', school: '石家庄信息工程职业学院', progress: 100, status: 'pending_complete' },
+    { name: '区块链电子档案系统', enterprise: '河北圣诺', school: '石家庄信息工程职业学院', progress: 80, status: 'in_progress' },
+    { name: '自定位机器人仿真平台', enterprise: '顶天科技', school: '石家庄信息工程职业学院', progress: 100, status: 'completed' },
   ]
   const st = { in_progress: '进行中', pending_complete: '待确认', completed: '已结项' }
   const sc = { in_progress: 'processing', pending_complete: 'orange', completed: 'green' }

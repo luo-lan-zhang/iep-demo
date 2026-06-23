@@ -20,9 +20,9 @@ const mockQuotas = [
 ]
 
 const mockAcceptances = [
-  { id: 1, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 1, schoolName: '深圳大学', assignedCount: 20, status: 'in_progress', acceptDate: '2024-07-01', completeDate: '' },
+  { id: 1, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 1, schoolName: '石家庄信息工程职业学院', assignedCount: 20, status: 'in_progress', acceptDate: '2024-07-01', completeDate: '' },
   { id: 2, quotaId: 1, quotaTitle: 'HarmonyOS开发工程师培训', schoolId: 2, schoolName: '深圳职业技术学院', assignedCount: 15, status: 'completed', acceptDate: '2024-07-01', completeDate: '2024-08-15' },
-  { id: 3, quotaId: 2, quotaTitle: 'AI大模型应用培训', schoolId: 1, schoolName: '深圳大学', assignedCount: 10, status: 'in_progress', acceptDate: '2024-07-10', completeDate: '' },
+  { id: 3, quotaId: 2, quotaTitle: 'AI大模型应用培训', schoolId: 1, schoolName: '石家庄信息工程职业学院', assignedCount: 10, status: 'in_progress', acceptDate: '2024-07-10', completeDate: '' },
   { id: 4, quotaId: 4, quotaTitle: '嵌入式系统开发培训', schoolId: 2, schoolName: '深圳职业技术学院', assignedCount: 25, status: 'completed', acceptDate: '2024-05-01', completeDate: '2024-06-25' },
 ]
 
@@ -48,15 +48,15 @@ const mockTechServices = [
 ]
 
 const mockTechInterests = [
-  { id: 1, serviceId: 1, unitName: '深圳大学', contact: '李教授', type: 'school', status: 'pending', message: '我们学校机器人实验室有相关产线改造经验，希望合作' },
-  { id: 2, serviceId: 2, unitName: '张教授（深圳大学）', contact: '张教授', type: 'teacher', status: 'approved', message: 'AI视觉检测是我们的研究方向，可以提供算法优化方案' },
+  { id: 1, serviceId: 1, unitName: '石家庄信息工程职业学院', contact: '李教授', type: 'school', status: 'pending', message: '我们学校机器人实验室有相关产线改造经验，希望合作' },
+  { id: 2, serviceId: 2, unitName: '张教授（石家庄信息工程职业学院）', contact: '张教授', type: 'teacher', status: 'approved', message: 'AI视觉检测是我们的研究方向，可以提供算法优化方案' },
 ]
 
 const mockCapabilities = [
-  { id: 1, name: 'AI视觉检测方案', industry: '智能制造', provider: '深圳大学', contact: '张教授', contactPhone: '13800139001', description: '提供基于深度学习的工业视觉检测全套解决方案，包括缺陷检测、尺寸测量、字符识别等' },
+  { id: 1, name: 'AI视觉检测方案', industry: '智能制造', provider: '石家庄信息工程职业学院', contact: '张教授', contactPhone: '13800139001', description: '提供基于深度学习的工业视觉检测全套解决方案，包括缺陷检测、尺寸测量、字符识别等' },
   { id: 2, name: '工业机器人集成', industry: '智能制造', provider: '深圳职业技术学院', contact: '王老师', contactPhone: '13800139003', description: '提供六轴工业机器人编程、仿真、集成调试服务，支持多种品牌机器人' },
-  { id: 3, name: '5G通信测试服务', industry: '信息通信', provider: '华南理工大学', contact: '陈教授', contactPhone: '13800139004', description: '提供5G基站、终端设备的射频性能测试、协议一致性测试服务' },
-  { id: 4, name: '嵌入式系统开发', industry: '电子信息', provider: '广东工业大学', contact: '刘老师', contactPhone: '13800139006', description: '提供基于ARM/RISC-V的嵌入式系统软硬件开发服务，包括RTOS移植、驱动开发' },
+  { id: 3, name: '5G通信测试服务', industry: '信息通信', provider: '石家庄信息工程职业学院', contact: '陈教授', contactPhone: '13800139004', description: '提供5G基站、终端设备的射频性能测试、协议一致性测试服务' },
+  { id: 4, name: '嵌入式系统开发', industry: '电子信息', provider: '石家庄信息工程职业学院', contact: '刘老师', contactPhone: '13800139006', description: '提供基于ARM/RISC-V的嵌入式系统软硬件开发服务，包括RTOS移植、驱动开发' },
 ]
 
 export default function ServicePool() {
@@ -498,7 +498,7 @@ export default function ServicePool() {
                 <Select allowClear placeholder="选择教师（院校承接时可选）" options={mockTeachers.map(t => ({ value: t.id, label: `${t.name} (${mockSchools.find(s => s.id === t.schoolId)?.name || ''})` }))} />
               </Form.Item>
               <Form.Item name="unitName" label="单位/个人名称" rules={[{ required: true }]}>
-                <Input placeholder="如：深圳大学计算机学院" />
+                <Input placeholder="如：石家庄信息工程职业学院计算机学院" />
               </Form.Item>
               <Form.Item name="contact" label="联系人" rules={[{ required: true }]}>
                 <Input placeholder="联系人姓名" />

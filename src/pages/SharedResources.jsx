@@ -25,6 +25,7 @@ export default function SharedResources() {
   const schoolMap = Object.fromEntries(mockSchools.map(s => [s.id, s.name]))
 
   const statusMap = { idle: { text: '空闲', color: 'green' }, rented: { text: '已租借', color: 'blue' }, pending: { text: '审核中', color: 'orange' } }
+  const publisherTypeMap = { park: { text: '园区', color: 'purple' }, enterprise: { text: '企业', color: 'blue' }, school: { text: '学校', color: 'cyan' } }
 
   const role = user?.role || 'admin'
   const enterpriseId = user?.enterpriseId
@@ -39,8 +40,8 @@ export default function SharedResources() {
 
   const resourceColumns = [
     { title: '资源名称', dataIndex: 'name', key: 'name' },
-    { title: '所属院校', dataIndex: 'publisher', key: 'publisher' },
-    { title: '类别', dataIndex: 'category', key: 'category', render: (t) => <Tag>{t}</Tag> },
+    { title: '发布方', key: 'publisher', render: (_, r) => <span>{r.publisher} <Tag color={publisherTypeMap[r.publisherType]?.color} style={{ marginLeft: 4 }}>{publisherTypeMap[r.publisherType]?.text}</Tag></span> },
+    { title: '类别', dataIndex: 'category', key: 'category', render: (t) => <Tag color={t === '设备' ? 'blue' : t === '场地' ? 'green' : t === '专家' ? 'orange' : 'default'}>{t}</Tag> },
     { title: '规格说明', dataIndex: 'specs', key: 'specs', ellipsis: true },
     { title: '每日积分', dataIndex: 'dailyPoints', key: 'dailyPoints', render: (v) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{v}</span> },
     { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
@@ -80,15 +81,12 @@ export default function SharedResources() {
 
   const handlePublish = () => {
     publishForm.validateFields().then(values => {
-      const school = mockSchools.find(s => s.id === values.schoolId)
       const newRes = {
         id: resources.length + 1,
         ...values,
-        publisher: school?.name || '未知',
         status: 'idle',
         publishDate: new Date().toISOString().split('T')[0],
       }
-      delete newRes.schoolId
       setResources([...resources, newRes])
       message.success('发布资源成功！')
       setPublishOpen(false)
@@ -179,12 +177,13 @@ export default function SharedResources() {
       {/* Publish Modal */}
       <Modal title="发布共享资源" open={publishOpen} onOk={handlePublish} onCancel={() => { setPublishOpen(false); publishForm.resetFields() }} width={600}>
         <Form form={publishForm} layout="vertical">
-          <Form.Item name="schoolId" label="所属院校" rules={[{ required: true }]}>
-            <Select options={mockSchools.map(s => ({ value: s.id, label: s.name }))} />
+          <Form.Item name="publisherType" label="发布方类型" rules={[{ required: true }]}>
+            <Select options={[{ value: 'park', label: '园区' }, { value: 'enterprise', label: '企业' }, { value: 'school', label: '学校' }]} />
           </Form.Item>
+          <Form.Item name="publisher" label="发布方名称" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="name" label="资源名称" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="category" label="类别" rules={[{ required: true }]}>
-            <Select options={[{ value: '计算设备', label: '计算设备' }, { value: '制造设备', label: '制造设备' }, { value: '测试仪器', label: '测试仪器' }, { value: '教学设备', label: '教学设备' }]} />
+            <Select options={[{ value: '设备', label: '设备' }, { value: '场地', label: '场地' }, { value: '专家', label: '专家' }, { value: '其他', label: '其他' }]} />
           </Form.Item>
           <Form.Item name="description" label="资源描述"><Input.TextArea rows={3} /></Form.Item>
           <Form.Item name="specs" label="规格说明"><Input.TextArea rows={2} /></Form.Item>
@@ -269,7 +268,7 @@ export default function SharedResources() {
         {detailResource && (
           <Descriptions column={1} bordered size="small">
             <Descriptions.Item label="资源名称">{detailResource.name}</Descriptions.Item>
-            <Descriptions.Item label="所属院校">{detailResource.publisher}</Descriptions.Item>
+            <Descriptions.Item label="发布方">{detailResource.publisher} <Tag color={publisherTypeMap[detailResource.publisherType]?.color}>{publisherTypeMap[detailResource.publisherType]?.text}</Tag></Descriptions.Item>
             <Descriptions.Item label="类别">{detailResource.category}</Descriptions.Item>
             <Descriptions.Item label="规格说明">{detailResource.specs}</Descriptions.Item>
             <Descriptions.Item label="资源描述">{detailResource.description}</Descriptions.Item>

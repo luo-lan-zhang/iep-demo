@@ -10,11 +10,11 @@ import { useAuth } from '../context/AuthContext'
 
 // ─── Five-Dimension Evaluation Config ───────────────────────────────────────
 const FIVE_DIMS = [
-  { key: 'profession',  label: '职业胜任力', desc: '专业知识掌握程度、岗位技能熟练度', color: '#1677ff' },
-  { key: 'innovation',  label: '技术创新力', desc: '技术选型判断、方案创新能力',        color: '#722ed1' },
-  { key: 'teamwork',    label: '团队协作力', desc: '沟通协作、任务配合能力',            color: '#13c2c2' },
-  { key: 'learning',    label: '终身学习力', desc: '自主学习、跟进新技术的能力',         color: '#52c41a' },
-  { key: 'adaptability', label: '职业适应力', desc: '需求理解、抗压与自我调节能力',      color: '#faad14' },
+  { key: 'profession',  label: '知识建构', desc: '专业知识构建与理论体系掌握程度', color: '#1677ff' },
+  { key: 'innovation',  label: '工程实践', desc: '工程开发、项目实施与交付能力',        color: '#722ed1' },
+  { key: 'teamwork',    label: '迭代创新', desc: '持续优化、创新改进与技术迭代能力',            color: '#13c2c2' },
+  { key: 'learning',    label: '团队协同', desc: '团队沟通、协作配合与项目管理能力',         color: '#52c41a' },
+  { key: 'adaptability', label: '职业胜任', desc: '职业素养、岗位适配与综合能力',      color: '#faad14' },
 ]
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
