@@ -211,6 +211,7 @@ function ProjectProgressTable() {
     { id: 110, name: '分级数据存储系统', enterpriseName: '高誉', teacherName: '李擎', budget: 200000, progress: 100, status: 'completed' },
     { id: 111, name: '数字矿山主流岩体识别系统', enterpriseName: '诺桦', teacherName: '罗文', budget: 200000, progress: 100, status: 'completed' },
   ]
+  const st = { in_progress: '进行中', pending_complete: '待确认', completed: '已结项' }
   const stColor = { in_progress: '#1677ff', pending_complete: '#fa8c16', completed: '#52c41a' }
   return (
     <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: '10px 8px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
