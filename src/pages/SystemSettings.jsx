@@ -13,7 +13,7 @@ export default function SystemSettings() {
   return (
     <Card title="系统设置">
       <Form form={form} layout="vertical" style={{ maxWidth: 600 }}>
-        <Form.Item name="platformName" label="平台名称" initialValue="产教融合云平台">
+        <Form.Item name="platformName" label="平台名称" initialValue="产教融合智慧管理平台">
           <Input />
         </Form.Item>
         <Form.Item name="contactEmail" label="联系邮箱" initialValue="admin@iep-platform.com">

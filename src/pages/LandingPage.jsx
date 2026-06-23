@@ -460,11 +460,9 @@ export default function LandingPage() {
         <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px' }}>
           {/* Logo + title */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 44, height: 44, background: 'linear-gradient(135deg, #0d47a1, #1565c0)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 22 }}>
-              <ReadOutlined />
-            </div>
+            <img src={`${import.meta.env.BASE_URL}xuexiao.png`} alt="logo" style={{ width: 44, height: 44, borderRadius: 10, objectFit: 'cover' }} />
             <div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#0d47a1', lineHeight: 1.2 }}>产教融合云平台</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#0d47a1', lineHeight: 1.2 }}>产教融合智慧管理平台</div>
               <div style={{ fontSize: 11, color: '#999', letterSpacing: 1.5 }}>INDUSTRY-EDUCATION INTEGRATION PLATFORM</div>
             </div>
           </div>
@@ -632,7 +630,7 @@ export default function LandingPage() {
 
       {/* ═══ Footer ══════════════════════════════════════════════════════════ */}
       <footer style={{ background: '#0d47a1', color: '#8ba9cc', textAlign: 'center', padding: '16px 24px', fontSize: 12 }}>
-        Copyright &copy; 2024 产教融合云平台 · Industry-Education Integration Cloud Platform · All Rights Reserved.
+        Copyright &copy; 2024 产教融合智慧管理平台 · Industry-Education Integration Cloud Platform · All Rights Reserved.
       </footer>
     </div>
   )
