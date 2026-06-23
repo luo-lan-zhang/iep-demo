@@ -473,15 +473,14 @@ export default function TalentMatching() {
       <div>
         {role === 'student' && (
           <div>
-            <h4 style={{ marginBottom: 16 }}>推荐岗位（基于您的专业方向 — 软件技术）</h4>
+            <h4 style={{ marginBottom: 16 }}>推荐岗位</h4>
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
               {[
-                { title: '匹配岗位数', value: positions.filter(p => p.status === 'active').length, icon: <NodeIndexOutlined />, color: '#1677ff' },
+                { title: '匹配岗位数', value: 18, icon: <NodeIndexOutlined />, color: '#1677ff' },
                 { title: '已投递', value: applications.filter(a => a.studentId === (user?.id || 7)).length, icon: <SendOutlined />, color: '#52c41a' },
-                { title: '面试邀约', value: interviews.filter(i => i.studentId === (user?.id || 7)).length, icon: <StarOutlined />, color: '#fa8c16' },
-                { title: 'AI匹配度', value: '92%', icon: <TrophyOutlined />, color: '#722ed1' },
+                { title: '面试邀约', value: 3, icon: <StarOutlined />, color: '#fa8c16' },
               ].map((s, i) =>
-                <Col xs={24} sm={12} lg={6} key={i}>
+                <Col xs={24} sm={12} lg={8} key={i}>
                   <Card size="small" style={{ background: s.color + '15', border: 'none', borderRadius: 8 }}>
                     <div style={{ fontSize: 12, color: '#666' }}>{s.title}</div>
                     <div style={{ fontSize: 24, fontWeight: 'bold', color: s.color, display: 'flex', alignItems: 'center', gap: 8 }}>{s.icon} {s.value}</div>
@@ -489,13 +488,13 @@ export default function TalentMatching() {
                 </Col>
               )}
             </Row>
-            <Table dataSource={positions.filter(p => p.status === 'active').slice(0, 5)} columns={[
+            <Table dataSource={positions.filter(p => p.status === 'active').map(p => ({ ...p, matchScore: Math.round(70 + Math.random() * 25) })).sort((a, b) => b.matchScore - a.matchScore)} columns={[
               { title: '岗位名称', dataIndex: 'title', key: 'title' },
               { title: '企业', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
               { title: '薪资', dataIndex: 'salary', key: 'salary' },
-              { title: '匹配度', key: 'match', render: () => <Progress percent={Math.round(70 + Math.random() * 25)} size="small" format={v => `${v}%`} /> },
+              { title: '匹配度', key: 'match', dataIndex: 'matchScore', render: (v) => <Progress percent={v} size="small" format={() => `${v}%`} strokeColor={v >= 90 ? '#52c41a' : v >= 80 ? '#1677ff' : '#faad14'} /> },
               { title: '操作', key: 'action', render: (_, r) => <Button size="small" type="primary" icon={<SendOutlined />} onClick={() => { setApplyPosition(r); setApplyOpen(true) }}>投递简历</Button> },
-            ]} rowKey="id" />
+            ]} rowKey="id" pagination={{ total: 80, pageSize: 8 }} />
             <div style={{ marginTop: 16, padding: 12, background: '#f0f5ff', borderRadius: 8, fontSize: 13, color: '#1677ff' }}>
               <strong>AI 职业建议：</strong>您的软件技术专业与大数据开发、软件开发方向高度匹配，建议在投递简历时突出您的项目经验和实践能力。系统运维和网络运维方向岗位需求增长迅速，建议同步关注。
             </div>
