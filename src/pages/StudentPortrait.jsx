@@ -198,7 +198,7 @@ export default function StudentPortrait() {
         </Col>
 
         <Col span={16} style={{ display: 'flex' }}>
-          <Card title="五维评价雷达图" size="small" style={{ width: '100%' }}>
+          <Card title="五维能力评估" size="small" style={{ width: '100%' }}>
             <div style={{ display: 'flex', gap: 16 }}>
               <div ref={radarRef} style={{ flex: 1, minHeight: 460 }} />
               <div style={{ width: 280, flexShrink: 0 }}>
