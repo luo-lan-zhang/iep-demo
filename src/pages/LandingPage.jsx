@@ -212,7 +212,7 @@ function ProjectProgressTable() {
   return (
     <div style={{ background: 'rgba(10,30,60,0.85)', borderRadius: 10, border: '1px solid rgba(0,212,255,0.15)', padding: 12, overflow: 'hidden' }}>
       <div style={{ textAlign: 'center', color: '#b8d4ff', fontSize: 13, fontWeight: 500, marginBottom: 10 }}>供需对接项目进度一览表</div>
-      <div style={{ maxHeight: 260, overflowY: 'auto' }}>
+      <div>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'sticky', top: 0, background: 'rgba(10,30,60,0.98)' }}>
