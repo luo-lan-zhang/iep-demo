@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import * as echarts from 'echarts'
 import { Tag } from 'antd'
-import { TrophyOutlined } from '@ant-design/icons'
+import { TrophyOutlined, ReadOutlined } from '@ant-design/icons'
 
 // ─── Mock data ──────────────────────────────────────────────────────────────
 const NEWS_ITEMS = [
@@ -460,8 +460,8 @@ export default function LandingPage() {
         <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px' }}>
           {/* Logo + title */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 44, height: 44, background: 'linear-gradient(135deg, #0d47a1, #1565c0)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20, fontWeight: 700, letterSpacing: 1 }}>
-              产融
+            <div style={{ width: 44, height: 44, background: 'linear-gradient(135deg, #0d47a1, #1565c0)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 22 }}>
+              <ReadOutlined />
             </div>
             <div>
               <div style={{ fontSize: 22, fontWeight: 700, color: '#0d47a1', lineHeight: 1.2 }}>产教融合云平台</div>
