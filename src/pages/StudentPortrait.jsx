@@ -13,7 +13,6 @@ const FIVE_DIMS = [
   { key: 'adaptability', label: '职业适应力', color: '#faad14' },
 ]
 
-// 模拟四名学生画像数据
 const MOCK_PORTRAITS = {
   1: {
     completedProjects: 3,
@@ -51,14 +50,12 @@ const MOCK_PORTRAITS = {
     dims: { profession: 75, innovation: 70, teamwork: 78, learning: 74, adaptability: 80 },
     avgDims: { profession: 78, innovation: 72, teamwork: 80, learning: 75, adaptability: 76 },
   },
-}
-
   5: {
     completedProjects: 3,
     projects: [
-      { name: "矿用无线张力油压监测系统", role: "设备选型", score: 95, date: "2024-06" },
-      { name: "区块链电子档案", role: "前端开发", score: 87, date: "2024-03" },
-      { name: "5G基站天线优化设计", role: "测试", score: 83, date: "2024-01" },
+      { name: '矿用无线张力油压监测系统', role: '设备选型', score: 95, date: '2024-06' },
+      { name: '区块链电子档案', role: '前端开发', score: 87, date: '2024-03' },
+      { name: '5G基站天线优化设计', role: '测试', score: 83, date: '2024-01' },
     ],
     dims: { profession: 91, innovation: 85, teamwork: 93, learning: 88, adaptability: 90 },
     avgDims: { profession: 78, innovation: 72, teamwork: 80, learning: 75, adaptability: 76 },
@@ -66,8 +63,8 @@ const MOCK_PORTRAITS = {
   6: {
     completedProjects: 2,
     projects: [
-      { name: "矿用无线张力油压监测系统", role: "架构设计", score: 88, date: "2024-04" },
-      { name: "数字矿山岩体识别", role: "全栈", score: 84, date: "2024-02" },
+      { name: '矿用无线张力油压监测系统', role: '架构设计', score: 88, date: '2024-04' },
+      { name: '数字矿山岩体识别', role: '全栈', score: 84, date: '2024-02' },
     ],
     dims: { profession: 83, innovation: 89, teamwork: 80, learning: 86, adaptability: 82 },
     avgDims: { profession: 78, innovation: 72, teamwork: 80, learning: 75, adaptability: 76 },
@@ -75,10 +72,10 @@ const MOCK_PORTRAITS = {
   7: {
     completedProjects: 4,
     projects: [
-      { name: "物联网固件AI污点检测系统", role: "系统测试", score: 80, date: "2024-06" },
-      { name: "矿用无线张力油压监测系统", role: "系统调优", score: 75, date: "2024-04" },
-      { name: "学生成绩分析平台", role: "前端", score: 89, date: "2024-02" },
-      { name: "自动驾驶感知算法", role: "测试", score: 91, date: "2023-12" },
+      { name: '物联网固件AI污点检测系统', role: '系统测试', score: 80, date: '2024-06' },
+      { name: '矿用无线张力油压监测系统', role: '系统调优', score: 75, date: '2024-04' },
+      { name: '学生成绩分析平台', role: '前端', score: 89, date: '2024-02' },
+      { name: '自动驾驶感知算法', role: '测试', score: 91, date: '2023-12' },
     ],
     dims: { profession: 87, innovation: 82, teamwork: 90, learning: 85, adaptability: 88 },
     avgDims: { profession: 78, innovation: 72, teamwork: 80, learning: 75, adaptability: 76 },
@@ -86,11 +83,13 @@ const MOCK_PORTRAITS = {
   8: {
     completedProjects: 1,
     projects: [
-      { name: "虚拟实验教学资源软件", role: "开发工程师", score: 79, date: "2024-05" },
+      { name: '虚拟实验教学资源软件', role: '开发工程师', score: 79, date: '2024-05' },
     ],
     dims: { profession: 76, innovation: 78, teamwork: 82, learning: 80, adaptability: 77 },
     avgDims: { profession: 78, innovation: 72, teamwork: 80, learning: 75, adaptability: 76 },
   },
+}
+
 export default function StudentPortrait() {
   const [studentId, setStudentId] = useState(1)
   const [avatar, setAvatar] = useState(null)
@@ -101,7 +100,6 @@ export default function StudentPortrait() {
   const school = mockSchools.find(s => s.id === student?.schoolId)
   const portrait = MOCK_PORTRAITS[studentId] || MOCK_PORTRAITS[1]
 
-  // Radar chart
   useEffect(() => {
     if (!radarRef.current) return
     if (chartRef.current) { try { chartRef.current.dispose() } catch {} }
@@ -116,8 +114,8 @@ export default function StudentPortrait() {
       tooltip: {},
       legend: { data: ['该学生', '班级平均'], bottom: 0, textStyle: { color: '#666', fontSize: 12 } },
       radar: {
-        center: ['50%', '48%'],
-        radius: '68%',
+        center: ['50%', '46%'],
+        radius: '65%',
         indicator: FIVE_DIMS.map(d => ({ name: d.label, max: 100 })),
         axisName: { color: '#333', fontSize: 12 },
       },
@@ -152,7 +150,6 @@ export default function StudentPortrait() {
   const avgScore = Math.round(Object.values(portrait.dims).reduce((a, b) => a + b, 0) / 5)
   const latestProjectScore = portrait.projects[0]?.score || '-'
 
-  // Upload handler
   const handleUpload = (info) => {
     if (info.file.status === 'done') {
       const reader = new FileReader()
@@ -171,7 +168,6 @@ export default function StudentPortrait() {
 
   return (
     <div style={{ padding: 24 }}>
-      {/* Student selector */}
       <Card size="small" style={{ marginBottom: 16 }}>
         <Select value={studentId} onChange={setStudentId} style={{ width: 240 }}
           options={mockStudents.map(s => ({ value: s.id, label: `${s.name} - ${s.major}` }))}
@@ -179,10 +175,8 @@ export default function StudentPortrait() {
       </Card>
 
       <Row gutter={16}>
-        {/* 左侧：学生简历 + 照片 */}
         <Col span={6}>
           <Card title="学生简历" size="small">
-            {/* 照片区域 */}
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
               {avatar ? (
                 <Image src={avatar} width={120} height={120} style={{ borderRadius: 8, objectFit: 'cover' }} />
@@ -221,14 +215,12 @@ export default function StudentPortrait() {
           </Card>
         </Col>
 
-        {/* 中间：五维度雷达图 */}
         <Col span={10}>
           <Card title="五维度能力评价" size="small" style={{ height: '100%' }}>
             <div ref={radarRef} style={{ width: '100%', height: 380 }} />
           </Card>
         </Col>
 
-        {/* 右侧：五维度分数 + 最新项目分数 */}
         <Col span={8}>
           <Card title="能力详情" size="small">
             <div style={{ marginBottom: 16 }}>
