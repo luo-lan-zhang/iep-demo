@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Card, Row, Col, Select, Descriptions, Tag, Image, Upload, Button, message, Progress, Empty, Table } from 'antd'
-import { UploadOutlined, UserOutlined } from '@ant-design/icons'
+import { Card, Row, Col, Select, Descriptions, Tag, Image, Progress, Empty, Table } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
 import * as echarts from 'echarts'
 import { mockStudents } from '../mock/students'
 import { mockSchools } from '../mock/schools'
@@ -150,14 +150,6 @@ export default function StudentPortrait() {
   const avgScore = Math.round(Object.values(portrait.dims).reduce((a, b) => a + b, 0) / 5)
   const latestProjectScore = portrait.projects[0]?.score || '-'
 
-  const handleUpload = (info) => {
-    if (info.file.status === 'done') {
-      const reader = new FileReader()
-      reader.onload = (e) => setAvatar(e.target.result)
-      reader.readAsDataURL(info.file.originFileObj)
-      message.success('头像上传成功')
-    }
-  }
 
   const projectColumns = [
     { title: '项目名称', dataIndex: 'name', key: 'name', width: 140, render: (t) => <div style={{ whiteSpace: 'normal', wordBreak: 'break-all', lineHeight: 1.5 }}>{t}</div> },
@@ -189,12 +181,7 @@ export default function StudentPortrait() {
                   <UserOutlined style={{ fontSize: 48, color: '#bfbfbf' }} />
                 </div>
               )}
-              <Upload showUploadList={false} customRequest={({ file, onSuccess }) => setTimeout(() => onSuccess?.('ok'), 500)}
-                onChange={handleUpload} accept="image/*">
-                <Button icon={<UploadOutlined />} size="small" style={{ marginTop: 8 }}>上传照片</Button>
-              </Upload>
             </div>
-
             <Descriptions column={1} size="small" bordered>
               <Descriptions.Item label="姓名">{student?.name || '-'}</Descriptions.Item>
               <Descriptions.Item label="学校">{school?.name || '-'}</Descriptions.Item>
