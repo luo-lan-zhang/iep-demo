@@ -199,7 +199,27 @@ export default function StudentPortrait() {
 
         <Col span={16} style={{ display: 'flex' }}>
           <Card title="五维评价雷达图" size="small" style={{ width: '100%' }}>
-            <div ref={radarRef} style={{ width: '100%', height: 500 }} />
+            <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
+              <div ref={radarRef} style={{ flex: 1, minHeight: 460 }} />
+              <div style={{ width: 220, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>最新项目</div>
+                {portrait.projects.slice(0, 5).map((p, i) => (
+                  <div key={i} style={{
+                    padding: '10px 12px', borderRadius: 8, border: '1px solid #e8e8e8',
+                    background: i === 0 ? 'linear-gradient(135deg, #e6f7ff, #f0f5ff)' : '#fafafa',
+                  }}>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: '#333', marginBottom: 4, lineHeight: 1.5 }}>{p.name}</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 11, color: '#999' }}>{p.role} · {p.date}</span>
+                      <Tag color="gold" style={{ fontSize: 11, margin: 0 }}>{p.score}分</Tag>
+                    </div>
+                  </div>
+                ))}
+                {portrait.projects.length === 0 && (
+                  <Empty description="暂无项目" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                )}
+              </div>
+            </div>
           </Card>
         </Col>
       </Row>
