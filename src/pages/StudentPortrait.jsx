@@ -109,10 +109,15 @@ export default function StudentPortrait() {
     const dimLabels = FIVE_DIMS.map(d => d.label)
     const studentValues = FIVE_DIMS.map(d => portrait.dims[d.key])
     const avgValues = FIVE_DIMS.map(d => portrait.avgDims[d.key])
+    const latestProjectScore = portrait.projects[0]?.score || 0
+    const projectDims = portrait.projects[0]?.dims
+    const projectValues = projectDims
+      ? FIVE_DIMS.map(d => projectDims[d.key] || latestProjectScore)
+      : FIVE_DIMS.map(() => latestProjectScore)
 
     inst.setOption({
       tooltip: {},
-      legend: { data: ['学生平时', '班级平均'], bottom: 0, textStyle: { color: '#666', fontSize: 12 } },
+      legend: { data: ['学生平时', '班级平均', '最新项目评分'], bottom: 0, textStyle: { color: '#666', fontSize: 11 } },
       radar: {
         center: ['50%', '46%'],
         radius: '65%',
@@ -135,6 +140,14 @@ export default function StudentPortrait() {
           lineStyle: { color: '#faad14', width: 2, type: 'dashed' },
           areaStyle: { color: 'rgba(250,173,20,0.08)' },
           itemStyle: { color: '#faad14' },
+        },
+        {
+          type: 'radar', name: '最新项目评分',
+          data: [{ value: projectValues, name: '最新项目评分' }],
+          symbol: 'diamond', symbolSize: 5,
+          lineStyle: { color: '#52c41a', width: 2 },
+          areaStyle: { color: 'rgba(82,196,26,0.1)' },
+          itemStyle: { color: '#52c41a' },
         },
       ],
     })
@@ -197,30 +210,9 @@ export default function StudentPortrait() {
           </Card>
         </Col>
 
-        <Col span={11} style={{ display: 'flex' }}>
+        <Col span={16} style={{ display: 'flex' }}>
           <Card title="五维能力评估" size="small" style={{ width: '100%' }}>
-            <div ref={radarRef} style={{ width: '100%', height: 460 }} />
-          </Card>
-        </Col>
-        <Col span={5} style={{ display: 'flex' }}>
-          <Card title={<span><ProjectOutlined /> 最新项目</span>} size="small" style={{ width: '100%' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 440, overflowY: 'auto' }}>
-              {portrait.projects.map((p, i) => (
-                <div key={i} style={{
-                  padding: '10px 12px', borderRadius: 8, border: '1px solid #e8e8e8',
-                  background: i === 0 ? 'linear-gradient(135deg, #e6f7ff, #f0f5ff)' : '#fafafa',
-                }}>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: '#333', marginBottom: 6, lineHeight: 1.5 }}>{p.name}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 11, color: '#999' }}>{p.role} · {p.date}</span>
-                    <Tag color="gold" style={{ fontSize: 11, margin: 0 }}>{p.score}分</Tag>
-                  </div>
-                </div>
-              ))}
-              {portrait.projects.length === 0 && (
-                <Empty description="暂无项目" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-              )}
-            </div>
+            <div ref={radarRef} style={{ width: '100%', height: 480 }} />
           </Card>
         </Col>
       </Row>
