@@ -414,7 +414,6 @@ export default function ProjectCooperation() {
               acts.push(<Button key="ps" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setProjectScoreTarget(r); projectScoreForm.resetFields(); setProjectScoreOpen(true) }}>评分</Button>)
               acts.push(<Button key="pc" size="small" icon={<CheckCircleOutlined />} style={{ borderColor: '#52c41a', color: '#52c41a' }} onClick={() => handleProjectComplete(r)}>结项</Button>)
             }
-            acts.push(<Button key="tm" size="small" icon={<TeamOutlined />} onClick={() => { setTeamProject(r); setTeamStudents(r.assignedStudents || []); setTeamMentors((r.teamData?.mentors) || []); setTeamTeachers((r.teamData?.teachers) || []); setTeamOpen(true) }}>组建团队</Button>)
           }
           if (isEnt || role === 'park') acts.push(<Button key="vd" size="small" icon={<EyeOutlined />} onClick={() => { setDetailProject(r); setDetailOpen(true) }}>查看</Button>)
           if (acts.length === 0) acts.push(<span key="-" style={{ color: '#999' }}>-</span>)
@@ -430,7 +429,7 @@ export default function ProjectCooperation() {
     { title: '所属项目', key: 'pn', render: (_, r) => projects.find(p => p.id === r.projectId)?.name || '-' },
     { title: '负责人', dataIndex: 'assignee', key: 'assignee' },
     { title: '截止日期', dataIndex: 'deadline', key: 'deadline' },
-    { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={taskStatusMap[s]?.color}>{taskStatusMap[s]?.text}</Tag> },
+    { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress || (r.status === 'completed' ? 100 : r.status === 'in_progress' ? 50 : 0)} size="small" /> },
     {
       title: '五维均分', dataIndex: 'score', key: 'score', render: (s, r) => {
         if (!s) return '-'
@@ -617,24 +616,15 @@ export default function ProjectCooperation() {
 
     // 非学生角色：项目列表
     if (role === 'teacher') {
+      const teacherProject = projects.find(p => p.teacherId === teacherId)
+      const tabLabel = teacherProject ? `项目管理 - ${teacherProject.name}` : '项目管理'
       items.push({
-        key: 'list', label: '任务分配', children: (
+        key: 'list', label: tabLabel, children: (
           <div>
-            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-              <Select value={taskFilterStatus} onChange={setTaskFilterStatus} style={{ width: 160 }}
-                options={[
-                  { value: 'all', label: '全部状态' },
-                  { value: 'pending', label: '待开始' },
-                  { value: 'in_progress', label: '进行中' },
-                  { value: 'submitted', label: '待评价' },
-                  { value: 'completed', label: '已完成' },
-                ]}
-              />
-            </div>
-            {visibleTasks.length === 0 ? (
-              <Empty description="暂无任务" />
+            {filteredProjects.length === 0 ? (
+              <Empty description="暂无项目" />
             ) : (
-              <Table dataSource={visibleTasks} columns={taskColumns} rowKey="id" />
+              <Table dataSource={filteredProjects} columns={projectColumns} rowKey="id" />
             )}
           </div>
         )
