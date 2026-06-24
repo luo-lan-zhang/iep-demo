@@ -19,12 +19,12 @@ const FIVE_DIMS = [
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialProjects = [
-  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 500000, teacherId: 6, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
-  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 286000, teacherId: 6, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
+  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
+  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 286000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
   { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 800000, teacherId: null, teacherName: null, schoolId: null, status: 'pending', progress: 0, description: '5G基站天线阵列的优化设计', deliverables: '设计方案', requirements: '', tags: ['5G', '天线'], assignedStudents: [] },
-  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 600000, teacherId: 6, teacherName: '张教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
-  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 200000, teacherId: 6, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
-  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 400000, teacherId: 6, teacherName: '张教授', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
+  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 600000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
+  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 200000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
+  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 400000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
 ]
 
 const enterpriseProjects = [
@@ -43,10 +43,31 @@ const enterpriseProjects = [
 
 // Tasks with 五维 evaluation data
 const initialTasks = [
-  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
-  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'in_progress', score: 88, comment: '数据采集方案合理，覆盖面广', dims: { profession: 87, innovation: 85, teamwork: 88, learning: 90, adaptability: 86 } },
-  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'in_progress', score: 85, comment: '模型收敛效果良好', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 88, adaptability: 82 } },
-  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: 90, comment: '测试用例覆盖全面', dims: { profession: 91, innovation: 88, teamwork: 90, learning: 89, adaptability: 92 } },
+  // 项目1 - 物联网固件AI污点检测与POC智能协同验证系统
+  { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', progress: 100, score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
+  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'in_progress', progress: 65, score: 88, comment: '数据采集方案合理，覆盖面广', dims: { profession: 87, innovation: 85, teamwork: 88, learning: 90, adaptability: 86 } },
+  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'in_progress', progress: 40, score: 85, comment: '模型收敛效果良好', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 88, adaptability: 82 } },
+  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', progress: 20, score: 90, comment: '测试用例覆盖全面', dims: { profession: 91, innovation: 88, teamwork: 90, learning: 89, adaptability: 92 } },
+  // 项目2 - 矿用无线张力油压监测系统
+  { id: 5, projectId: 2, name: '需求分析', assigneeId: 5, assignee: '孙七', deadline: '2026-02-15', status: 'completed', progress: 100, score: 90, comment: '矿山监测需求分析透彻，技术路线清晰', dims: { profession: 89, innovation: 88, teamwork: 90, learning: 91, adaptability: 92 } },
+  { id: 6, projectId: 2, name: '数据采集', assigneeId: 6, assignee: '周八', deadline: '2026-04-18', status: 'completed', progress: 100, score: 87, comment: '张力油压传感数据采集方案完善', dims: { profession: 86, innovation: 85, teamwork: 88, learning: 87, adaptability: 89 } },
+  { id: 7, projectId: 2, name: '模型训练', assigneeId: 7, assignee: '吴九', deadline: '2026-06-20', status: 'in_progress', progress: 70, score: 85, comment: '无线信号模型训练进展顺利', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 85, adaptability: 87 } },
+  { id: 8, projectId: 2, name: '系统测试', assigneeId: 5, assignee: '孙七', deadline: '2026-08-10', status: 'pending', progress: 0, score: null, comment: '', dims: null },
+  // 项目4 - 工业机器人控制算法
+  { id: 9, projectId: 4, name: '需求分析', assigneeId: 4, assignee: '赵六', deadline: '2026-02-28', status: 'completed', progress: 100, score: 88, comment: '工业机器人控制需求梳理完整', dims: { profession: 87, innovation: 86, teamwork: 88, learning: 89, adaptability: 90 } },
+  { id: 10, projectId: 4, name: '数据采集', assigneeId: 4, assignee: '赵六', deadline: '2026-04-15', status: 'in_progress', progress: 55, score: 84, comment: '六轴运动数据采集进行中', dims: { profession: 83, innovation: 85, teamwork: 82, learning: 84, adaptability: 86 } },
+  { id: 11, projectId: 4, name: '模型训练', assigneeId: 3, assignee: '王五', deadline: '2026-06-30', status: 'pending', progress: 0, score: null, comment: '', dims: null },
+  { id: 12, projectId: 4, name: '系统测试', assigneeId: 2, assignee: '李四', deadline: '2026-08-15', status: 'pending', progress: 0, score: null, comment: '', dims: null },
+  // 项目5 - 学生成绩分析平台（已完成）
+  { id: 13, projectId: 5, name: '需求分析', assigneeId: 1, assignee: '杨亚楠', deadline: '2025-09-15', status: 'completed', progress: 100, score: 95, comment: '教育数据分析需求非常到位', dims: { profession: 94, innovation: 93, teamwork: 95, learning: 96, adaptability: 94 } },
+  { id: 14, projectId: 5, name: '数据采集', assigneeId: 2, assignee: '李四', deadline: '2025-10-30', status: 'completed', progress: 100, score: 90, comment: '学生成绩数据采集清洗规范', dims: { profession: 89, innovation: 88, teamwork: 91, learning: 90, adaptability: 92 } },
+  { id: 15, projectId: 5, name: '模型训练', assigneeId: 7, assignee: '吴九', deadline: '2025-12-20', status: 'completed', progress: 100, score: 88, comment: '成绩预测模型准确率较高', dims: { profession: 87, innovation: 88, teamwork: 86, learning: 89, adaptability: 90 } },
+  { id: 16, projectId: 5, name: '系统测试', assigneeId: 1, assignee: '杨亚楠', deadline: '2026-01-25', status: 'completed', progress: 100, score: 92, comment: '全流程测试覆盖完整', dims: { profession: 91, innovation: 90, teamwork: 93, learning: 92, adaptability: 91 } },
+  // 项目6 - 自动驾驶感知算法优化
+  { id: 17, projectId: 6, name: '需求分析', assigneeId: 1, assignee: '杨亚楠', deadline: '2026-01-10', status: 'completed', progress: 100, score: 91, comment: '多传感器融合需求分析深入', dims: { profession: 90, innovation: 92, teamwork: 89, learning: 91, adaptability: 93 } },
+  { id: 18, projectId: 6, name: '数据采集', assigneeId: 3, assignee: '王五', deadline: '2026-03-05', status: 'completed', progress: 100, score: 87, comment: '感知数据集标注质量高', dims: { profession: 86, innovation: 88, teamwork: 85, learning: 87, adaptability: 89 } },
+  { id: 19, projectId: 6, name: '模型训练', assigneeId: 7, assignee: '吴九', deadline: '2026-05-20', status: 'completed', progress: 100, score: 85, comment: '感知算法模型效果达到预期', dims: { profession: 83, innovation: 87, teamwork: 84, learning: 86, adaptability: 85 } },
+  { id: 20, projectId: 6, name: '系统测试', assigneeId: 1, assignee: '杨亚楠', deadline: '2026-06-15', status: 'submitted', progress: 90, score: 89, comment: '实车测试验证通过，待最终确认', dims: { profession: 88, innovation: 90, teamwork: 87, learning: 89, adaptability: 91 } },
 ]
 
 const statusMap = {
@@ -77,6 +98,7 @@ export default function ProjectCooperation() {
   const [tasks, setTasks] = useState(initialTasks)
   const [filterStatus, setFilterStatus] = useState('all')
   const [taskFilterStatus, setTaskFilterStatus] = useState('all')
+  const [teacherProjectFilter, setTeacherProjectFilter] = useState('all')
 
   // Modals
   const [publishOpen, setPublishOpen] = useState(false)
@@ -145,6 +167,7 @@ export default function ProjectCooperation() {
     if (role === 'teacher' && teacherId) {
       const tIds = projects.filter(p => p.teacherId === teacherId).map(p => p.id)
       list = list.filter(t => tIds.includes(t.projectId))
+      if (teacherProjectFilter !== 'all') list = list.filter(t => t.projectId === teacherProjectFilter)
       if (taskFilterStatus !== 'all') list = list.filter(t => t.status === taskFilterStatus)
     }
     if (role === 'mentor') {
@@ -614,18 +637,29 @@ export default function ProjectCooperation() {
 
     // 非学生角色：项目列表
     if (role === 'teacher') {
-      const teacherProject = projects.find(p => p.teacherId === teacherId)
+      const teacherProjects = projects.filter(p => p.teacherId === teacherId)
+      const teacherProject = teacherProjects.length > 0 ? teacherProjects[0] : null
       const tabLabel = teacherProject ? `任务管理 - ${teacherProject.name}` : '任务管理'
       items.push({
         key: 'list', label: tabLabel, children: (
           <div>
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: 16, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Select
+                value={teacherProjectFilter}
+                onChange={setTeacherProjectFilter}
+                style={{ width: 260 }}
+                placeholder="按项目筛选任务"
+                options={[
+                  { value: 'all', label: '全部项目' },
+                  ...teacherProjects.map(p => ({ value: p.id, label: p.name })),
+                ]}
+              />
               <Button type="primary" icon={<PlusOutlined />} onClick={() => {
                 const act = projects.filter(p => p.teacherId === teacherId && p.status === 'in_progress')
                 if (act.length === 0) { message.warning('没有进行中的项目'); return }
                 setTaskProjectId(act[0].id); taskForm.resetFields(); setTaskOpen(true)
               }}>下发任务</Button>
-              <span style={{ marginLeft: 12, color: '#666' }}>将项目任务/模块下发给具体学生执行</span>
+              <span style={{ color: '#666' }}>将项目任务/模块下发给具体学生执行</span>
             </div>
             {visibleTasks.length === 0 ? (
               <Empty description="暂无任务" />
@@ -837,10 +871,10 @@ export default function ProjectCooperation() {
     }
 
     return items
-  }, [filteredProjects, projectColumns, taskColumns, studentTaskColumns, filterStatus, role, teacherId, visibleTasks])
+  }, [filteredProjects, projectColumns, taskColumns, studentTaskColumns, filterStatus, teacherProjectFilter, role, teacherId, visibleTasks])
 
   return (
-    <Card title="项目管理">
+    <Card title={role === 'teacher' ? (() => { const tp = projects.filter(p => p.teacherId === teacherId); return tp.length > 0 ? `项目管理 - ${tp[0].name}` : '项目管理'; })() : '项目管理'}>
       <Tabs items={tabItems} />
 
       {/* 发布项目 */}
