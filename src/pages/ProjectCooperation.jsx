@@ -639,7 +639,7 @@ export default function ProjectCooperation() {
     if (role === 'teacher') {
       const teacherProjects = projects.filter(p => p.teacherId === teacherId)
       const teacherProject = teacherProjects.length > 0 ? teacherProjects[0] : null
-      const tabLabel = teacherProject ? `任务管理 - ${teacherProject.name}` : '任务管理'
+      const tabLabel = '任务管理'
       items.push({
         key: 'list', label: tabLabel, children: (
           <div>
@@ -659,7 +659,6 @@ export default function ProjectCooperation() {
                 if (act.length === 0) { message.warning('没有进行中的项目'); return }
                 setTaskProjectId(act[0].id); taskForm.resetFields(); setTaskOpen(true)
               }}>下发任务</Button>
-              <span style={{ color: '#666' }}>将项目任务/模块下发给具体学生执行</span>
             </div>
             {visibleTasks.length === 0 ? (
               <Empty description="暂无任务" />
@@ -669,32 +668,10 @@ export default function ProjectCooperation() {
                 { title: '负责人', dataIndex: 'assignee', key: 'assignee' },
                 { title: '截止日期', dataIndex: 'deadline', key: 'deadline' },
                 { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={taskStatusMap[s]?.color}>{taskStatusMap[s]?.text}</Tag> },
-                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress || (r.status === 'completed' ? 100 : r.status === 'in_progress' ? 50 : 0)} size="small" /> },
-                {
-                  title: '五维均分', dataIndex: 'score', key: 'score', render: (s, r) => {
-                    if (!s) return '-'
-                    return (
-                      <Tooltip title={
-                        <div>
-                          {FIVE_DIMS.map(d => (
-                            <div key={d.key} style={{ marginBottom: 2 }}>{d.label}: {r.dims?.[d.key] || 0}分</div>
-                          ))}
-                          <Divider style={{ margin: '4px 0', borderColor: 'rgba(255,255,255,0.2)' }} />
-                          <div style={{ fontWeight: 'bold' }}>综合: {s}分</div>
-                        </div>
-                      }>
-                        <span style={{ cursor: 'pointer' }}>
-                          <Rate disabled value={Math.round(s/20)} allowHalf />
-                          <span style={{ fontSize: 12, color: '#999', marginLeft: 4 }}>{s}分</span>
-                        </span>
-                      </Tooltip>
-                    )
-                  }
-                },
+                { title: '进度', key: 'progress', render: () => <Progress percent={100} size="small" /> },
                 { title: '操作', key: 'action', width: 200, render: (_, r) => (
                   <span style={{ display: 'flex', gap: 4 }}>
-                    {r.status === 'in_progress' && <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评分</Button>}
-                    {r.status === 'submitted' && <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>}
+                    <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评分</Button>
                     <Button size="small" icon={<EyeOutlined />} onClick={() => {
                       const pj = projects.find(p => p.id === r.projectId)
                       Modal.info({ title: r.name, width: 560, content: (
