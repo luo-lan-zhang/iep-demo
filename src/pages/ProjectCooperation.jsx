@@ -19,12 +19,12 @@ const FIVE_DIMS = [
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialProjects = [
-  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '华为', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
-  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '腾讯', budget: 286000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
-  { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '华为', budget: 800000, teacherId: null, teacherName: null, schoolId: null, status: 'pending', progress: 0, description: '5G基站天线阵列的优化设计', deliverables: '设计方案', requirements: '', tags: ['5G', '天线'], assignedStudents: [] },
-  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '华为', budget: 600000, teacherId: 6, teacherName: '陈教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
-  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '腾讯', budget: 200000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
-  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '华为', budget: 400000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
+  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
+  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 286000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
+  { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 800000, teacherId: null, teacherName: null, schoolId: null, status: 'pending', progress: 0, description: '5G基站天线阵列的优化设计', deliverables: '设计方案', requirements: '', tags: ['5G', '天线'], assignedStudents: [] },
+  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 600000, teacherId: 6, teacherName: '陈教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
+  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 200000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
+  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 400000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
 ]
 
 const enterpriseProjects = [
@@ -44,9 +44,10 @@ const enterpriseProjects = [
 // Tasks with 五维 evaluation data
 const initialTasks = [
   { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
-  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'submitted', score: null, comment: '', dims: null },
+  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'in_progress', score: null, comment: '', dims: null },
   { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'pending', score: null, comment: '', dims: null },
   { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
+  { id: 8, projectId: 1, name: '系统运维', assigneeId: 5, assignee: '牛凯琦', deadline: '2026-09-15', status: 'pending', score: null, comment: '', dims: null },
   { id: 5, projectId: 2, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
   { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'submitted', score: null, comment: '', dims: null },
   { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'pending', score: null, comment: '', dims: null },
@@ -71,7 +72,7 @@ export default function ProjectCooperation() {
   const { user, hasPermission } = useAuth()
   const role = user?.role || 'council'
   const enterpriseId = user?.enterpriseId
-  const teacherId = user?.teacherId
+  const teacherId = user?.teacherId || (role === 'teacher' ? user?.id : undefined)
   const schoolId = user?.schoolId
   const studentId = user?.id || 7
 
