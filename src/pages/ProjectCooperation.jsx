@@ -625,7 +625,6 @@ export default function ProjectCooperation() {
               <Empty description="暂无项目" />
             ) : (
               <Table dataSource={filteredProjects} columns={[
-                { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
                 { title: '企业名称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
                 { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
                 { title: '原负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <span style={{ color: '#999' }}>-</span> },
