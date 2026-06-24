@@ -49,24 +49,24 @@ const initialTasks = [
   { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'in_progress', progress: 40, score: 85, comment: '模型收敛效果良好', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 88, adaptability: 82 } },
   { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', progress: 20, score: 90, comment: '测试用例覆盖全面', dims: { profession: 91, innovation: 88, teamwork: 90, learning: 89, adaptability: 92 } },
   // 项目2 - 矿用无线张力油压监测系统
-  { id: 5, projectId: 2, name: '需求分析', assigneeId: 5, assignee: '孙七', deadline: '2026-02-15', status: 'completed', progress: 100, score: 90, comment: '矿山监测需求分析透彻，技术路线清晰', dims: { profession: 89, innovation: 88, teamwork: 90, learning: 91, adaptability: 92 } },
-  { id: 6, projectId: 2, name: '数据采集', assigneeId: 6, assignee: '周八', deadline: '2026-04-18', status: 'completed', progress: 100, score: 87, comment: '张力油压传感数据采集方案完善', dims: { profession: 86, innovation: 85, teamwork: 88, learning: 87, adaptability: 89 } },
-  { id: 7, projectId: 2, name: '模型训练', assigneeId: 7, assignee: '吴九', deadline: '2026-06-20', status: 'in_progress', progress: 70, score: 85, comment: '无线信号模型训练进展顺利', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 85, adaptability: 87 } },
-  { id: 8, projectId: 2, name: '系统测试', assigneeId: 5, assignee: '孙七', deadline: '2026-08-10', status: 'pending', progress: 0, score: null, comment: '', dims: null },
+  { id: 5, projectId: 2, name: '需求分析', assigneeId: 5, assignee: '孙逸凡', deadline: '2026-02-15', status: 'completed', progress: 100, score: 90, comment: '矿山监测需求分析透彻，技术路线清晰', dims: { profession: 89, innovation: 88, teamwork: 90, learning: 91, adaptability: 92 } },
+  { id: 6, projectId: 2, name: '数据采集', assigneeId: 6, assignee: '周子涵', deadline: '2026-04-18', status: 'completed', progress: 100, score: 87, comment: '张力油压传感数据采集方案完善', dims: { profession: 86, innovation: 85, teamwork: 88, learning: 87, adaptability: 89 } },
+  { id: 7, projectId: 2, name: '模型训练', assigneeId: 7, assignee: '吴俊杰', deadline: '2026-06-20', status: 'in_progress', progress: 70, score: 85, comment: '无线信号模型训练进展顺利', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 85, adaptability: 87 } },
+  { id: 8, projectId: 2, name: '系统测试', assigneeId: 5, assignee: '孙逸凡', deadline: '2026-08-10', status: 'pending', progress: 0, score: null, comment: '', dims: null },
   // 项目4 - 工业机器人控制算法
-  { id: 9, projectId: 4, name: '需求分析', assigneeId: 4, assignee: '赵六', deadline: '2026-02-28', status: 'completed', progress: 100, score: 88, comment: '工业机器人控制需求梳理完整', dims: { profession: 87, innovation: 86, teamwork: 88, learning: 89, adaptability: 90 } },
-  { id: 10, projectId: 4, name: '数据采集', assigneeId: 4, assignee: '赵六', deadline: '2026-04-15', status: 'in_progress', progress: 55, score: 84, comment: '六轴运动数据采集进行中', dims: { profession: 83, innovation: 85, teamwork: 82, learning: 84, adaptability: 86 } },
-  { id: 11, projectId: 4, name: '模型训练', assigneeId: 3, assignee: '王五', deadline: '2026-06-30', status: 'pending', progress: 0, score: null, comment: '', dims: null },
-  { id: 12, projectId: 4, name: '系统测试', assigneeId: 2, assignee: '李四', deadline: '2026-08-15', status: 'pending', progress: 0, score: null, comment: '', dims: null },
+  { id: 9, projectId: 4, name: '需求分析', assigneeId: 4, assignee: '赵博文', deadline: '2026-02-28', status: 'completed', progress: 100, score: 88, comment: '工业机器人控制需求梳理完整', dims: { profession: 87, innovation: 86, teamwork: 88, learning: 89, adaptability: 90 } },
+  { id: 10, projectId: 4, name: '数据采集', assigneeId: 4, assignee: '赵博文', deadline: '2026-04-15', status: 'in_progress', progress: 55, score: 84, comment: '六轴运动数据采集进行中', dims: { profession: 83, innovation: 85, teamwork: 82, learning: 84, adaptability: 86 } },
+  { id: 11, projectId: 4, name: '模型训练', assigneeId: 3, assignee: '王浩然', deadline: '2026-06-30', status: 'pending', progress: 0, score: null, comment: '', dims: null },
+  { id: 12, projectId: 4, name: '系统测试', assigneeId: 2, assignee: '李明哲', deadline: '2026-08-15', status: 'pending', progress: 0, score: null, comment: '', dims: null },
   // 项目5 - 学生成绩分析平台（已完成）
   { id: 13, projectId: 5, name: '需求分析', assigneeId: 1, assignee: '杨亚楠', deadline: '2025-09-15', status: 'completed', progress: 100, score: 95, comment: '教育数据分析需求非常到位', dims: { profession: 94, innovation: 93, teamwork: 95, learning: 96, adaptability: 94 } },
-  { id: 14, projectId: 5, name: '数据采集', assigneeId: 2, assignee: '李四', deadline: '2025-10-30', status: 'completed', progress: 100, score: 90, comment: '学生成绩数据采集清洗规范', dims: { profession: 89, innovation: 88, teamwork: 91, learning: 90, adaptability: 92 } },
-  { id: 15, projectId: 5, name: '模型训练', assigneeId: 7, assignee: '吴九', deadline: '2025-12-20', status: 'completed', progress: 100, score: 88, comment: '成绩预测模型准确率较高', dims: { profession: 87, innovation: 88, teamwork: 86, learning: 89, adaptability: 90 } },
+  { id: 14, projectId: 5, name: '数据采集', assigneeId: 2, assignee: '李明哲', deadline: '2025-10-30', status: 'completed', progress: 100, score: 90, comment: '学生成绩数据采集清洗规范', dims: { profession: 89, innovation: 88, teamwork: 91, learning: 90, adaptability: 92 } },
+  { id: 15, projectId: 5, name: '模型训练', assigneeId: 7, assignee: '吴俊杰', deadline: '2025-12-20', status: 'completed', progress: 100, score: 88, comment: '成绩预测模型准确率较高', dims: { profession: 87, innovation: 88, teamwork: 86, learning: 89, adaptability: 90 } },
   { id: 16, projectId: 5, name: '系统测试', assigneeId: 1, assignee: '杨亚楠', deadline: '2026-01-25', status: 'completed', progress: 100, score: 92, comment: '全流程测试覆盖完整', dims: { profession: 91, innovation: 90, teamwork: 93, learning: 92, adaptability: 91 } },
   // 项目6 - 自动驾驶感知算法优化
   { id: 17, projectId: 6, name: '需求分析', assigneeId: 1, assignee: '杨亚楠', deadline: '2026-01-10', status: 'completed', progress: 100, score: 91, comment: '多传感器融合需求分析深入', dims: { profession: 90, innovation: 92, teamwork: 89, learning: 91, adaptability: 93 } },
-  { id: 18, projectId: 6, name: '数据采集', assigneeId: 3, assignee: '王五', deadline: '2026-03-05', status: 'completed', progress: 100, score: 87, comment: '感知数据集标注质量高', dims: { profession: 86, innovation: 88, teamwork: 85, learning: 87, adaptability: 89 } },
-  { id: 19, projectId: 6, name: '模型训练', assigneeId: 7, assignee: '吴九', deadline: '2026-05-20', status: 'completed', progress: 100, score: 85, comment: '感知算法模型效果达到预期', dims: { profession: 83, innovation: 87, teamwork: 84, learning: 86, adaptability: 85 } },
+  { id: 18, projectId: 6, name: '数据采集', assigneeId: 3, assignee: '王浩然', deadline: '2026-03-05', status: 'completed', progress: 100, score: 87, comment: '感知数据集标注质量高', dims: { profession: 86, innovation: 88, teamwork: 85, learning: 87, adaptability: 89 } },
+  { id: 19, projectId: 6, name: '模型训练', assigneeId: 7, assignee: '吴俊杰', deadline: '2026-05-20', status: 'completed', progress: 100, score: 85, comment: '感知算法模型效果达到预期', dims: { profession: 83, innovation: 87, teamwork: 84, learning: 86, adaptability: 85 } },
   { id: 20, projectId: 6, name: '系统测试', assigneeId: 1, assignee: '杨亚楠', deadline: '2026-06-15', status: 'submitted', progress: 90, score: 89, comment: '实车测试验证通过，待最终确认', dims: { profession: 88, innovation: 90, teamwork: 87, learning: 89, adaptability: 91 } },
 ]
 

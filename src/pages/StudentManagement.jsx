@@ -88,7 +88,7 @@ export default function StudentManagement() {
       <Modal title="批量导入学生" open={batchOpen} onOk={handleBatchImport} onCancel={() => setBatchOpen(false)} width={600} okText="导入">
         <p style={{ color: '#666', marginBottom: 12 }}>每行一条记录，格式：<code>姓名,学校ID,专业,年级,电话(可选),邮箱(可选)</code></p>
         <Input.TextArea rows={10} value={batchText} onChange={e => setBatchText(e.target.value)}
-          placeholder={'张三,1,计算机科学与技术,2022级,13900139001,zhangsan@szu.edu.cn\n李四,1,软件工程,2022级,13900139002,lisi@szu.edu.cn\n王五,1,人工智能,2023级'}
+          placeholder={'张三,1,计算机科学与技术,2022级,13900139001,zhangsan@szu.edu.cn\n李明哲,1,软件工程,2022级,13900139002,lisi@szu.edu.cn\n王浩然,1,人工智能,2023级'}
         />
       </Modal>
 

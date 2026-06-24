@@ -298,13 +298,13 @@ export default function Dashboard() {
     const myInProgress = myProjects.filter(p => p.status === 'in_progress').length
     const myPending = myProjects.filter(p => p.status === 'pending').length
     const myTasks = [
-      { id: 1, projectName: '智能仓储管理系统开发', taskName: '后端API开发', student: '李四', status: 'submitted', deadline: '2024-09-30' },
-      { id: 2, projectName: 'AI质检模型训练', taskName: '数据集标注', student: '孙七', status: 'completed', deadline: '2024-08-30', score: 88 },
+      { id: 1, projectName: '智能仓储管理系统开发', taskName: '后端API开发', student: '李明哲', status: 'submitted', deadline: '2024-09-30' },
+      { id: 2, projectName: 'AI质检模型训练', taskName: '数据集标注', student: '孙逸凡', status: 'completed', deadline: '2024-08-30', score: 88 },
       { id: 3, projectName: '智能仓储管理系统开发', taskName: '需求分析', student: '张三', status: 'completed', deadline: '2024-08-15', score: 92 },
     ]
     const pendingEv = myTasks.filter(t => t.status === 'submitted').length
     const myRecs = [
-      { id: 1, student: '孙七', position: 'HarmonyOS开发工程师', enterprise: '华为', status: 'pending', date: '2024-07-10' },
+      { id: 1, student: '孙逸凡', position: 'HarmonyOS开发工程师', enterprise: '华为', status: 'pending', date: '2024-07-10' },
       { id: 2, student: '张三', position: 'AI算法工程师', enterprise: '腾讯', status: 'pending', date: '2024-07-12' },
     ]
     return (

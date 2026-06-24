@@ -24,7 +24,7 @@ const initialApplications = [
   { id: 3, positionId: 3, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '石家庄中川科技有限公司', positionTitle: '开发工程师', status: 'pending', applyDate: '2026-05-18', matchScore: 88 },
   { id: 4, positionId: 1, studentId: 2, studentName: '陈芝树', major: '软件技术', enterpriseName: '中数智创科技有限公司', positionTitle: '大数据开发工程师', status: 'rejected', applyDate: '2026-06-01', matchScore: 78 },
   { id: 5, positionId: 4, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '河北唐讯科技有限公司', positionTitle: '软件开发工程师', status: 'pending', applyDate: '2026-06-05', matchScore: 90 },
-  { id: 6, positionId: 5, studentId: 3, studentName: '王五', major: '人工智能', enterpriseName: '河北新磁信息技术有限公司', positionTitle: '系统运维工程师', status: 'approved', applyDate: '2026-05-20', matchScore: 82 },
+  { id: 6, positionId: 5, studentId: 3, studentName: '王浩然', major: '人工智能', enterpriseName: '河北新磁信息技术有限公司', positionTitle: '系统运维工程师', status: 'approved', applyDate: '2026-05-20', matchScore: 82 },
   { id: 7, positionId: 8, studentId: 1, studentName: '贾梦圆', major: '软件技术', enterpriseName: '中憬科技集团有限公司', positionTitle: '网络运维工程师', status: 'pending', applyDate: '2026-06-10', matchScore: 86 },
   { id: 8, positionId: 3, studentId: 2, studentName: '陈芝树', major: '软件技术', enterpriseName: '石家庄中川科技有限公司', positionTitle: '开发工程师', status: 'pending', applyDate: '2026-06-12', matchScore: 84 },
 ]
