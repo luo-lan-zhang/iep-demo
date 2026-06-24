@@ -44,13 +44,9 @@ const enterpriseProjects = [
 // Tasks with 五维 evaluation data
 const initialTasks = [
   { id: 1, projectId: 1, name: '需求分析', assigneeId: 1, assignee: '高怡希', deadline: '2026-01-20', status: 'completed', score: 92, comment: '需求文档撰写清晰完整', dims: { profession: 90, innovation: 92, teamwork: 91, learning: 88, adaptability: 94 } },
-  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'pending', score: null, comment: '', dims: null },
-  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: null, comment: '', dims: null },
-  { id: 8, projectId: 1, name: '系统运维', assigneeId: 5, assignee: '牛凯琦', deadline: '2026-09-15', status: 'pending', score: null, comment: '', dims: null },
-  { id: 5, projectId: 2, name: '设备选型', assigneeId: 5, assignee: '牛凯琦', deadline: '2025-09-26', status: 'completed', score: 95, comment: '选型方案详尽合理', dims: { profession: 95, innovation: 90, teamwork: 95, learning: 92, adaptability: 90 } },
-  { id: 6, projectId: 2, name: '架构设计', assigneeId: 6, assignee: '王雪',   deadline: '2025-10-12', status: 'submitted', score: null, comment: '', dims: null },
-  { id: 7, projectId: 2, name: '系统调优', assigneeId: 7, assignee: '李思琪', deadline: '2026-04-05', status: 'pending', score: null, comment: '', dims: null },
+  { id: 2, projectId: 1, name: '数据采集', assigneeId: 2, assignee: '彭子芮', deadline: '2026-03-26', status: 'in_progress', score: 88, comment: '数据采集方案合理，覆盖面广', dims: { profession: 87, innovation: 85, teamwork: 88, learning: 90, adaptability: 86 } },
+  { id: 3, projectId: 1, name: '模型训练', assigneeId: 3, assignee: '张子怡', deadline: '2026-05-26', status: 'in_progress', score: 85, comment: '模型收敛效果良好', dims: { profession: 84, innovation: 86, teamwork: 83, learning: 88, adaptability: 82 } },
+  { id: 4, projectId: 1, name: '系统测试', assigneeId: 4, assignee: '胡瑜韬', deadline: '2026-07-26', status: 'in_progress', score: 90, comment: '测试用例覆盖全面', dims: { profession: 91, innovation: 88, teamwork: 90, learning: 89, adaptability: 92 } },
 ]
 
 const statusMap = {
