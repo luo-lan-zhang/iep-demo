@@ -624,7 +624,26 @@ export default function ProjectCooperation() {
             {filteredProjects.length === 0 ? (
               <Empty description="暂无项目" />
             ) : (
-              <Table dataSource={filteredProjects} columns={projectColumns} rowKey="id" />
+              <Table dataSource={filteredProjects} columns={[
+                { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a> },
+                { title: '企业名称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
+                { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
+                { title: '原负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <span style={{ color: '#999' }}>-</span> },
+                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
+                { title: '操作', key: 'action', width: 280, render: (_, r) => {
+                  const acts = []
+                  if (r.status === 'in_progress') {
+                    acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
+                    acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
+                    acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }} onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
+                    acts.push(<Button key="ps" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setProjectScoreTarget(r); projectScoreForm.resetFields(); setProjectScoreOpen(true) }}>评分</Button>)
+                    acts.push(<Button key="pc" size="small" icon={<CheckCircleOutlined />} style={{ borderColor: '#52c41a', color: '#52c41a' }} onClick={() => handleProjectComplete(r)}>结项</Button>)
+                  }
+                  if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
+                  return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
+                }},
+              ]} rowKey="id" size="small" />
             )}
           </div>
         )
