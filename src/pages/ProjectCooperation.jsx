@@ -615,7 +615,7 @@ export default function ProjectCooperation() {
     // 非学生角色：项目列表
     if (role === 'teacher') {
       const teacherProject = projects.find(p => p.teacherId === teacherId)
-      const tabLabel = teacherProject ? `项目管理 - ${teacherProject.name}` : '项目管理'
+      const tabLabel = teacherProject ? `任务管理 - ${teacherProject.name}` : '任务管理'
       items.push({
         key: 'list', label: tabLabel, children: (
           <div>
