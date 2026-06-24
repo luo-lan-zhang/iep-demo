@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     enterprise: { id: 3,  username: 'enterprise', name: '刘总（河北圣诺）',  role: 'enterprise', avatar: '' },
     mentor:     { id: 4,  username: 'mentor',    name: '王导师（河北圣诺）', role: 'mentor',     avatar: '' },
     school:     { id: 5,  username: 'school',    name: '李校长（石家庄信息工程职业学院）', role: 'school',     avatar: '' },
-    teacher:    { id: 6,  username: 'teacher',   name: '张晓雷', role: 'teacher',    avatar: '' },
+    teacher:    { id: 6,  username: 'teacher',   name: '张晓蕾', role: 'teacher',    avatar: '' },
     student:    { id: 7,  username: 'student',   name: '杨亚楠',   role: 'student',    avatar: '' },
   }
 
