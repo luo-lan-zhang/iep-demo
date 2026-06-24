@@ -15,7 +15,14 @@ const roleMeta = {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('auth_user')
-    return saved ? JSON.parse(saved) : null
+    if (!saved) return null
+    const parsed = JSON.parse(saved)
+    // migrate old teacher name
+    if (parsed.role === 'teacher' && (parsed.name === '张教授（石家庄信息工程职业学院）' || parsed.name === '张晓雷' || parsed.name === '张教授')) {
+      parsed.name = '张晓蕾'
+      localStorage.setItem('auth_user', JSON.stringify(parsed))
+    }
+    return parsed
   })
 
   const enrichedUser = useMemo(() => {
