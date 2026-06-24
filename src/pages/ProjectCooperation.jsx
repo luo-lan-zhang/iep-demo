@@ -623,28 +623,63 @@ export default function ProjectCooperation() {
       items.push({
         key: 'list', label: tabLabel, children: (
           <div>
-            {filteredProjects.length === 0 ? (
-              <Empty description="暂无项目" />
+            <div style={{ marginBottom: 16 }}>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => {
+                const act = projects.filter(p => p.teacherId === teacherId && p.status === 'in_progress')
+                if (act.length === 0) { message.warning('没有进行中的项目'); return }
+                setTaskProjectId(act[0].id); taskForm.resetFields(); setTaskOpen(true)
+              }}>下发任务</Button>
+              <span style={{ marginLeft: 12, color: '#666' }}>将项目任务/模块下发给具体学生执行</span>
+            </div>
+            {visibleTasks.length === 0 ? (
+              <Empty description="暂无任务" />
             ) : (
-              <Table dataSource={filteredProjects} columns={[
-                { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a>, ellipsis: true },
-                { title: '企业名称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
-                { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
-                { title: '负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <span style={{ color: '#999' }}>-</span> },
-                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
-                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
-                { title: '操作', key: 'action', width: 280, render: (_, r) => {
-                  const acts = []
-                  if (r.status === 'in_progress') {
-                    acts.push(<Button key="at" size="small" onClick={() => { setTaskProjectId(r.id); taskForm.resetFields(); setTaskOpen(true) }}>分配任务</Button>)
-                    acts.push(<Button key="gt" size="small" icon={<ScheduleOutlined />} onClick={() => { setGanttProject(r); setGanttOpen(true) }}>甘特图</Button>)
-                    acts.push(<Button key="mr" size="small" icon={<CheckCircleOutlined />} style={{ backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff' }} onClick={() => { setReviewProject(r); setReviewType('mid'); reviewForm.resetFields(); setReviewOpen(true) }}>项目评审</Button>)
-                    acts.push(<Button key="ps" size="small" type="primary" icon={<StarOutlined />} onClick={() => { setProjectScoreTarget(r); projectScoreForm.resetFields(); setProjectScoreOpen(true) }}>评分</Button>)
-                    acts.push(<Button key="pc" size="small" icon={<CheckCircleOutlined />} style={{ borderColor: '#52c41a', color: '#52c41a' }} onClick={() => handleProjectComplete(r)}>结项</Button>)
+              <Table dataSource={visibleTasks} columns={[
+                { title: '任务名称', dataIndex: 'name', key: 'name' },
+                { title: '负责人', dataIndex: 'assignee', key: 'assignee' },
+                { title: '截止日期', dataIndex: 'deadline', key: 'deadline' },
+                { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={taskStatusMap[s]?.color}>{taskStatusMap[s]?.text}</Tag> },
+                { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress || (r.status === 'completed' ? 100 : r.status === 'in_progress' ? 50 : 0)} size="small" /> },
+                {
+                  title: '五维均分', dataIndex: 'score', key: 'score', render: (s, r) => {
+                    if (!s) return '-'
+                    return (
+                      <Tooltip title={
+                        <div>
+                          {FIVE_DIMS.map(d => (
+                            <div key={d.key} style={{ marginBottom: 2 }}>{d.label}: {r.dims?.[d.key] || 0}分</div>
+                          ))}
+                          <Divider style={{ margin: '4px 0', borderColor: 'rgba(255,255,255,0.2)' }} />
+                          <div style={{ fontWeight: 'bold' }}>综合: {s}分</div>
+                        </div>
+                      }>
+                        <span style={{ cursor: 'pointer' }}>
+                          <Rate disabled value={Math.round(s/20)} allowHalf />
+                          <span style={{ fontSize: 12, color: '#999', marginLeft: 4 }}>{s}分</span>
+                        </span>
+                      </Tooltip>
+                    )
                   }
-                  if (acts.length === 0) acts.push(<span style={{ color: '#999' }}>-</span>)
-                  return <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{acts}</span>
-                }},
+                },
+                { title: '操作', key: 'action', width: 200, render: (_, r) => (
+                  <span style={{ display: 'flex', gap: 4 }}>
+                    {r.status === 'in_progress' && <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评分</Button>}
+                    {r.status === 'submitted' && <Button size="small" type="primary" icon={<StarOutlined />} onClick={() => { setEvaluateTask(r); evaluateForm.resetFields(); setDimScores({ profession: 80, innovation: 75, teamwork: 80, learning: 75, adaptability: 75 }); setEvaluateOpen(true) }}>评价</Button>}
+                    <Button size="small" icon={<EyeOutlined />} onClick={() => {
+                      const pj = projects.find(p => p.id === r.projectId)
+                      Modal.info({ title: r.name, width: 560, content: (
+                        <Descriptions column={1} bordered size="small" style={{ marginTop: 16 }}>
+                          <Descriptions.Item label="任务名称">{r.name}</Descriptions.Item>
+                          <Descriptions.Item label="所属项目">{pj?.name || '-'}</Descriptions.Item>
+                          <Descriptions.Item label="负责人">{r.assignee}</Descriptions.Item>
+                          <Descriptions.Item label="截止日期">{r.deadline}</Descriptions.Item>
+                          <Descriptions.Item label="状态"><Tag color={taskStatusMap[r.status]?.color}>{taskStatusMap[r.status]?.text}</Tag></Descriptions.Item>
+                          {r.score && <><Descriptions.Item label="五维均分">{r.score}分</Descriptions.Item><Descriptions.Item label="教师点评">{r.comment || '无'}</Descriptions.Item></>}
+                        </Descriptions>
+                      ), okText: '关闭' })
+                    }}>查看</Button>
+                  </span>
+                )},
               ]} rowKey="id" size="small" />
             )}
           </div>
@@ -748,19 +783,9 @@ export default function ProjectCooperation() {
     }
 
     // 任务分配/管理
-    if (role !== 'mentor' && role !== 'enterprise') items.push({
-      key: 'tasks', label: '任务列表', children: (
+    if (role !== 'mentor' && role !== 'enterprise' && role !== 'teacher') items.push({
+      key: 'tasks', label: '任务分配', children: (
         <div>
-          {role === 'teacher' && (
-            <div style={{ marginBottom: 16 }}>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => {
-                const act = projects.filter(p => p.teacherId === teacherId && p.status === 'in_progress')
-                if (act.length === 0) { message.warning('没有进行中的项目'); return }
-                setTaskProjectId(act[0].id); taskForm.resetFields(); setTaskOpen(true)
-              }}>下发任务给学生</Button>
-              <span style={{ marginLeft: 12, color: '#666' }}>将项目任务/模块下发给具体学生执行</span>
-            </div>
-          )}
           <Table dataSource={visibleTasks} columns={taskColumns} rowKey="id" />
         </div>
       )
