@@ -430,6 +430,7 @@ export default function ProjectCooperation() {
     { title: '所属项目', key: 'pn', render: (_, r) => projects.find(p => p.id === r.projectId)?.name || '-' },
     { title: '负责人', dataIndex: 'assignee', key: 'assignee' },
     { title: '截止日期', dataIndex: 'deadline', key: 'deadline' },
+    { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={taskStatusMap[s]?.color}>{taskStatusMap[s]?.text}</Tag> },
     { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress || (r.status === 'completed' ? 100 : r.status === 'in_progress' ? 50 : 0)} size="small" /> },
     {
       title: '五维均分', dataIndex: 'score', key: 'score', render: (s, r) => {
@@ -626,9 +627,10 @@ export default function ProjectCooperation() {
               <Empty description="暂无项目" />
             ) : (
               <Table dataSource={filteredProjects} columns={[
+                { title: '项目名称', dataIndex: 'name', key: 'name', render: (t, r) => <a onClick={() => { setDetailProject(r); setDetailOpen(true) }}>{t}</a>, ellipsis: true },
                 { title: '企业名称', dataIndex: 'enterpriseName', key: 'enterpriseName', render: (t) => <Tag color="blue">{t}</Tag> },
                 { title: '预算', dataIndex: 'budget', key: 'budget', render: (v) => `¥${(v/10000).toFixed(1)}万` },
-                { title: '原负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <span style={{ color: '#999' }}>-</span> },
+                { title: '负责教师', dataIndex: 'teacherName', key: 'teacherName', render: (v) => v || <span style={{ color: '#999' }}>-</span> },
                 { title: '进度', key: 'progress', render: (_, r) => <Progress percent={r.progress} size="small" format={() => r.progress > 0 ? `${r.progress}%` : '-'} /> },
                 { title: '状态', dataIndex: 'status', key: 'status', render: (s) => <Tag color={statusMap[s]?.color}>{statusMap[s]?.text}</Tag> },
                 { title: '操作', key: 'action', width: 280, render: (_, r) => {
