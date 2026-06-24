@@ -1,5 +1,5 @@
 export const mockStudents = [
-  { id: 1, name: '杨亚楠', schoolId: 1, major: '软件技术', grade: '2024级', phone: '13800138001', email: 'yangyanan@sjziei.edu.cn' },
+  { id: 1, name: '杨亚楠', schoolId: 1, major: '软件技术', grade: '2023级', phone: '13800138001', email: 'yangyanan@sjziei.edu.cn' },
   { id: 2, name: '李四', schoolId: 1, major: '软件工程', grade: '2022级', phone: '13900139002', email: 'lisi@szu.edu.cn' },
   { id: 3, name: '王五', schoolId: 1, major: '人工智能', grade: '2023级', phone: '13900139003', email: 'wangwu@szu.edu.cn' },
   { id: 4, name: '赵六', schoolId: 2, major: '电子信息工程', grade: '2022级', phone: '13900139004', email: 'zhaoliu@szpt.edu.cn' },
