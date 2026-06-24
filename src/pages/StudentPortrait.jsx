@@ -175,7 +175,7 @@ export default function StudentPortrait() {
     <div style={{ padding: 24 }}>
 
       <Row gutter={16} style={{ alignItems: 'stretch' }}>
-        <Col span={8} style={{ display: 'flex' }}>
+        <Col span={7} style={{ display: 'flex' }}>
           <Card title="学生简历" size="small" style={{ width: '100%' }}>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
               {avatar ? (
@@ -210,9 +210,42 @@ export default function StudentPortrait() {
           </Card>
         </Col>
 
-        <Col span={16} style={{ display: 'flex' }}>
+        <Col span={12} style={{ display: 'flex' }}>
           <Card title="五维能力评估" size="small" style={{ width: '100%' }}>
             <div ref={radarRef} style={{ width: '100%', height: 480 }} />
+          </Card>
+        </Col>
+        <Col span={5} style={{ display: 'flex' }}>
+          <Card title="最新项目五维评估" size="small" style={{ width: '100%' }}>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: '#333' }}>五维度评分</div>
+              {FIVE_DIMS.map(d => (
+                <div key={d.key} style={{ marginBottom: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+                    <span style={{ fontSize: 12, color: '#555' }}>{d.label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: d.color }}>{portrait.dims[d.key]}分</span>
+                  </div>
+                  <Progress percent={portrait.dims[d.key]} strokeColor={d.color} showInfo={false} size="small" />
+                </div>
+              ))}
+            </div>
+            <div style={{
+              padding: '10px 12px', background: 'linear-gradient(135deg, #e6f7ff, #f0f5ff)',
+              borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10,
+            }}>
+              <span style={{ fontSize: 13, fontWeight: 500 }}>综合均分</span>
+              <span style={{ fontSize: 22, fontWeight: 700, color: '#1677ff', fontFamily: 'DIN, monospace' }}>{avgScore}</span>
+            </div>
+            <div style={{
+              padding: '10px 12px', background: 'linear-gradient(135deg, #fffbe6, #fff7e6)',
+              borderRadius: 8, border: '1px solid #ffe58f', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: 11, color: '#999', marginBottom: 2 }}>最新项目: {portrait.projects[0]?.name || '暂无'}</div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: '#faad14', fontFamily: 'DIN, monospace' }}>
+                {latestProjectScore}
+              </div>
+              <div style={{ fontSize: 11, color: '#999' }}>分</div>
+            </div>
           </Card>
         </Col>
       </Row>
