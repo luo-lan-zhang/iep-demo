@@ -11,13 +11,13 @@ const mockPointsBalance = [
   { id: 3, name: '石家庄信息工程职业学院', role: 'school', currentPoints: 9800, totalEarned: 15000 },
   { id: 4, name: '华为技术有限公司', role: 'enterprise', currentPoints: 25000, totalEarned: 40000 },
   { id: 5, name: '腾讯科技（深圳）有限公司', role: 'enterprise', currentPoints: 18000, totalEarned: 30000 },
-  { id: 6, name: '张教授', role: 'teacher', currentPoints: 5600, totalEarned: 8000 },
+  { id: 6, name: '张晓蕾', role: 'teacher', currentPoints: 5600, totalEarned: 8000 },
   { id: 7, name: '李教授', role: 'teacher', currentPoints: 4200, totalEarned: 6500 },
   { id: 8, name: '张三', role: 'student', currentPoints: 1200, totalEarned: 1800 },
 ]
 
 const mockAdjustments = [
-  { id: 1, applicantName: '石家庄信息工程职业学院', applicantRole: 'school', targetName: '张教授', type: 'increase', amount: 500, reason: '教学文件评审通过奖励', attachments: '', status: 'approved', applyDate: '2024-06-01', auditDate: '2024-06-02', auditor: '理事会管理员', auditComment: '同意发放' },
+  { id: 1, applicantName: '石家庄信息工程职业学院', applicantRole: 'school', targetName: '张晓蕾', type: 'increase', amount: 500, reason: '教学文件评审通过奖励', attachments: '', status: 'approved', applyDate: '2024-06-01', auditDate: '2024-06-02', auditor: '理事会管理员', auditComment: '同意发放' },
   { id: 2, applicantName: '王老师', applicantRole: 'teacher', targetName: '张三', type: 'increase', amount: 200, reason: '竞赛获奖学生奖励', attachments: '', status: 'approved', applyDate: '2024-05-28', auditDate: '2024-05-29', auditor: '理事会管理员', auditComment: '审核通过' },
   { id: 3, applicantName: '华为技术有限公司', applicantRole: 'enterprise', targetName: '石家庄信息工程职业学院', type: 'increase', amount: 3000, reason: '完成培训指标奖励', attachments: '', status: 'pending', applyDate: '2024-06-05', auditDate: '', auditor: '', auditComment: '' },
   { id: 4, applicantName: '腾讯科技（深圳）有限公司', applicantRole: 'enterprise', targetName: '石家庄信息工程职业学院', type: 'increase', amount: 2000, reason: '技术服务项目结算', attachments: '', status: 'pending', applyDate: '2024-06-08', auditDate: '', auditor: '', auditComment: '' },
@@ -26,7 +26,7 @@ const mockAdjustments = [
 ]
 
 const mockAuditLog = [
-  { id: 1, operator: '理事会管理员', action: '审核通过', target: '石家庄信息工程职业学院 -> 张教授 +500', time: '2024-06-02 10:30:00' },
+  { id: 1, operator: '理事会管理员', action: '审核通过', target: '石家庄信息工程职业学院 -> 张晓蕾 +500', time: '2024-06-02 10:30:00' },
   { id: 2, operator: '理事会管理员', action: '审核通过', target: '王老师 -> 张三 +200', time: '2024-05-29 14:20:00' },
   { id: 3, operator: '理事会管理员', action: '审核拒绝', target: '深圳职业技术学院 -> 王老师 +800', time: '2024-05-22 09:15:00', comment: '证明材料不充分' },
   { id: 4, operator: '理事会管理员', action: '积分调整', target: '石家庄信息工程职业学院 调整余额', time: '2024-05-15 11:00:00' },

@@ -36,8 +36,8 @@ const initialInterviews = [
 ]
 
 const initialRecommendations = [
-  { id: 1, positionId: 1, studentId: 2, studentName: '陈芝树', major: '软件技术', teacherId: 1, teacherName: '张教授', reason: '该生后端开发能力扎实，有信息安全课程项目经验', status: 'pending', recommendDate: '2026-06-10' },
-  { id: 2, positionId: 3, studentId: 1, studentName: '贾梦圆', major: '软件技术', teacherId: 1, teacherName: '张教授', reason: '前端开发能力突出，有智慧校园餐饮系统项目经验', status: 'pending', recommendDate: '2026-06-12' },
+  { id: 1, positionId: 1, studentId: 2, studentName: '陈芝树', major: '软件技术', teacherId: 1, teacherName: '张晓蕾', reason: '该生后端开发能力扎实，有信息安全课程项目经验', status: 'pending', recommendDate: '2026-06-10' },
+  { id: 2, positionId: 3, studentId: 1, studentName: '贾梦圆', major: '软件技术', teacherId: 1, teacherName: '张晓蕾', reason: '前端开发能力突出，有智慧校园餐饮系统项目经验', status: 'pending', recommendDate: '2026-06-12' },
   { id: 3, positionId: 4, studentId: 2, studentName: '陈芝树', major: '软件技术', teacherId: 2, teacherName: '李教授', reason: '全栈能力突出，学习能力强', status: 'interviewed', recommendDate: '2026-06-08' },
 ]
 

@@ -47,11 +47,11 @@ const mockTechServices = [
 
 const mockTechInterests = [
   { id: 1, serviceId: 1, unitName: '深圳大学', contact: '李教授', type: 'school', status: 'pending', message: '我们学校机器人实验室有相关产线改造经验，希望合作' },
-  { id: 2, serviceId: 2, unitName: '张教授（深圳大学）', contact: '张教授', type: 'teacher', status: 'approved', message: 'AI视觉检测是我们的研究方向，可以提供算法优化方案' },
+  { id: 2, serviceId: 2, unitName: '张晓蕾（深圳大学）', contact: '张晓蕾', type: 'teacher', status: 'approved', message: 'AI视觉检测是我们的研究方向，可以提供算法优化方案' },
 ]
 
 const mockCapabilities = [
-  { id: 1, name: 'AI视觉检测方案', industry: '智能制造', provider: '深圳大学', contact: '张教授', contactPhone: '13800139001', description: '提供基于深度学习的工业视觉检测全套解决方案，包括缺陷检测、尺寸测量、字符识别等' },
+  { id: 1, name: 'AI视觉检测方案', industry: '智能制造', provider: '深圳大学', contact: '张晓蕾', contactPhone: '13800139001', description: '提供基于深度学习的工业视觉检测全套解决方案，包括缺陷检测、尺寸测量、字符识别等' },
   { id: 2, name: '工业机器人集成', industry: '智能制造', provider: '深圳职业技术学院', contact: '王老师', contactPhone: '13800139003', description: '提供六轴工业机器人编程、仿真、集成调试服务，支持多种品牌机器人' },
   { id: 3, name: '5G通信测试服务', industry: '信息通信', provider: '华南理工大学', contact: '陈教授', contactPhone: '13800139004', description: '提供5G基站、终端设备的射频性能测试、协议一致性测试服务' },
   { id: 4, name: '嵌入式系统开发', industry: '电子信息', provider: '广东工业大学', contact: '刘老师', contactPhone: '13800139006', description: '提供基于ARM/RISC-V的嵌入式系统软硬件开发服务，包括RTOS移植、驱动开发' },

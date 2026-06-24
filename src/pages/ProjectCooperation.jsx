@@ -19,12 +19,12 @@ const FIVE_DIMS = [
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const initialProjects = [
-  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 500000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
-  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 286000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
+  { id: 1, name: '物联网固件AI污点检测与POC智能协同验证系统', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 500000, teacherId: 1, teacherName: '张晓蕾', schoolId: 1, status: 'in_progress', progress: 65, description: '物联网固件AI污点检测与POC智能协同验证', deliverables: '污点检测系统', requirements: 'AI、物联网安全', tags: ['AI', '物联网'], assignedStudents: [1, 2, 3, 7] },
+  { id: 2, name: '矿用无线张力油压监测系统', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 286000, teacherId: 1, teacherName: '张晓蕾', schoolId: 1, status: 'in_progress', progress: 90, description: '矿用无线张力油压监测系统开发', deliverables: '监测系统', requirements: '无线传感、矿山', tags: ['矿山', '无线'], assignedStudents: [5, 6, 7] },
   { id: 3, name: '5G基站天线优化设计', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 800000, teacherId: null, teacherName: null, schoolId: null, status: 'pending', progress: 0, description: '5G基站天线阵列的优化设计', deliverables: '设计方案', requirements: '', tags: ['5G', '天线'], assignedStudents: [] },
-  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 600000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
-  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 200000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
-  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 400000, teacherId: 1, teacherName: '张教授', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
+  { id: 4, name: '工业机器人控制算法', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 600000, teacherId: 1, teacherName: '张晓蕾', schoolId: 1, status: 'teacher_accepted', progress: 5, description: '六轴工业机器人控制算法优化', deliverables: '源码', requirements: '熟悉ROS', tags: ['机器人'], assignedStudents: [4] },
+  { id: 5, name: '学生成绩分析平台', enterpriseId: 2, enterpriseName: '中数智创科技有限公司', budget: 200000, teacherId: 1, teacherName: '张晓蕾', schoolId: 1, status: 'completed', progress: 100, description: '在校学生学业成绩分析平台', deliverables: '平台', requirements: '', tags: ['大数据'], assignedStudents: [1, 2, 7] },
+  { id: 6, name: '自动驾驶感知算法优化', enterpriseId: 1, enterpriseName: '中数智创科技有限公司', budget: 400000, teacherId: 1, teacherName: '张晓蕾', schoolId: 1, status: 'pending_complete', progress: 100, description: '多传感器融合的自动驾驶环境感知算法', deliverables: '算法模型', requirements: '熟悉传感器融合', tags: ['自动驾驶', 'AI'], assignedStudents: [1, 3, 7] },
 ]
 
 const enterpriseProjects = [

@@ -15,9 +15,9 @@ const typeConfig = {
 }
 
 const mockAchievements = [
-  { id: 1, title: '基于深度学习的医学影像分析系统', type: '科研成果', teacherId: 1, teacherName: '张教授', schoolId: 1, schoolName: '石家庄信息工程职业学院', description: '提出了一种新型的CNN-Transformer混合架构，在肺部CT影像分析中达到99.2%的准确率，发表于Nature Medicine。该成果已应用于合作医院的临床辅助诊断系统。', completionDate: '2024-03-15', tags: ['AI', '深度学习', '医学影像'], certificateUrl: '' },
+  { id: 1, title: '基于深度学习的医学影像分析系统', type: '科研成果', teacherId: 1, teacherName: '张晓蕾', schoolId: 1, schoolName: '石家庄信息工程职业学院', description: '提出了一种新型的CNN-Transformer混合架构，在肺部CT影像分析中达到99.2%的准确率，发表于Nature Medicine。该成果已应用于合作医院的临床辅助诊断系统。', completionDate: '2024-03-15', tags: ['AI', '深度学习', '医学影像'], certificateUrl: '' },
   { id: 2, title: '产线AI视觉检测技术方案', type: '技术方案', teacherId: 2, teacherName: '李教授', schoolId: 1, schoolName: '石家庄信息工程职业学院', description: '针对电子制造产线质检需求，基于YOLOv8和多光谱成像技术，实现缺陷检测准确率99.6%。方案已在华为产线试点应用，漏检率降低80%。', completionDate: '2024-05-20', tags: ['机器视觉', '工业检测', 'AI'], certificateUrl: '' },
-  { id: 3, title: '智能医疗影像识别系统V2.0', type: '专利软著', teacherId: 1, teacherName: '张教授', schoolId: 1, schoolName: '石家庄信息工程职业学院', description: '发明专利：一种基于多模态融合的医疗影像智能识别方法及系统。专利号：ZL202410000123.4，已获得授权。', completionDate: '2024-05-20', tags: ['专利', '医疗影像', '多模态'], certificateUrl: '' },
+  { id: 3, title: '智能医疗影像识别系统V2.0', type: '专利软著', teacherId: 1, teacherName: '张晓蕾', schoolId: 1, schoolName: '石家庄信息工程职业学院', description: '发明专利：一种基于多模态融合的医疗影像智能识别方法及系统。专利号：ZL202410000123.4，已获得授权。', completionDate: '2024-05-20', tags: ['专利', '医疗影像', '多模态'], certificateUrl: '' },
   { id: 4, title: '工业机器人智能分拣教学案例', type: '教学案例', teacherId: 3, teacherName: '王老师', schoolId: 2, schoolName: '深圳职业技术学院', description: '基于机器视觉的工业机器人智能分拣系统完整教学案例，包含项目任务书、实验指导手册、视频资源。已在高职院校推广使用。', completionDate: '2024-04-10', tags: ['机器人', '教学', '分拣'], certificateUrl: '' },
   { id: 5, title: '5G毫米波通信天线技术方案', type: '技术方案', teacherId: 2, teacherName: '李教授', schoolId: 1, schoolName: '石家庄信息工程职业学院', description: '设计了一种新型宽带毫米波天线阵列，工作频率覆盖24-43GHz，适用于5G基站和终端设备。该方案已在多家通信设备制造商试用。', completionDate: '2024-02-28', tags: ['5G', '天线', '通信'], certificateUrl: '' },
   { id: 6, title: '新能源汽车电池管理系统', type: '专利软著', teacherId: 4, teacherName: '陈教授', schoolId: 3, schoolName: '石家庄信息工程职业学院', description: '发明专利：一种基于电化学模型的动力电池SOC在线估计方法及系统。专利号：ZL202410000567.8', completionDate: '2024-03-30', tags: ['新能源', '电池管理系统', '汽车'], certificateUrl: '' },

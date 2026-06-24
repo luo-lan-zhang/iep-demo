@@ -104,7 +104,7 @@ function TabsRanking() {
       { rank: 5, name: '河北国龙制药有限公司', score: 78, projects: 6 },
     ],
     teacher: [
-      { rank: 1, name: '张教授', score: 95, projects: 8 },
+      { rank: 1, name: '张晓蕾', score: 95, projects: 8 },
       { rank: 2, name: '李教授', score: 90, projects: 7 },
       { rank: 3, name: '陈教授', score: 85, projects: 6 },
       { rank: 4, name: '王副教授', score: 80, projects: 5 },
